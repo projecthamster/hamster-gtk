@@ -1,0 +1,16 @@
+# This file is used for local testing with and without tox as well as for
+# testing on the CI servers.
+# This file is not part of our packaging specification. It is used to generate
+# a reproduceable test environment. For check out ``docs/packaging``.
+# For package-requirements refer to ``setup.py``.
+
+coverage==4.0.3
+fauxfactory==2.0.9
+isort==4.2.5
+pytest==2.9.1
+pytest_faker==1.1.0
+pytest-factoryboy==1.1.6
+tox==2.3.1
+future==0.15.2
+freezegun==0.3.7
+pytest-mock==0.11.0

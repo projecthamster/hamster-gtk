@@ -1,0 +1,12 @@
+# This file specifies all packages required for local development
+# This file is not part of our packaging specification. It is used to generate
+# a reproduceable development environment. For check out ``docs/packaging``.
+# For package-requirements refer to ``setup.py``.
+
+-r ./docs.pip
+-r ./test.pip
+
+bumpversion==0.5.3
+ipython==4.2.0
+wheel==0.29.0
+watchdog==0.8.3
