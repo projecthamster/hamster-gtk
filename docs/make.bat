@@ -97,7 +97,7 @@ if "%1" == "json" (
 	if errorlevel 1 exit /b 1
 	echo.
 	echo.Build finished; now you can process the JSON files.
-	goto end
+	goto endguide/
 )
 
 if "%1" == "htmlhelp" (

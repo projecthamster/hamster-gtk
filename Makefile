@@ -80,15 +80,15 @@ coverage-html: coverage
 	$(BROWSER) htmlcov/index.html
 
 docs:
-	rm -f docs/hamster-gtk.rst
+	rm -f docs/hamster_gtk.rst
 	rm -f docs/modules.rst
-	sphinx-apidoc -o docs/ hamster-gtk
+	sphinx-apidoc -o docs/ hamster_gtk
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 	$(BROWSER) docs/_build/html/index.html
 
 isort:
-	isort --recursive setup.py hamster-gtk/ tests/
+	isort --recursive setup.py hamster_gtk/ tests/
 
 
 servedocs: docs

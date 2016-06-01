@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import pytest
 
-
-def test_show_error():
+def test_smoke():
+    """Pseudo test so coverage does not fail reportless."""
     pass

@@ -3,9 +3,15 @@ include CONTRIBUTING.rst
 include HISTORY.rst
 include LICENSE
 include README.rst
+include Makefile
+include tox.ini
+include .editorconfig
 
 recursive-include tests *
+recursive-include hamster_gtk *.py
+recursive-include requirements *.pip
+recursive-include docs *.rst conf.py Makefile make.bat
+
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
-
-recursive-include docs *.rst conf.py Makefile make.bat
+recursive-exclude * *.sw?
