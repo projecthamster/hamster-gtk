@@ -2,6 +2,10 @@
 hamster-gtk
 ===============================
 
+.. image:: https://badges.gitter.im/elbenfreund/hamster-gtk.svg
+   :alt: Join the chat at https://gitter.im/elbenfreund/hamster-gtk
+   :target: https://gitter.im/elbenfreund/hamster-gtk?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+
 .. .. image:: https://img.shields.io/pypi/v/hamster-gtk.svg
         :target: https://pypi.python.org/pypi/hamster-gtk
 
