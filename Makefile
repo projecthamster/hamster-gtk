@@ -75,6 +75,9 @@ coverage:
 	coverage run -m pytest $(TEST_ARGS) tests
 	coverage report
 
+test2:
+	py.test tests
+
 coverage-html: coverage
 	coverage html
 	$(BROWSER) htmlcov/index.html

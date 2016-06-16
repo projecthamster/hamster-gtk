@@ -1,6 +1,60 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
 
-def test_smoke():
-    """Pseudo test so coverage does not fail reportless."""
-    pass
+import gi
+gi.require_version('Gdk', '3.0')  # NOQA
+from gi.repository import Gtk
+
+from six import text_type
+import pytest
+
+def refresh_gui(delay=0):
+    import time
+    while Gtk.events_pending():
+        Gtk.main_iteration_do(False)
+    time.sleep(delay)
+
+from hamster_gtk import hamster_gtk
+from hamster_gtk.screens.tracking import TrackingScreen
+
+class TestHamsterGTK(object):
+    """Unittests for the main app class."""
+
+    def test_instantiation(self):
+        """Make sure class instatiation works as intended."""
+        app = hamster_gtk.HamsterGTK()
+        assert app
+
+
+class TestMainWindow(object):
+    """Unittests for the main application window."""
+    def test_init(self, app):
+        """Make sure class setup works up as intended."""
+        window = hamster_gtk.MainWindow(application=app)
+        assert isinstance(window.get_titlebar(), hamster_gtk.HeaderBar)
+        assert isinstance(window._app, hamster_gtk.HamsterGTK)
+        assert window.get_size() == hamster_gtk.DEFAULT_WINDOW_SIZE
+        assert isinstance(window.get_children()[0], TrackingScreen)
+
+    def test_get_css(self, app_window):
+        """Make sure a string is returned."""
+        assert isinstance(app_window._get_css(), text_type)
+
+
+class TestHeaderBar(object):
+    """Test that headerbar works as intended."""
+    def test_initial_anatomy(self):
+        """Test that the bars initial setup is as expected."""
+        bar = hamster_gtk.HeaderBar(None)
+        assert bar.props.title == 'Hamster-GTK'
+        assert bar.props.subtitle == 'Your friendly time tracker.'
+        assert bar.props.show_close_button
+        assert len(bar.get_children()) == 1
+
+
+    def test_on_overview_button_overview_exists(self, app_window):
+        """Test that we don't create a new overview if we already have one."""
+        app_window.overview = True
+        bar = hamster_gtk.HeaderBar(app_window)
+        assert bar._on_overview_button(None) is None
