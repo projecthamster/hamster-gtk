@@ -19,4 +19,4 @@ def app(request):
 
 @pytest.fixture
 def app_window(request, app):
-    return hamster_gtk.MainWindow(application=app)
+    return hamster_gtk.MainWindow(app)

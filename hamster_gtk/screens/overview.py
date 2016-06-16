@@ -19,7 +19,7 @@
 """
 This Module provides the ``Overview`` class to generate a general listing of our data.
 
-In order to do that, this module contain multiple auxiliary widgets to render specific aspects of
+In order to do that, this module contains multiple auxiliary widgets to render specific aspects of
 this screen.
 
 Due to using default ``Gtk`` classes as bases for our custom widgets (such as
@@ -38,12 +38,12 @@ from gettext import gettext as _
 from gi.repository import Gtk
 
 
-class Overview(Gtk.Dialog):
+class OverviewScreen(Gtk.Dialog):
     """Overview-screen that provides information about a users facts.."""
 
     def __init__(self, app, parent):
         """Initialize dialog."""
-        super(Overview, self).__init__()
+        super(OverviewScreen, self).__init__()
         self.set_default_size(640, 800)
         self.set_titlebar(HeaderBar())
         self.set_transient_for(parent)

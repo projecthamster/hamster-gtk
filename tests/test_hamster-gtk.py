@@ -9,14 +9,14 @@ from gi.repository import Gtk
 from six import text_type
 import pytest
 
+from hamster_gtk import hamster_gtk
+from hamster_gtk.screens.tracking import TrackingScreen
+
 def refresh_gui(delay=0):
     import time
     while Gtk.events_pending():
         Gtk.main_iteration_do(False)
     time.sleep(delay)
-
-from hamster_gtk import hamster_gtk
-from hamster_gtk.screens.tracking import TrackingScreen
 
 class TestHamsterGTK(object):
     """Unittests for the main app class."""
@@ -31,7 +31,7 @@ class TestMainWindow(object):
     """Unittests for the main application window."""
     def test_init(self, app):
         """Make sure class setup works up as intended."""
-        window = hamster_gtk.MainWindow(application=app)
+        window = hamster_gtk.MainWindow(app)
         assert isinstance(window.get_titlebar(), hamster_gtk.HeaderBar)
         assert isinstance(window._app, hamster_gtk.HamsterGTK)
         assert window.get_size() == hamster_gtk.DEFAULT_WINDOW_SIZE
