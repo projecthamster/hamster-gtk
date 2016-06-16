@@ -19,10 +19,10 @@ hamster_gtk.dialogs module
     :undoc-members:
     :show-inheritance:
 
-hamster_gtk.hamster-gtk module
+hamster_gtk.hamster_gtk module
 ------------------------------
 
-.. automodule:: hamster_gtk.hamster-gtk
+.. automodule:: hamster_gtk.hamster_gtk
     :members:
     :undoc-members:
     :show-inheritance:

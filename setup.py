@@ -16,6 +16,7 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read().replace('.. :changelog:', '')
 
 requirements = [
+    'hamsterlib',
 ]
 
 setup(
@@ -45,4 +46,8 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
     ],
+    entry_points='''
+    [gui_scripts]
+    hamster-gtk=hamster_gtk.hamster_gtk:_main
+    '''
 )
