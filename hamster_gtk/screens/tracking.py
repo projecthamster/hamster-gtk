@@ -26,7 +26,7 @@ from gettext import gettext as _
 from gi.repository import Gtk
 from hamsterlib import Fact
 
-import helpers
+import hamster_gtk.helpers as helpers
 
 
 class TrackingScreen(Gtk.Stack):
@@ -47,7 +47,7 @@ class TrackingScreen(Gtk.Stack):
 
     def update(self):
         """
-        Determine which widget should be used initialy.
+        Determine which widget should be displayed.
 
         This depends on wether there exists an *ongoing fact* or not.
         """
@@ -68,10 +68,10 @@ class CurrentFactBox(Gtk.Box):
 
     def __init__(self, parent):
         """Setup widget."""
+        # We need to wrap this in a vbox to limit its vertical expansion.
         super(CurrentFactBox, self).__init__(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         self.parent = parent
         self.main_window = parent.main_window
-        # We need to wrap this in a bvox to limit its vertical expansion.
         self.content = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.pack_start(self.content, False, False, 0)
         self.update()
@@ -88,8 +88,8 @@ class CurrentFactBox(Gtk.Box):
                 # This should never be seen by the user. It would mean that a
                 # switch to this screen has been triggered without an ongoing
                 # fact existing.
-                self.pack_start(self._get_invalid_label(), True, True, 0)
-        if fact:
+                self.content.pack_start(self._get_invalid_label(), True, True, 0)
+        else:
             self.content.pack_start(self._get_fact_label(fact), True, True, 0)
             self.content.pack_start(self._get_cancel_button(), False, False, 0)
             self.content.pack_start(self._get_save_button(), False, False, 0)

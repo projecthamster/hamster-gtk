@@ -19,15 +19,22 @@
 
 """Main module for 'hamster-gtk'. Provides central ``Gtk.Application`` instance."""
 
+
+from __future__ import unicode_literals
+
 from gettext import gettext as _
 
 import gi
 import hamsterlib
 from gi.repository import Gdk, Gtk
 
-import helpers
-import screens.overview
-import screens.tracking
+from . import helpers
+from .screens.overview import OverviewScreen
+from .screens.tracking import TrackingScreen
+
+gi.require_version('Gdk', '3.0')  # NOQA
+gi.require_version('Gtk', '3.0')  # NOQA
+
 
 gi.require_version('Gdk', '3.0')  # NOQA
 gi.require_version('Gtk', '3.0')  # NOQA
@@ -44,7 +51,7 @@ class HeaderBar(Gtk.HeaderBar):
         """Initialize header bar."""
         super(HeaderBar, self).__init__(**kwargs)
         self._parent = parent
-        self.set_title(_("Hamster-gtk"))
+        self.set_title(_("Hamster-GTK"))
         self.set_subtitle(_("Your friendly time tracker."))
         self.set_show_close_button(True)
 
@@ -54,23 +61,22 @@ class HeaderBar(Gtk.HeaderBar):
 
     def _on_overview_button(self, button):
         """Callback for overview button."""
-        if not self._parent._app.overview:
-            overview = screens.overview.Overview(self._parent._app, self._parent)
-            self._parent._app.overview = overview
-            overview.show_all()
+        # [FIXME] Make sure only one overview dialog is shown at a time.
+        overview = OverviewScreen(self._parent._app, self._parent)
+        overview.show_all()
 
 
 class MainWindow(Gtk.ApplicationWindow):
     """Main window class that is the center of our GUI."""
 
-    def __init__(self, app):
+    def __init__(self, app, *args, **kwargs):
         """Initialize window."""
-        super(MainWindow, self).__init__(title=APP_NAME)
+        super(MainWindow, self).__init__(*args, application=app, **kwargs)
         self.set_titlebar(HeaderBar(self))
 
         # Setup css
         style_provider = Gtk.CssProvider()
-        style_provider.load_from_data(self._get_css())
+        style_provider.load_from_data(str(self._get_css()))
         Gtk.StyleContext.add_provider_for_screen(
             Gdk.Screen.get_default(),
             style_provider,
@@ -84,7 +90,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.set_default_size(*DEFAULT_WINDOW_SIZE)
 
         # Set tracking as default screen at startup.
-        self.add(screens.tracking.TrackingScreen(self))
+        self.add(TrackingScreen(self))
 
     # [FIXME] Obsolete?
     def _facts_changed(self):
@@ -137,6 +143,7 @@ class HamsterGTK(Gtk.Application):
     def __init__(self):
         """Setup instance and make sure default signals are connected to methods."""
         super(HamsterGTK, self).__init__()
+        self.window = None
 
         self.connect('startup', self._startup)
         self.connect('activate', self._activate)
@@ -154,15 +161,18 @@ class HamsterGTK(Gtk.Application):
 
     def _activate(self, app):
         """Triggered in regular use after startup."""
-        main_window = MainWindow(app)
-        app.add_window(main_window)
-        main_window.show_all()
+        if not self.window:
+            self.window = MainWindow(app)
+        app.add_window(self.window)
+        self.window.show_all()
+        self.window.present()
 
     def _shutdown(self, app):
         """Triggered upon termination."""
         print('Hamster-GTK shut down.')  # NOQA
 
 
-if __name__ == '__main__':
+def _main():
+    """Main function, callable by ``setup.py`` entry point."""
     app = HamsterGTK()
     app.run()
