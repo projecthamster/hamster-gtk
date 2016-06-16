@@ -21,7 +21,7 @@
 
 import datetime
 
-import dialogs
+from . import dialogs
 
 
 def _get_config():

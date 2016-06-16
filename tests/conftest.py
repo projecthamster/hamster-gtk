@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 
-import gi
-gi.require_version('Gdk', '3.0')  # NOQA
-from gi.repository import Gtk
+"""Unittest fixtures."""
+
 import pytest
 
-from hamster_gtk import hamster_gtk
-from hamster_gtk.screens.tracking import TrackingScreen
+import hamster_gtk.hamster_gtk as hamster_gtk
+
 
 @pytest.fixture
 def app(request):
-    """Return a app fixture."""
+    """Return an ``Application`` fixture."""
     app = hamster_gtk.HamsterGTK()
     app._startup(app)
     app._activate(app)
@@ -19,4 +18,5 @@ def app(request):
 
 @pytest.fixture
 def app_window(request, app):
+    """Return a ``ApplicationWindow`` fixture."""
     return hamster_gtk.MainWindow(app)

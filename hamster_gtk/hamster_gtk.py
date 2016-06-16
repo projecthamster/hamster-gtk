@@ -25,19 +25,14 @@ from __future__ import unicode_literals
 from gettext import gettext as _
 
 import gi
-import hamsterlib
+gi.require_version('Gdk', '3.0')  # NOQA
+gi.require_version('Gtk', '3.0')  # NOQA
 from gi.repository import Gdk, Gtk
+import hamsterlib
 
 from . import helpers
 from .screens.overview import OverviewScreen
 from .screens.tracking import TrackingScreen
-
-gi.require_version('Gdk', '3.0')  # NOQA
-gi.require_version('Gtk', '3.0')  # NOQA
-
-
-gi.require_version('Gdk', '3.0')  # NOQA
-gi.require_version('Gtk', '3.0')  # NOQA
 
 
 APP_NAME = 'Hamster-GTK'
@@ -76,7 +71,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Setup css
         style_provider = Gtk.CssProvider()
-        style_provider.load_from_data(str(self._get_css()))
+        style_provider.load_from_data(self._get_css().encode())
         Gtk.StyleContext.add_provider_for_screen(
             Gdk.Screen.get_default(),
             style_provider,

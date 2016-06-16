@@ -5,8 +5,10 @@ language: python
 
 env:
   - TOXENV=flake8
-  - TOXENV=isort
   - TOXENV=pep257
+   #- TOXENV=docs
+  - TOXENV=manifest
+
 
 before_install:
   - pip install codecov
@@ -18,4 +20,3 @@ install:
 # command to run tests, e.g. python setup.py test
 script:
   - make test-all
-
