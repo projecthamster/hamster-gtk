@@ -30,36 +30,50 @@ reimplementing this properly is out of the scope right now and a price we are wi
 """
 
 
+import gi
+gi.require_version('Gdk', '3.0')  # NOQA
 import datetime
 import operator
 from collections import defaultdict, namedtuple
 from gettext import gettext as _
-
 from gi.repository import Gtk
+
+import hamster_gtk.helpers as helpers
 
 
 class OverviewScreen(Gtk.Dialog):
     """Overview-screen that provides information about a users facts.."""
 
-    def __init__(self, app, parent):
+    def __init__(self, parent, app):
         """Initialize dialog."""
-        super(OverviewScreen, self).__init__()
+        super(OverviewScreen, self).__init__(parent=parent)
         self.set_default_size(640, 800)
         self.set_titlebar(HeaderBar())
         self.set_transient_for(parent)
 
-        self._app = app
         self._parent = parent
+        self._app = app
         self._charts = False
 
+        self._facts = None
+        self._grouped_facts = None
+
+        self.main_box = self.get_content_area()
+        self.refresh()
+
+        self.connect('delete-event', self._on_delete)
+
+    def refresh(self):
+        """Recompute data and trigger redrawing."""
         self._facts = self._get_facts()
         self._grouped_facts, self._totals = self._group_facts()
 
-        self.main_box = self.get_content_area()
-        scrolled_window = Gtk.ScrolledWindow()
+        helpers.clear_children(self.main_box)
+
+        facts_window = Gtk.ScrolledWindow()
         self.factlist = FactGrid(self._grouped_facts.by_date)
-        scrolled_window.add(self.factlist)
-        self.main_box.pack_start(scrolled_window, True, True, 0)
+        facts_window.add(self.factlist)
+        self.main_box.pack_start(facts_window, True, True, 0)
 
         self.totals_panel = Summary(self._get_highest_totals(self._totals.category, 3))
         self.main_box.pack_start(self.totals_panel, False, False, 0)
@@ -67,6 +81,8 @@ class OverviewScreen(Gtk.Dialog):
         charts_button = Gtk.Button('click to show more details ...')
         charts_button.connect('clicked', self._on_charts_button)
         self.main_box.pack_start(charts_button, False, True, 0)
+
+        self.show_all()
 
     def _on_charts_button(self, button):
         """On button click either show or hide extended details."""
@@ -77,6 +93,18 @@ class OverviewScreen(Gtk.Dialog):
             self._charts = Charts(self._totals)
             self.main_box.pack_start(self._charts, False, False, 0)
             self.show_all()
+
+    def _on_delete(self, event, data):
+        """
+        Close this dialog.
+
+        It would be preferable to just hide the dialog and re-present it if
+        it required again, but we did run into serious issues "re-showing" it.
+        So for now we get rid of it entirely so a new instance is triggered
+        instead.
+        """
+        self.destroy()
+        self._parent._overview_window = None
 
     def _get_facts(self):
         """Collect and return all facts too be shown, not necessarily be visible."""

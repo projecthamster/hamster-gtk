@@ -56,9 +56,9 @@ class HeaderBar(Gtk.HeaderBar):
 
     def _on_overview_button(self, button):
         """Callback for overview button."""
-        # [FIXME] Make sure only one overview dialog is shown at a time.
-        overview = OverviewScreen(self._parent._app, self._parent)
-        overview.show_all()
+        if not self._parent._overview_window:
+            self._parent._overview_window = OverviewScreen(self._parent, self._parent._app)
+        self._parent._overview_window.present()
 
 
 class MainWindow(Gtk.ApplicationWindow):
@@ -80,6 +80,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Some basic inventory
         self._app = app
+        self._overview_window = None
 
         # Some Geometry
         self.set_default_size(*DEFAULT_WINDOW_SIZE)

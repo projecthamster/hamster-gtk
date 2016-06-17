@@ -62,3 +62,15 @@ def show_error(parent, error, message=None):
     dialog = dialogs.ErrorDialog(parent, message)
     dialog.run()
     dialog.destroy()
+
+
+def clear_children(widget):
+    """
+    Remove and destroy all children from a widget.
+
+    It seems GTK really does not have this build in. Iterating over all
+    seems a bit blunt, but seems to be the way to do this.
+    """
+    for child in widget.get_children():
+        child.destroy()
+    return widget
