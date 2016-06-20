@@ -9,10 +9,13 @@ import hamster_gtk.hamster_gtk as hamster_gtk
 
 @pytest.fixture
 def app(request):
-    """Return an ``Application`` fixture."""
+    """
+    Return an ``Application`` fixture.
+
+    Please note: the app has just been started but not activated.
+    """
     app = hamster_gtk.HamsterGTK()
     app._startup(app)
-    app._activate(app)
     return app
 
 

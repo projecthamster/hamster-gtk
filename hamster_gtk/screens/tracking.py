@@ -32,14 +32,17 @@ import hamster_gtk.helpers as helpers
 class TrackingScreen(Gtk.Stack):
     """Main container for the tracking screen."""
 
-    def __init__(self, parent):
+    def __init__(self, parent, app):
         """Setup widget."""
         super(TrackingScreen, self).__init__()
+        self._parent = parent
+        self._app = app
+
         self.main_window = parent
         self.set_transition_type(Gtk.StackTransitionType.SLIDE_UP)
         self.set_transition_duration(1000)
-        self.current_fact_view = CurrentFactBox(self)
-        self.start_tracking_view = StartTrackingBox(self)
+        self.current_fact_view = CurrentFactBox(self, self._app)
+        self.start_tracking_view = StartTrackingBox(self, self._app)
         self.add_titled(self.start_tracking_view, 'start tracking', _("Start Tracking"))
         self.add_titled(self.current_fact_view, 'ongoing fact', _("Show Ongoing Fact"))
         self.update()
@@ -52,7 +55,7 @@ class TrackingScreen(Gtk.Stack):
         This depends on wether there exists an *ongoing fact* or not.
         """
         try:
-            current_fact = self.main_window._app.store.facts.get_tmp_fact()
+            current_fact = self._app.controler.store.facts.get_tmp_fact()
         except KeyError:
             self.start_tracking_view.show()
             self.set_visible_child(self.start_tracking_view)
@@ -66,11 +69,12 @@ class TrackingScreen(Gtk.Stack):
 class CurrentFactBox(Gtk.Box):
     """Box to be used if current fact is present."""
 
-    def __init__(self, parent):
+    def __init__(self, parent, app):
         """Setup widget."""
         # We need to wrap this in a vbox to limit its vertical expansion.
         super(CurrentFactBox, self).__init__(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         self.parent = parent
+        self._app = app
         self.main_window = parent.main_window
         self.content = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.pack_start(self.content, False, False, 0)
@@ -83,7 +87,7 @@ class CurrentFactBox(Gtk.Box):
 
         if not fact:
             try:
-                fact = self.fact = self.main_window._app.store.facts.get_tmp_fact()
+                fact = self.fact = self._app.controler.store.facts.get_tmp_fact()
             except KeyError:
                 # This should never be seen by the user. It would mean that a
                 # switch to this screen has been triggered without an ongoing
@@ -128,7 +132,6 @@ class CurrentFactBox(Gtk.Box):
 
         Save *ongoing fact* to storage.
         """
-        self.fact.end = datetime.datetime.now()
         try:
             self.main_window._app.store.facts.stop_tmp_fact()
         except Exception as error:
@@ -136,17 +139,19 @@ class CurrentFactBox(Gtk.Box):
         else:
             self.parent.update()
             # Inform the main window about the chance.
-            self.main_window._facts_changed()
+            self._app.controler.signal_handler.emit('facts-changed')
 
 
 class StartTrackingBox(Gtk.Box):
     """Box to be used if no *ongoing fact* is present."""
 
-    def __init__(self, parent, *args, **kwargs):
+    def __init__(self, parent, app, *args, **kwargs):
         """Setup widget."""
         super(StartTrackingBox, self).__init__(orientation=Gtk.Orientation.VERTICAL,
                                                spacing=10, *args, **kwargs)
         self.parent = parent
+        self._app = app
+
         self.main_window = parent.main_window
         self.set_homogeneous(False)
 

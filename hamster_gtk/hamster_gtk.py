@@ -27,7 +27,7 @@ from gettext import gettext as _
 import gi
 gi.require_version('Gdk', '3.0')  # NOQA
 gi.require_version('Gtk', '3.0')  # NOQA
-from gi.repository import Gdk, Gtk
+from gi.repository import Gdk, Gtk, GObject
 import hamsterlib
 
 from . import helpers
@@ -42,10 +42,12 @@ DEFAULT_WINDOW_SIZE = (400, 200)
 class HeaderBar(Gtk.HeaderBar):
     """Header bar for the main application window."""
 
-    def __init__(self, parent, **kwargs):
+    def __init__(self, parent, app, **kwargs):
         """Initialize header bar."""
         super(HeaderBar, self).__init__(**kwargs)
         self._parent = parent
+        self._app = app
+
         self.set_title(_("Hamster-GTK"))
         self.set_subtitle(_("Your friendly time tracker."))
         self.set_show_close_button(True)
@@ -57,7 +59,7 @@ class HeaderBar(Gtk.HeaderBar):
     def _on_overview_button(self, button):
         """Callback for overview button."""
         if not self._parent._overview_window:
-            self._parent._overview_window = OverviewScreen(self._parent, self._parent._app)
+            self._parent._overview_window = OverviewScreen(self._parent, self._app)
         self._parent._overview_window.present()
 
 
@@ -67,7 +69,14 @@ class MainWindow(Gtk.ApplicationWindow):
     def __init__(self, app, *args, **kwargs):
         """Initialize window."""
         super(MainWindow, self).__init__(*args, application=app, **kwargs)
-        self.set_titlebar(HeaderBar(self))
+        # Some basic inventory
+        self._app = app
+        self._overview_window = None
+
+        # Styling
+        self.set_position(Gtk.WindowPosition.CENTER)
+        self.set_titlebar(HeaderBar(self, self._app))
+        self.set_default_size(*DEFAULT_WINDOW_SIZE)
 
         # Setup css
         style_provider = Gtk.CssProvider()
@@ -78,25 +87,11 @@ class MainWindow(Gtk.ApplicationWindow):
             Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         )
 
-        # Some basic inventory
-        self._app = app
-        self._overview_window = None
-
         # Some Geometry
-        self.set_default_size(*DEFAULT_WINDOW_SIZE)
 
         # Set tracking as default screen at startup.
-        self.add(TrackingScreen(self))
+        self.add(TrackingScreen(self, self._app))
 
-    # [FIXME] Obsolete?
-    def _facts_changed(self):
-        """
-        Callback to indicate that facts have been changed in the backend.
-
-        Workaround until we have evaluated the need for proper signals.
-        """
-        # self.app.overview.update()
-        pass
 
     def _get_css(self):
         """
@@ -140,7 +135,29 @@ class MainWindow(Gtk.ApplicationWindow):
                 padding-left: 10px;
                 padding-right: 10px;
             }
+
+            /* EditDialog */
+            #EditDialogMainBox {
+                padding: 15px;
+            }
             """
+
+
+class SignalHandler(GObject.GObject):
+    """
+    A simple signaling class. Use this to provide custom signal registration.
+
+    Once signals have been 'registered' here you can ``emit`` or ``connect`` to
+    them via its class instances.
+    """
+
+    __gsignals__ = {
+        str('facts-changed'): (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, ()),
+    }
+
+    def __init__(self):
+        """Initialize instance."""
+        super(SignalHandler, self).__init__()
 
 
 class HamsterGTK(Gtk.Application):
@@ -159,6 +176,7 @@ class HamsterGTK(Gtk.Application):
         """Triggered right at startup."""
         print(_('Hamster-GTK started.'))  # NOQA
         self.controler = hamsterlib.HamsterControl(helpers._get_config())
+        self.controler.signal_handler = SignalHandler()
         # For convenience only
         self.store = self.controler.store
 

@@ -29,9 +29,6 @@ The one major downside is, that we can not easily reimplement its eye candy
 reimplementing this properly is out of the scope right now and a price we are willing to pay.
 """
 
-
-import gi
-gi.require_version('Gdk', '3.0')  # NOQA
 import datetime
 import operator
 from collections import defaultdict, namedtuple
@@ -39,6 +36,8 @@ from gettext import gettext as _
 from gi.repository import Gtk
 
 import hamster_gtk.helpers as helpers
+import hamster_gtk.dialogs as dialogs
+from hamster_gtk.screens.edit import EditFactDialog
 
 
 class OverviewScreen(Gtk.Dialog):
@@ -47,12 +46,13 @@ class OverviewScreen(Gtk.Dialog):
     def __init__(self, parent, app):
         """Initialize dialog."""
         super(OverviewScreen, self).__init__(parent=parent)
+        self._parent = parent
+        self._app = app
+
         self.set_default_size(640, 800)
         self.set_titlebar(HeaderBar())
         self.set_transient_for(parent)
 
-        self._parent = parent
-        self._app = app
         self._charts = False
 
         self._facts = None
@@ -62,6 +62,11 @@ class OverviewScreen(Gtk.Dialog):
         self.refresh()
 
         self.connect('delete-event', self._on_delete)
+        self._app.controler.signal_handler.connect('facts-changed', self._on_facts_changed)
+
+    def _on_facts_changed(self, sender):
+        """Callback to be triggered if stored facts have been changed."""
+        self.refresh()
 
     def refresh(self):
         """Recompute data and trigger redrawing."""
@@ -71,7 +76,7 @@ class OverviewScreen(Gtk.Dialog):
         helpers.clear_children(self.main_box)
 
         facts_window = Gtk.ScrolledWindow()
-        self.factlist = FactGrid(self._grouped_facts.by_date)
+        self.factlist = FactGrid(facts_window, self._app, self._grouped_facts.by_date)
         facts_window.add(self.factlist)
         self.main_box.pack_start(facts_window, True, True, 0)
 
@@ -184,16 +189,18 @@ class HeaderBar(Gtk.HeaderBar):
 class FactGrid(Gtk.Grid):
     """Listing of facts per day."""
 
-    def __init__(self, initial):
+    def __init__(self, parent, app, initial):
         """Initialize widget."""
         super(FactGrid, self).__init__()
         self.set_column_spacing(0)
+        self._parent = parent
+        self._app = app
 
         row = 0
         for date, facts in initial.items():
             # [FIXME] Order by fact start
             self.attach(self._get_date_widget(date), 0, row, 1, 1)
-            self.attach(FactListBox(facts), 1, row, 1, 1)
+            self.attach(FactListBox(self._parent, self._app, facts), 1, row, 1, 1)
             row += 1
 
     def _get_date_widget(self, date):
@@ -223,23 +230,55 @@ class FactGrid(Gtk.Grid):
 class FactListBox(Gtk.ListBox):
     """A List widget that represents each fact in a seperate actionable row."""
 
-    def __init__(self, facts):
+    def __init__(self, parent, app, facts):
         """Initialize widget."""
         super(FactListBox, self).__init__()
+        self._parent = parent
+        self._app = app
+
         self.set_name('OverviewFactList')
         self.set_selection_mode(Gtk.SelectionMode.SINGLE)
+        self.props.activate_on_single_click = False
+        self.connect('row-activated', self._on_activate)
 
         for fact in facts:
             row = FactListRow(fact)
             self.add(row)
+
+    # Signal callbacks
+    def _on_activate(self, widget, row):
+        """Callback trigger if a row is 'activated'."""
+        edit_dialog = EditFactDialog(self.get_toplevel(), row.fact, self._app)
+        response = edit_dialog.run()
+        if response == Gtk.ResponseType.CANCEL:
+            pass
+        elif response == Gtk.ResponseType.REJECT:
+            edit_dialog.delete()
+        elif response == Gtk.ResponseType.APPLY:
+            edit_dialog.apply()
+        else:
+            message = _(
+                "Something went wrong. Dialog returned unexpected value."
+                " No changes were perpormed!"
+            )
+            dialog = dialogs.ErrorDialog(widget.get_toplevel(), message)
+            dialog.run
+            dialog.destroy()
+        edit_dialog.destroy()
 
 
 class FactListRow(Gtk.ListBoxRow):
     """A row representing a single fact."""
 
     def __init__(self, fact):
-        """Initialize widget."""
+        """
+        Initialize widget.
+
+        Attributes:
+            fact (hamsterlib.Fact): Fact instance represented by this row.
+        """
         super(FactListRow, self).__init__()
+        self.fact = fact
         self.set_hexpand(True)
         self.set_name('FactListRow')
         hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
@@ -265,7 +304,9 @@ class FactListRow(Gtk.ListBoxRow):
         label = Gtk.Label('{} Minutes'.format(fact.get_string_delta()))
         label.props.valign = Gtk.Align.START
         label.props.halign = Gtk.Align.END
-        return label
+        box = Gtk.EventBox()
+        box.add(label)
+        return box
 
 
 class FactBox(Gtk.Box):

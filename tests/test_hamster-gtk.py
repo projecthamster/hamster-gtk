@@ -36,9 +36,9 @@ class TestMainWindow(object):
 class TestHeaderBar(object):
     """Test that headerbar works as intended."""
 
-    def test_initial_anatomy(self):
+    def test_initial_anatomy(self, app_window):
         """Test that the bars initial setup is as expected."""
-        bar = hamster_gtk.HeaderBar(None)
+        bar = hamster_gtk.HeaderBar(app_window, app_window._app)
         assert bar.props.title == 'Hamster-GTK'
         assert bar.props.subtitle == 'Your friendly time tracker.'
         assert bar.props.show_close_button
@@ -47,5 +47,5 @@ class TestHeaderBar(object):
     def test_on_overview_button_overview_exists(self, app_window):
         """Test that we don't create a new overview if we already have one."""
         app_window.overview = True
-        bar = hamster_gtk.HeaderBar(app_window)
+        bar = hamster_gtk.HeaderBar(app_window, app_window._app)
         assert bar._on_overview_button(None) is None
