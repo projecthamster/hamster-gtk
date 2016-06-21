@@ -182,22 +182,19 @@ class HeaderBar(Gtk.HeaderBar):
 
 
 class FactGrid(Gtk.Grid):
-    """Listing of facts."""
+    """Listing of facts per day."""
 
     def __init__(self, initial):
         """Initialize widget."""
         super(FactGrid, self).__init__()
-        self.set_column_spacing(20)
+        self.set_column_spacing(0)
 
-        self._row = 0
+        row = 0
         for date, facts in initial.items():
             # [FIXME] Order by fact start
-            self.attach(self._get_date_widget(date), 0, self._row, 1, len(facts))
-            for fact in facts:
-                self.attach(self._get_time_widget(fact), 1, self._row, 1, 1)
-                self.attach(FactBox(fact), 2, self._row, 1, 1)
-                self.attach(self._get_delta_widget(fact), 3, self._row, 1, 1)
-                self._row += 1
+            self.attach(self._get_date_widget(date), 0, row, 1, 1)
+            self.attach(FactListBox(facts), 1, row, 1, 1)
+            row += 1
 
     def _get_date_widget(self, date):
         """Return a widget to be used in the 'date column'."""
@@ -205,11 +202,54 @@ class FactGrid(Gtk.Grid):
         date_box = Gtk.EventBox()
         date_box.set_name('DayRowDateBox')
         date_label = Gtk.Label()
+        date_label.set_name('OverviewDateLabel')
         date_label.set_markup("<b>{}</b>".format(date_string))
         date_label.set_valign(Gtk.Align.START)
         date_label.set_justify(Gtk.Justification.RIGHT)
         date_box.add(date_label)
         return date_box
+
+    def _get_fact_list(self, facts):
+        """
+        Return a widget representing all of the dates facts.
+
+        We use a ``Gtk.ListBox`` as opposed to just adding widgets representing
+        the facts right to the ``FactGrid`` in order to make use of
+        ``Gtk.ListBox`` keyboard and mouse navigation / event handling.
+        """
+        return FactListBox(facts)
+
+
+class FactListBox(Gtk.ListBox):
+    """A List widget that represents each fact in a seperate actionable row."""
+
+    def __init__(self, facts):
+        """Initialize widget."""
+        super(FactListBox, self).__init__()
+        self.set_name('OverviewFactList')
+        self.set_selection_mode(Gtk.SelectionMode.SINGLE)
+
+        for fact in facts:
+            row = FactListRow(fact)
+            self.add(row)
+
+
+class FactListRow(Gtk.ListBoxRow):
+    """A row representing a single fact."""
+
+    def __init__(self, fact):
+        """Initialize widget."""
+        super(FactListRow, self).__init__()
+        self.set_hexpand(True)
+        self.set_name('FactListRow')
+        hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        time_widget = self._get_time_widget(fact)
+        fact_box = FactBox(fact)
+        delta_widget = self._get_delta_widget(fact)
+        hbox.pack_start(time_widget, False, True, 0)
+        hbox.pack_start(fact_box, True, True, 0)
+        hbox.pack_start(delta_widget, False, True, 0)
+        self.add(hbox)
 
     def _get_time_widget(self, fact):
         """"Return widget to represent ``Fact.start`` and ``Fact.end``."""
@@ -223,6 +263,7 @@ class FactGrid(Gtk.Grid):
     def _get_delta_widget(self, fact):
         """"Return widget to represent ``Fact.delta``."""
         label = Gtk.Label('{} Minutes'.format(fact.get_string_delta()))
+        label.props.valign = Gtk.Align.START
         label.props.halign = Gtk.Align.END
         return label
 
@@ -239,8 +280,8 @@ class FactBox(Gtk.Box):
         """Initialize widget."""
         super(FactBox, self).__init__(orientation=Gtk.Orientation.VERTICAL)
         self.set_name('OverviewFactBox')
-        self.pack_start(self._get_activity_widget(fact), False, False, 0)
-        self.pack_start(self._get_tags_widget(fact), False, False, 0)
+        self.pack_start(self._get_activity_widget(fact), True, True, 0)
+        self.pack_start(self._get_tags_widget(fact), True, True, 0)
         if fact.description:
             self.pack_start(self._get_description_widget(fact), False, False, 0)
 
@@ -288,8 +329,6 @@ class FactBox(Gtk.Box):
         return description_label
 
 
-# [TODO] Evaluate if it would be useful to make those available in
-# ``hamsterlib``.
 class Summary(Gtk.Box):
     """A widget that shows categories with highest commutative ``Fact.delta``."""
 

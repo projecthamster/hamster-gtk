@@ -110,8 +110,9 @@ class MainWindow(Gtk.ApplicationWindow):
                 background: #dfdfdf;
             }
 
-            #OverviewFactsBox {
-                padding-bottom: 20px;
+            #OverviewDateLabel {
+                padding-left: 10px;
+                padding-right: 10px;
             }
 
             #OverviewTagLabel {
@@ -129,6 +130,15 @@ class MainWindow(Gtk.ApplicationWindow):
                 border-width: 1px 1px 1px 1px;
                 border-style: solid;
                 color: white;
+            }
+
+            #OverviewFactList {
+                background: @bg_color;
+            }
+
+            #OverviewFactBox {
+                padding-left: 10px;
+                padding-right: 10px;
             }
             """
 
