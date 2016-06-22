@@ -22,6 +22,8 @@
 
 from __future__ import unicode_literals
 
+import traceback
+
 from gettext import gettext as _
 
 import gi
@@ -87,11 +89,8 @@ class MainWindow(Gtk.ApplicationWindow):
             Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         )
 
-        # Some Geometry
-
         # Set tracking as default screen at startup.
         self.add(TrackingScreen(self, self._app))
-
 
     def _get_css(self):
         """
@@ -186,7 +185,14 @@ class HamsterGTK(Gtk.Application):
     def _activate(self, app):
         """Triggered in regular use after startup."""
         if not self.window:
-            self.window = MainWindow(app)
+            # We wamt to make sure that we leave the mainloop if anything goes
+            # wrong setting up the actual window.
+            try:
+                self.window = MainWindow(app)
+            except:
+                traceback.print_exc()
+                self.quit()
+
         app.add_window(self.window)
         self.window.show_all()
         self.window.present()
