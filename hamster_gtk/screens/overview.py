@@ -138,6 +138,10 @@ class OverviewScreen(Gtk.Dialog):
         facts_by_activity = defaultdict(list)
         activity_deltas = defaultdict(list)
 
+        GroupedFacts = namedtuple('GroupedFacts', ('by_activity', 'by_category', 'by_date'))
+        # Provide a dummy in case there are no facts to be grouped.
+        grouped_facts = GroupedFacts({}, {}, {})
+
         for fact in self._facts:
             facts_by_date[fact.date].append(fact)
             date_deltas[fact.date].append(fact.delta)
@@ -150,7 +154,6 @@ class OverviewScreen(Gtk.Dialog):
             facts_by_category[fact.category].append(fact)
             category_deltas[fact.category].append(fact.delta)
 
-            GroupedFacts = namedtuple('GroupedFacts', ('by_activity', 'by_category', 'by_date'))
             grouped_facts = GroupedFacts(
                 by_activity=facts_by_activity,
                 by_category=facts_by_category,
