@@ -24,7 +24,7 @@ import datetime
 from gettext import gettext as _
 
 from gi.repository import Gtk
-from hamsterlib import Fact
+from hamster_lib import Fact
 
 import hamster_gtk.helpers as helpers
 

@@ -278,7 +278,7 @@ class FactListRow(Gtk.ListBoxRow):
         Initialize widget.
 
         Attributes:
-            fact (hamsterlib.Fact): Fact instance represented by this row.
+            fact (hamster_lib.Fact): Fact instance represented by this row.
         """
         super(FactListRow, self).__init__()
         self.fact = fact
@@ -347,7 +347,7 @@ class FactBox(Gtk.Box):
 
         Note:
             Right now, this just returns a pseudo-tag to showcase the functionality and
-            styling options because ``hamsterlib`` (0.10.0) does not support tags yet.
+            styling options because ``hamster_lib`` (0.11.0) does not support tags yet.
         """
         def get_tag_widget(name):
             tag_label = Gtk.Label()
@@ -420,7 +420,7 @@ class Charts(Gtk.Grid):
             row += 1
         return grid
 
-    # [FIXME] Place in a proper helper module. Maybe even in ``hamsterlib``?
+    # [FIXME] Place in a proper helper module. Maybe even in ``hamster-lib``?
     # In that case make sure to check if we can refactor
     # ``Fact.get_string_delta``!
     def _get_delta_string(self, delta):

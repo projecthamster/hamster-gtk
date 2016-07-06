@@ -18,8 +18,9 @@
 """Module that provides the edit screen class."""
 
 from gi.repository import Gtk
+from six import text_type
 
-from hamsterlib import Fact
+from hamster_lib import Fact
 from hamster_gtk.helpers import show_error
 
 
@@ -40,7 +41,7 @@ class EditFactDialog(Gtk.Dialog):
         Args:
             parent (Gtk.Window): Parent window.
             app (Gtk.Application): Our main application  instance.
-            fact (hamsterlib.Fact): Fact instance to be edited.
+            fact (hamster_lib.Fact): Fact instance to be edited.
         """
         super(EditFactDialog, self).__init__()
         self._fact = fact
@@ -68,7 +69,7 @@ class EditFactDialog(Gtk.Dialog):
 
     def _get_old_fact_widget(self):
         """Return a widget representing the fact to be edited."""
-        label = Gtk.Label(self._fact.serialized_name)
+        label = Gtk.Label(text_type(self._fact))
         label.set_hexpand(True)
         label.set_name('EditDialogOldFactLabel')
         return label
@@ -77,12 +78,13 @@ class EditFactDialog(Gtk.Dialog):
         """Return a widget that accepts user input to provide new ``raw fact`` string."""
         entry = Gtk.Entry()
         # [FIXME]
-        # Once https://github.com/projecthamster/hamster-gtk/issues/34 is sorted
-        # this should no longer be needed.
-        label = '{start}-{end} {serialized_name}'.format(
+        # Maybe it would be sensible to have a serialization helper method as
+        # part of ``hamster-lib``?!
+        label = '{start}-{end} {activity}@{category}'.format(
             start=self._fact.start.strftime('%H:%M'),
             end=self._fact.end.strftime("%H:%M"),
-            serialized_name=self._fact.serialized_name
+            activity=text_type(self._fact.activity.name),
+            category=text_type(self._fact.category.name)
         )
         entry.set_text(label)
         entry.set_name('EditDialogRawFactEntry')

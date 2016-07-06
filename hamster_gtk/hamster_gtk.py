@@ -30,7 +30,7 @@ import gi
 gi.require_version('Gdk', '3.0')  # NOQA
 gi.require_version('Gtk', '3.0')  # NOQA
 from gi.repository import Gdk, Gtk, GObject
-import hamsterlib
+import hamster_lib
 
 from . import helpers
 from .screens.overview import OverviewScreen
@@ -174,7 +174,7 @@ class HamsterGTK(Gtk.Application):
     def _startup(self, app):
         """Triggered right at startup."""
         print(_('Hamster-GTK started.'))  # NOQA
-        self.controler = hamsterlib.HamsterControl(helpers._get_config())
+        self.controler = hamster_lib.HamsterControl(helpers._get_config())
         self.controler.signal_handler = SignalHandler()
         # For convenience only
         self.store = self.controler.store

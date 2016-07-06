@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-"""Test for hamsterlib."""
+"""Test for hamster-gtk."""
