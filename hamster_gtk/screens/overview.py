@@ -29,14 +29,17 @@ The one major downside is, that we can not easily reimplement its eye candy
 reimplementing this properly is out of the scope right now and a price we are willing to pay.
 """
 
+import calendar
 import datetime
 import operator
 from collections import defaultdict, namedtuple
 from gettext import gettext as _
-from gi.repository import Gtk
 
-import hamster_gtk.helpers as helpers
+from gi.repository import Gtk
+from six import text_type
+
 import hamster_gtk.dialogs as dialogs
+import hamster_gtk.helpers as helpers
 from hamster_gtk.screens.edit import EditFactDialog
 
 
@@ -48,13 +51,17 @@ class OverviewScreen(Gtk.Dialog):
         super(OverviewScreen, self).__init__(parent=parent)
         self._parent = parent
         self._app = app
+        self._connect_signals()
 
         self.set_default_size(640, 800)
-        self.set_titlebar(HeaderBar())
+        self.titlebar = HeaderBar()
+        self.set_titlebar(self.titlebar)
         self.set_transient_for(parent)
+        self._daterange = self._get_default_daterange()
 
         self._charts = False
 
+        # [FIXME] Should be a property to make sure the signal is emitted
         self._facts = None
         self._grouped_facts = None
 
@@ -62,10 +69,42 @@ class OverviewScreen(Gtk.Dialog):
         self.refresh()
 
         self.connect('delete-event', self._on_delete)
+
+    @property
+    def _daterange(self):
+        """Return the 'daterange' for which this overview displays facts."""
+        return self.__daterange
+
+    @_daterange.setter
+    def _daterange(self, daterange):
+        """Set daterange and make sure we emit the corresponding signal."""
+        self.__daterange = daterange
+        self._app.controler.signal_handler.emit('daterange-changed')
+
+    def _connect_signals(self):
+        """Connect signals this instance listens for."""
         self._app.controler.signal_handler.connect('facts-changed', self._on_facts_changed)
+        self._app.controler.signal_handler.connect('daterange-changed', self._on_daterange_changed)
+
+    def _get_default_daterange(self):
+        """Return the default daterange used when none has been selected by user."""
+        today = datetime.date.today()
+        return (today, today)
 
     def _on_facts_changed(self, sender):
         """Callback to be triggered if stored facts have been changed."""
+        self.refresh()
+
+    def _on_daterange_changed(self, sender):
+        """Callback to be triggered if the 'daterange' changed."""
+        def get_label_text(daterange):
+            start, end = daterange
+            if start == end:
+                text = text_type(start)
+            else:
+                text = '{} - {}'.format(start, end)
+            return text
+        self.titlebar.set_daterange_button_label(get_label_text(self._daterange))
         self.refresh()
 
     def refresh(self):
@@ -83,6 +122,8 @@ class OverviewScreen(Gtk.Dialog):
         self.totals_panel = Summary(self._get_highest_totals(self._totals.category, 3))
         self.main_box.pack_start(self.totals_panel, False, False, 0)
 
+        # [FIXME]
+        # Only show button if there are facts.
         charts_button = Gtk.Button('click to show more details ...')
         charts_button.connect('clicked', self._on_charts_button)
         self.main_box.pack_start(charts_button, False, True, 0)
@@ -113,7 +154,8 @@ class OverviewScreen(Gtk.Dialog):
 
     def _get_facts(self):
         """Collect and return all facts too be shown, not necessarily be visible."""
-        return self._app.store.facts.get_all()
+        start, end = self._daterange
+        return self._app.store.facts.get_all(start, end)
 
     def _group_facts(self):
         """
@@ -178,15 +220,83 @@ class OverviewScreen(Gtk.Dialog):
             result = totals[:amount]
         return result
 
+    def apply_previous_daterange(self):
+        """Apply a daterange of equal 'length' right before the given range."""
+        # [FIXME]
+        # In case of a 'month' we should return another (varialble) month
+        # length not neccessarily the same length
+        orig_start, orig_end = self._daterange
+        offset = (orig_end - orig_start) + datetime.timedelta(days=1)
+        self._daterange = (orig_start - offset, orig_end - offset)
+
+    def apply_next_daterange(self):
+        """Apply a daterange of equal 'length' right before the given range."""
+        # [FIXME]
+        # In case of a 'month' we should return another (varialble) month
+        # length not neccessarily the same length
+        orig_start, orig_end = self._daterange
+        offset = (orig_end - orig_start) + datetime.timedelta(days=1)
+        self._daterange = (orig_start + offset, orig_end + offset)
+
 
 class HeaderBar(Gtk.HeaderBar):
     """Headerbar used by the overview screen."""
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         """Initialize headerbar."""
-        super(HeaderBar, self).__init__()
+        super(HeaderBar, self).__init__(*args, **kwargs)
         self.set_show_close_button(True)
         self.set_title(_("Overview"))
+        self._daterange_button = self._get_daterange_button()
+        self.pack_start(self._get_prev_daterange_button())
+        self.pack_start(self._get_next_daterange_button())
+        self.pack_start(self._daterange_button)
+
+    def set_daterange_button_label(self, text):
+        """Set text on the 'daterange button'."""
+        # We provide this method as a clean public interface rather than exposing
+        # the button directly.
+        label = self._daterange_button.get_children()[0]
+        label.set_text(text)
+
+    # Widgets
+    def _get_daterange_button(self):
+        """Return a button that opens the *select daterange* dialog."""
+        # We add a dummy label which will be set properly once a daterange is
+        # set.
+        button = Gtk.Button('')
+        button.connect('clicked', self._on_daterange_button_clicked)
+        return button
+
+    def _get_prev_daterange_button(self):
+        """Return a 'previous dateframe' widget."""
+        button = Gtk.Button(_("Earlier"))
+        button.connect('clicked', self._on_previous_daterange_button_clicked)
+        return button
+
+    def _get_next_daterange_button(self):
+        """Return a 'next dateframe' widget."""
+        button = Gtk.Button(_("Later"))
+        button.connect('clicked', self._on_next_daterange_button_clicked)
+        return button
+
+    # Callbacks
+    def _on_daterange_button_clicked(self, button):
+        """Callback for when the 'daterange' button is clicked."""
+        parent = self.get_parent()
+        dialog = DateRangeSelectDialog(parent)
+        response = dialog.run()
+        if response == Gtk.ResponseType.APPLY:
+            parent._daterange = dialog.daterange
+        dialog.destroy()
+
+    def _on_previous_daterange_button_clicked(self, button):
+        """Callback for when the 'previous' button is clicked."""
+        self.get_parent().apply_previous_daterange()
+
+    def _on_next_daterange_button_clicked(self, button):
+        """Callback for when the 'next' button is clicked."""
+        self.get_parent().apply_next_daterange()
 
 
 class FactGrid(Gtk.Grid):
@@ -490,3 +600,172 @@ class HorizontalBarChart(Gtk.DrawingArea):
 
         context.rectangle(x_start, y_start, bar_x, bar_y)
         context.fill()
+
+
+class DateRangeSelectDialog(Gtk.Dialog):
+    """
+    A Dialog that allows to select two dates that form a 'daterange'.
+
+    The core of the dialog is two :class:`Gtk.Calendar` widgets which allow for
+    manual setting of start- and enddate. Additionally, three presets are
+    provided for the users convenience.
+    """
+
+    # Gtk.Calendar returns month in a ``0`` based ordering which is why we
+    # need to add/subtract ``1`` when translating with real live months.
+
+    def __init__(self, parent, *args, **kwargs):
+        """
+        Initialize widget.
+
+        Args:
+            parent (OverviewScreen): Parent window for this dialog.
+        """
+        super(DateRangeSelectDialog, self).__init__(*args, **kwargs)
+        self.set_transient_for(parent)
+        self._mainbox = Gtk.Grid()
+        self._mainbox.set_hexpand(True)
+        self._mainbox.set_vexpand(True)
+
+        self._start_calendar = Gtk.Calendar()
+        self._end_calendar = Gtk.Calendar()
+
+        self._mainbox.attach(self._get_today_widget(), 0, 0, 4, 1)
+        self._mainbox.attach(self._get_week_widget(), 0, 1, 4, 1)
+        self._mainbox.attach(self._get_month_widget(), 0, 2, 4, 1)
+        self._mainbox.attach(self._get_custom_range_label(), 0, 3, 1, 1)
+        self._mainbox.attach(self._get_custom_range_connection_label(), 2, 3, 1, 1)
+        self._mainbox.attach(self._start_calendar, 1, 3, 1, 1)
+        self._mainbox.attach(self._end_calendar, 3, 3, 1, 1)
+
+        self.get_content_area().add(self._mainbox)
+        self.add_action_widget(self._get_apply_button(), Gtk.ResponseType.APPLY)
+        self.show_all()
+
+    @property
+    def daterange(self):
+        """Return start and end date as per calendar widgets."""
+        start = helpers.calendar_date_to_datetime(self._start_calendar.get_date())
+        end = helpers.calendar_date_to_datetime(self._end_calendar.get_date())
+        return (start, end)
+
+    @daterange.setter
+    def daterange(self, daterange):
+        """Set calendar dates according to daterange."""
+        start, end = daterange
+        self._start_calendar.select_month(start.month - 1, start.year)
+        self._start_calendar.select_day(start.day)
+        self._end_calendar.select_month(end.month - 1, end.year)
+        self._end_calendar.select_day(end.day)
+
+    # Widgets
+    def _get_apply_button(self):
+        button = Gtk.Button.new_from_stock(Gtk.STOCK_APPLY)
+        return button
+
+    def _get_today_widget(self):
+        """Return a widget that sets the daterange to today."""
+        button = self._get_double_label_button(_("Today"), datetime.date.today())
+        button.set_hexpand(True)
+        button.set_relief(Gtk.ReliefStyle.NONE)
+        button.connect('clicked', self._on_today_button_clicked)
+        return button
+
+    def _get_week_widget(self):
+        """Return a widget that sets the daterange to the current week."""
+        start, end = self._get_week_range(datetime.date.today())
+        date_text = _("{} to {}".format(start, end))
+        button = self._get_double_label_button(_("Current Week"), date_text)
+        button.set_hexpand(True)
+        button.set_relief(Gtk.ReliefStyle.NONE)
+        button.connect('clicked', self._on_week_button_clicked)
+        return button
+
+    def _get_month_widget(self):
+        """Return a widget that sets the daterange to the current month."""
+        start, end = self._get_month_range(datetime.date.today())
+        date_text = _("{} to {}".format(start, end))
+        button = self._get_double_label_button(_("Current Month"), date_text)
+        button.set_hexpand(True)
+        button.set_relief(Gtk.ReliefStyle.NONE)
+        button.connect('clicked', self._on_month_button_clicked)
+        return button
+
+    def _get_start_calendar(self):
+        """Return ``Gtk.Calendar`` instance for the start date."""
+        return Gtk.Calendar()
+
+    def _get_end_calendar(self):
+        """Return ``Gtk.Calendar`` instance for the end date."""
+        return Gtk.Calendar()
+
+    def _get_custom_range_label(self):
+        """Return a 'heading' label for the widget."""
+        return Gtk.Label(_("Custom Range"))
+
+    def _get_custom_range_connection_label(self):
+        """Return the label to be displayed between the two calendars."""
+        return Gtk.Label(_("to"))
+
+    # Helper
+    def _get_double_label_button(self, left_label, right_label):
+        """
+        Return a special button with two label components.
+
+        The left label will be left aligned the right one right aligned.
+        """
+        button = Gtk.Button()
+        grid = Gtk.Grid()
+        button.add(grid)
+
+        left_label = Gtk.Label(left_label)
+        left_label.set_hexpand(True)
+        left_label.set_halign(Gtk.Align.START)
+
+        right_label = Gtk.Label(right_label)
+        right_label.set_hexpand(True)
+        right_label.set_halign(Gtk.Align.END)
+
+        grid.attach(left_label, 0, 0, 1, 1)
+        grid.attach(right_label, 1, 0, 1, 1)
+        return button
+
+    def _get_week_range(self, date):
+        """Return the start- and enddate of the week a given date is in."""
+        def get_offset_to_weekstart(weekday):
+            """
+            Return the distance to the desired start of the week given weekday.
+
+            No extra work is required if we want weeks to start on mondays as
+            in this case ``weekday=0``. If a different start of the week is
+            desired, we need to add some adjustments.
+            """
+            offset = weekday
+            return datetime.timedelta(days=offset)
+
+        start = date - get_offset_to_weekstart(date.weekday())
+        end = start + datetime.timedelta(days=6)
+        return (start, end)
+
+    def _get_month_range(self, date):
+        """Return the start- and enddate of the month a given date is in."""
+        start = date - datetime.timedelta(days=date.day - 1)
+        days_in_month = calendar.monthrange(date.year, date.month)[1]
+        end = start + datetime.timedelta(days=days_in_month - 1)
+        return (start, end)
+
+    # Callbacks
+    def _on_today_button_clicked(self, button):
+        today = datetime.date.today()
+        self.daterange = (today, today)
+        self.response(Gtk.ResponseType.APPLY)
+
+    def _on_week_button_clicked(self, button):
+        start, end = self._get_week_range(datetime.date.today())
+        self.daterange = (start, end)
+        self.response(Gtk.ResponseType.APPLY)
+
+    def _on_month_button_clicked(self, button):
+        start, end = self._get_month_range(datetime.date.today())
+        self.daterange = (start, end)
+        self.response(Gtk.ResponseType.APPLY)

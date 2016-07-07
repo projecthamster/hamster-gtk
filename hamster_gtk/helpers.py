@@ -74,3 +74,9 @@ def clear_children(widget):
     for child in widget.get_children():
         child.destroy()
     return widget
+
+
+def calendar_date_to_datetime(date):
+    """Convert :meth:`Gtk.Calendar.get_date` value to :class:`datetime.date`."""
+    year, month, day = date
+    return datetime.date(int(year), int(month) + 1, int(day))

@@ -18,9 +18,9 @@
 """Module that provides the edit screen class."""
 
 from gi.repository import Gtk
+from hamster_lib import Fact
 from six import text_type
 
-from hamster_lib import Fact
 from hamster_gtk.helpers import show_error
 
 

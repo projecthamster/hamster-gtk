@@ -29,8 +29,8 @@ from gettext import gettext as _
 import gi
 gi.require_version('Gdk', '3.0')  # NOQA
 gi.require_version('Gtk', '3.0')  # NOQA
-from gi.repository import Gdk, Gtk, GObject
 import hamster_lib
+from gi.repository import Gdk, GObject, Gtk
 
 from . import helpers
 from .screens.overview import OverviewScreen
@@ -152,6 +152,7 @@ class SignalHandler(GObject.GObject):
 
     __gsignals__ = {
         str('facts-changed'): (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, ()),
+        str('daterange-changed'): (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, ()),
     }
 
     def __init__(self):
