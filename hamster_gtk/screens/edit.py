@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 # This file is part of 'hamster-gtk'.
 #
 # 'hamster-gtk' is free software: you can redistribute it and/or modify
@@ -17,11 +18,11 @@
 
 """Module that provides the edit screen class."""
 
+from __future__ import absolute_import, unicode_literals
+
 from gi.repository import Gtk
 from hamster_lib import Fact
 from six import text_type
-
-from hamster_gtk.helpers import show_error
 
 
 class EditFactDialog(Gtk.Dialog):
@@ -34,38 +35,72 @@ class EditFactDialog(Gtk.Dialog):
     with values of those dedicated widgets the latter are authorative.
     """
 
-    def __init__(self, parent, fact, app):
+    def __init__(self, parent, fact):
         """
         Initialize dialog.
 
         Args:
             parent (Gtk.Window): Parent window.
-            app (Gtk.Application): Our main application  instance.
             fact (hamster_lib.Fact): Fact instance to be edited.
         """
         super(EditFactDialog, self).__init__()
         self._fact = fact
-        self._parent = parent
-        self._app = app
 
-        self.set_transient_for(self._parent)
+        self.set_transient_for(parent)
         self.set_default_size(600, 200)
-        self._mainbox = Gtk.Grid()
-        self._mainbox.set_hexpand(True)
-        self._mainbox.set_vexpand(True)
-        self._mainbox.set_name('EditDialogMainBox')
-        self._mainbox.set_row_spacing(20)
         # ``self.content_area`` is a ``Gtk.Box``. We strive for an
         # ``Gtk.Grid`` only based layout. So we have to add this extra step.
+        self._mainbox = self._get_main_box()
         self.get_content_area().add(self._mainbox)
-        self._mainbox.attach(self._get_old_fact_widget(), 0, 0, 1, 1)
+
+        # We do not use ``self.add_buttons`` because this only allows to pass
+        #  on strings not actual button instances. We want to pass button
+        # instances however so we can customize them if we want to.
+        self.add_action_widget(self._get_delete_button(), Gtk.ResponseType.REJECT)
+        self.add_action_widget(self._get_apply_button(), Gtk.ResponseType.APPLY)
+        self.add_action_widget(self._get_cancel_button(), Gtk.ResponseType.CANCEL)
+        self.show_all()
+
+    @property
+    def updated_fact(self):
+        """Fact instance using values at the time of accessing it."""
+        def get_raw_fact_value():
+            """Get text from raw fact entry field."""
+            return self._raw_fact_widget.get_text().decode('utf-8')
+
+        def get_description_value():
+            """Get unicode value from widget."""
+            text_view = self._description_widget.get_child()
+            text_buffer = text_view.get_buffer()
+            start, end = text_buffer.get_bounds()
+            return text_buffer.get_text(start, end, True).decode('utf-8')
+
+        # Create a new fact instance from the provided raw string.
+        fact = Fact.create_from_raw_fact(get_raw_fact_value())
+        # Instead of transferring all attributes of the parsed fact to the
+        # existing ``self._fact`` we just go the other way round and attach the
+        # old facts PK to the newly created instance.
+        fact.pk = self._fact.pk
+        # Explicit description trumps anything that may have been included in
+        # the `raw_fact``.
+        fact.description = get_description_value()
+        return fact
+
+    # Widgets
+    def _get_main_box(self):
+        """Return the main layout container storing the content area."""
+        grid = Gtk.Grid()
+        grid.set_hexpand(True)
+        grid.set_vexpand(True)
+        grid.set_name('EditDialogMainBox')
+        grid.set_row_spacing(20)
+
         self._raw_fact_widget = self._get_raw_fact_widget()
         self._description_widget = self._get_description_widget()
-        self._mainbox.attach(self._raw_fact_widget, 0, 1, 1, 1)
-        self._mainbox.attach(self._description_widget, 0, 2, 1, 1)
-
-        self._add_buttons()
-        self.show_all()
+        grid.attach(self._get_old_fact_widget(), 0, 0, 1, 1)
+        grid.attach(self._raw_fact_widget, 0, 1, 1, 1)
+        grid.attach(self._description_widget, 0, 2, 1, 1)
+        return grid
 
     def _get_old_fact_widget(self):
         """Return a widget representing the fact to be edited."""
@@ -105,53 +140,14 @@ class EditFactDialog(Gtk.Dialog):
         view.set_name('EditDialogDescriptionWindow')
         return window
 
-    def _get_raw_fact_value(self):
-        return self._raw_fact_widget.get_text().decode('utf-8')
+    def _get_delete_button(self):
+        """Return a *delete* button."""
+        return Gtk.Button.new_from_stock(Gtk.STOCK_DELETE)
 
-    def _get_description_value(self):
-        """Get unicode value from widget."""
-        text_view = self._description_widget.get_child()
-        text_buffer = text_view.get_buffer()
-        start, end = text_buffer.get_bounds()
-        return text_buffer.get_text(start, end, True).decode('utf-8')
+    def _get_apply_button(self):
+        """Return a *apply* button."""
+        return Gtk.Button.new_from_stock(Gtk.STOCK_APPLY)
 
-    def _add_buttons(self):
-        """
-        Add button widgets to the action area.
-
-        We do not use ``self.add_buttons`` because this only allows to pass on
-        strings not actual button instances. We want to pass button instances
-        however so we can customize them if we want to.
-        """
-        # [FIXME] According to http://lazka.github.io/pgi-docs/Gtk-3.0/constants.html#Gtk.STOCK_OK
-        # Stock buttons are deprecated since 3.10. The new solution however
-        # is unclear.
-        delete = Gtk.Button.new_from_stock(Gtk.STOCK_DELETE)
-        apply = Gtk.Button.new_from_stock(Gtk.STOCK_APPLY)
-        cancel = Gtk.Button.new_from_stock(Gtk.STOCK_CANCEL)
-        self.add_action_widget(delete, Gtk.ResponseType.REJECT)
-        self.add_action_widget(apply, Gtk.ResponseType.APPLY)
-        self.add_action_widget(cancel, Gtk.ResponseType.CANCEL)
-
-    def apply(self):
-        """Close dialog, updating the fact with values specified."""
-        # Create a new fact instance from the provided raw string.
-        fact = Fact.create_from_raw_fact(self._get_raw_fact_value())
-        # Instead of transfering all attributes of the parsed fact to the
-        # existing ``self._fact`` we just go the other way round and attach the
-        # old facts PK to the newly created instance.
-        fact.pk = self._fact.pk
-        # Explicit description trumps anything that may have been included in
-        # the `raw_fact``.
-        fact.description = self._get_description_value()
-        try:
-            self._app.controler.store.facts.save(fact)
-        except (ValueError, KeyError) as message:
-            show_error(self, message)
-        self._app.controler.signal_handler.emit('facts_changed')
-
-    def delete(self):
-        """Delete this fact from the backend. No further confirmation is required."""
-        result = self._app.store.facts.remove(self._fact)
-        self._app.controler.signal_handler.emit('facts_changed')
-        return result
+    def _get_cancel_button(self):
+        """Return a *cancel* button."""
+        return Gtk.Button.new_from_stock(Gtk.STOCK_CANCEL)

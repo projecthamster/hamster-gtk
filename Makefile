@@ -27,6 +27,7 @@ help:
 	@echo "   test-all      to run tests on every Python version with tox"
 	@echo "   coverage      to check code coverage quickly with the default Python"
 	@echo "   coverage-html"
+	@echo "   codecov"
 	@echo "   develop       to install (or update) all packages required for development"
 	@echo "   docs          to generate Sphinx HTML documentation, including API docs"
 	@echo "   isort         to run isort on the whole project."
@@ -81,6 +82,9 @@ test2:
 coverage-html: coverage
 	coverage html
 	$(BROWSER) htmlcov/index.html
+
+codecov: coverage
+	codecov --token=96b66aeb-8d82-4d44-8ff7-93ac5d5305b9
 
 docs:
 	rm -f docs/hamster_gtk.rst

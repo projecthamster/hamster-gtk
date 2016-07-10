@@ -29,6 +29,8 @@ The one major downside is, that we can not easily reimplement its eye candy
 reimplementing this properly is out of the scope right now and a price we are willing to pay.
 """
 
+from __future__ import absolute_import
+
 import calendar
 import datetime
 import operator
@@ -39,24 +41,27 @@ from gi.repository import Gtk
 from six import text_type
 
 import hamster_gtk.dialogs as dialogs
-import hamster_gtk.helpers as helpers
+from hamster_gtk import helpers
 from hamster_gtk.screens.edit import EditFactDialog
+
+Totals = namedtuple('Totals', ('activity', 'category', 'date'))
 
 
 class OverviewScreen(Gtk.Dialog):
     """Overview-screen that provides information about a users facts.."""
 
-    def __init__(self, parent, app):
+    def __init__(self, parent, app, *args, **kwargs):
         """Initialize dialog."""
-        super(OverviewScreen, self).__init__(parent=parent)
+        super(OverviewScreen, self).__init__(*args, **kwargs)
+        self.set_transient_for(parent)
+        self.titlebar = HeaderBar(app.controler)
         self._parent = parent
         self._app = app
         self._connect_signals()
 
         self.set_default_size(640, 800)
-        self.titlebar = HeaderBar()
         self.set_titlebar(self.titlebar)
-        self.set_transient_for(parent)
+        self.main_box = self.get_content_area()
         self._daterange = self._get_default_daterange()
 
         self._charts = False
@@ -65,10 +70,8 @@ class OverviewScreen(Gtk.Dialog):
         self._facts = None
         self._grouped_facts = None
 
-        self.main_box = self.get_content_area()
         self.refresh()
-
-        self.connect('delete-event', self._on_delete)
+        self.show_all()
 
     @property
     def _daterange(self):
@@ -79,7 +82,7 @@ class OverviewScreen(Gtk.Dialog):
     def _daterange(self, daterange):
         """Set daterange and make sure we emit the corresponding signal."""
         self.__daterange = daterange
-        self._app.controler.signal_handler.emit('daterange-changed')
+        self._app.controler.signal_handler.emit('daterange-changed', self.__daterange)
 
     def _connect_signals(self):
         """Connect signals this instance listens for."""
@@ -95,16 +98,8 @@ class OverviewScreen(Gtk.Dialog):
         """Callback to be triggered if stored facts have been changed."""
         self.refresh()
 
-    def _on_daterange_changed(self, sender):
+    def _on_daterange_changed(self, sender, daterange):
         """Callback to be triggered if the 'daterange' changed."""
-        def get_label_text(daterange):
-            start, end = daterange
-            if start == end:
-                text = text_type(start)
-            else:
-                text = '{} - {}'.format(start, end)
-            return text
-        self.titlebar.set_daterange_button_label(get_label_text(self._daterange))
         self.refresh()
 
     def refresh(self):
@@ -115,10 +110,12 @@ class OverviewScreen(Gtk.Dialog):
         helpers.clear_children(self.main_box)
 
         facts_window = Gtk.ScrolledWindow()
-        self.factlist = FactGrid(facts_window, self._app, self._grouped_facts.by_date)
+        self.factlist = FactGrid(self._app.controler, self._grouped_facts.by_date)
         facts_window.add(self.factlist)
         self.main_box.pack_start(facts_window, True, True, 0)
 
+        # [FIXME]
+        # Evaluate transfer to helper or even hamster-lib.
         self.totals_panel = Summary(self._get_highest_totals(self._totals.category, 3))
         self.main_box.pack_start(self.totals_panel, False, False, 0)
 
@@ -128,7 +125,7 @@ class OverviewScreen(Gtk.Dialog):
         charts_button.connect('clicked', self._on_charts_button)
         self.main_box.pack_start(charts_button, False, True, 0)
 
-        self.show_all()
+        self.main_box.show_all()
 
     def _on_charts_button(self, button):
         """On button click either show or hide extended details."""
@@ -139,18 +136,6 @@ class OverviewScreen(Gtk.Dialog):
             self._charts = Charts(self._totals)
             self.main_box.pack_start(self._charts, False, False, 0)
             self.show_all()
-
-    def _on_delete(self, event, data):
-        """
-        Close this dialog.
-
-        It would be preferable to just hide the dialog and re-present it if
-        it required again, but we did run into serious issues "re-showing" it.
-        So for now we get rid of it entirely so a new instance is triggered
-        instead.
-        """
-        self.destroy()
-        self._parent._overview_window = None
 
     def _get_facts(self):
         """Collect and return all facts too be shown, not necessarily be visible."""
@@ -165,9 +150,14 @@ class OverviewScreen(Gtk.Dialog):
             We handle totals as part of this method in order to limit the
             amount of iterations over ``self._facts``.
         """
+        # [FIXME]
+        # This is probably useful to other clients as well and worth
+        # considering for hamster-lib.
         def get_total(totals):
             """Return a dictionary of max deltas per key."""
             max_total = defaultdict(datetime.timedelta)
+            # [FIXME]
+            # is this really the *max* total, and not rather the total per key?
             for key, deltas in totals.items():
                 for delta in deltas:
                     max_total[key] += delta
@@ -202,7 +192,6 @@ class OverviewScreen(Gtk.Dialog):
                 by_date=facts_by_date
             )
 
-        Totals = namedtuple('Totals', ('activity', 'category', 'date'))
         totals = Totals(
             activity=get_total(activity_deltas),
             category=get_total(category_deltas),
@@ -223,8 +212,8 @@ class OverviewScreen(Gtk.Dialog):
     def apply_previous_daterange(self):
         """Apply a daterange of equal 'length' right before the given range."""
         # [FIXME]
-        # In case of a 'month' we should return another (varialble) month
-        # length not neccessarily the same length
+        # In case of a 'month' we should return another (variable) month
+        # length not necessarily the same length
         orig_start, orig_end = self._daterange
         offset = (orig_end - orig_start) + datetime.timedelta(days=1)
         self._daterange = (orig_start - offset, orig_end - offset)
@@ -232,17 +221,31 @@ class OverviewScreen(Gtk.Dialog):
     def apply_next_daterange(self):
         """Apply a daterange of equal 'length' right before the given range."""
         # [FIXME]
-        # In case of a 'month' we should return another (varialble) month
-        # length not neccessarily the same length
+        # In case of a 'month' we should return another (variable) month
+        # length not necessarily the same length
         orig_start, orig_end = self._daterange
         offset = (orig_end - orig_start) + datetime.timedelta(days=1)
         self._daterange = (orig_start + offset, orig_end + offset)
+
+    # Widgets
+    def _get_summery_widget(self, category_totals):
+        # [FIXME]
+        # Change to Grid based layout
+        box = Gtk.Box
+        for category, total in category_totals:
+            label = Gtk.Label()
+            label.set_markup("<b>{}:</b> {} minutes".format(category,
+                                                            int(total.total_seconds() / 60)))
+            box.pack_start(label, False, False, 10)
+        return box
+
+    # Callbacks
 
 
 class HeaderBar(Gtk.HeaderBar):
     """Headerbar used by the overview screen."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, controler, *args, **kwargs):
         """Initialize headerbar."""
         super(HeaderBar, self).__init__(*args, **kwargs)
         self.set_show_close_button(True)
@@ -252,12 +255,7 @@ class HeaderBar(Gtk.HeaderBar):
         self.pack_start(self._get_next_daterange_button())
         self.pack_start(self._daterange_button)
 
-    def set_daterange_button_label(self, text):
-        """Set text on the 'daterange button'."""
-        # We provide this method as a clean public interface rather than exposing
-        # the button directly.
-        label = self._daterange_button.get_children()[0]
-        label.set_text(text)
+        controler.signal_handler.connect('daterange-changed', self._on_daterange_changed)
 
     # Widgets
     def _get_daterange_button(self):
@@ -290,6 +288,17 @@ class HeaderBar(Gtk.HeaderBar):
             parent._daterange = dialog.daterange
         dialog.destroy()
 
+    def _on_daterange_changed(self, sender, daterange):
+        """Callback to be triggered if the 'daterange' changed."""
+        def get_label_text(daterange):
+            start, end = daterange
+            if start == end:
+                text = text_type(start)
+            else:
+                text = '{} - {}'.format(start, end)
+            return text
+        self._daterange_button.set_label(get_label_text(daterange))
+
     def _on_previous_daterange_button_clicked(self, button):
         """Callback for when the 'previous' button is clicked."""
         self.get_parent().apply_previous_daterange()
@@ -302,22 +311,31 @@ class HeaderBar(Gtk.HeaderBar):
 class FactGrid(Gtk.Grid):
     """Listing of facts per day."""
 
-    def __init__(self, parent, app, initial):
-        """Initialize widget."""
-        super(FactGrid, self).__init__()
+    def __init__(self, controler, initial, *args, **kwargs):
+        """
+        Initialize widget.
+
+        Args:
+            initial (dict): Dictionary where keys represent individual dates
+                and values an iterable of facts of that date.
+        """
+        super(FactGrid, self).__init__(*args, **kwargs)
         self.set_column_spacing(0)
-        self._parent = parent
-        self._app = app
 
         row = 0
         for date, facts in initial.items():
             # [FIXME] Order by fact start
             self.attach(self._get_date_widget(date), 0, row, 1, 1)
-            self.attach(FactListBox(self._parent, self._app, facts), 1, row, 1, 1)
+            self.attach(self._get_fact_list(controler, facts), 1, row, 1, 1)
             row += 1
 
     def _get_date_widget(self, date):
-        """Return a widget to be used in the 'date column'."""
+        """
+        Return a widget to be used in the 'date column'.
+
+        Args:
+            date (datetime.date): Date to be displayed.
+        """
         date_string = date.strftime("%A\n%b %d")
         date_box = Gtk.EventBox()
         date_box.set_name('DayRowDateBox')
@@ -329,7 +347,7 @@ class FactGrid(Gtk.Grid):
         date_box.add(date_label)
         return date_box
 
-    def _get_fact_list(self, facts):
+    def _get_fact_list(self, controler, facts):
         """
         Return a widget representing all of the dates facts.
 
@@ -337,17 +355,20 @@ class FactGrid(Gtk.Grid):
         the facts right to the ``FactGrid`` in order to make use of
         ``Gtk.ListBox`` keyboard and mouse navigation / event handling.
         """
-        return FactListBox(facts)
+        # [FIXME]
+        # It would be preferable to not have to pass the controler instance
+        # through all the way, but for now it will do.
+        return FactListBox(controler, facts)
 
 
 class FactListBox(Gtk.ListBox):
     """A List widget that represents each fact in a seperate actionable row."""
 
-    def __init__(self, parent, app, facts):
+    def __init__(self, controler, facts):
         """Initialize widget."""
         super(FactListBox, self).__init__()
-        self._parent = parent
-        self._app = app
+
+        self._controler = controler
 
         self.set_name('OverviewFactList')
         self.set_selection_mode(Gtk.SelectionMode.SINGLE)
@@ -361,23 +382,30 @@ class FactListBox(Gtk.ListBox):
     # Signal callbacks
     def _on_activate(self, widget, row):
         """Callback trigger if a row is 'activated'."""
-        edit_dialog = EditFactDialog(self.get_toplevel(), row.fact, self._app)
+        edit_dialog = EditFactDialog(self.get_toplevel(), row.fact)
         response = edit_dialog.run()
         if response == Gtk.ResponseType.CANCEL:
             pass
         elif response == Gtk.ResponseType.REJECT:
-            edit_dialog.delete()
+            self._delete_fact(edit_dialog._fact)
         elif response == Gtk.ResponseType.APPLY:
-            edit_dialog.apply()
-        else:
-            message = _(
-                "Something went wrong. Dialog returned unexpected value."
-                " No changes were perpormed!"
-            )
-            dialog = dialogs.ErrorDialog(widget.get_toplevel(), message)
-            dialog.run
-            dialog.destroy()
+            self._update_fact(edit_dialog.updated_fact)
         edit_dialog.destroy()
+
+    def _update_fact(self, fact):
+        """Update the a fact with values from edit dialog."""
+        try:
+            self._controler.store.facts.save(fact)
+        except (ValueError, KeyError) as message:
+            dialogs.show_error(self, message)
+        else:
+            self._controler.signal_handler.emit('facts_changed')
+
+    def _delete_fact(self, fact):
+        """Delete fact from the backend. No further confirmation is required."""
+        result = self._controler.store.facts.remove(fact)
+        self._controler.signal_handler.emit('facts_changed')
+        return result
 
 
 class FactListRow(Gtk.ListBoxRow):
@@ -394,6 +422,8 @@ class FactListRow(Gtk.ListBoxRow):
         self.fact = fact
         self.set_hexpand(True)
         self.set_name('FactListRow')
+        # [FIXME]
+        # Switch to grid design.
         hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         time_widget = self._get_time_widget(fact)
         fact_box = FactBox(fact)
@@ -434,6 +464,8 @@ class FactBox(Gtk.Box):
         """Initialize widget."""
         super(FactBox, self).__init__(orientation=Gtk.Orientation.VERTICAL)
         self.set_name('OverviewFactBox')
+        # [FIXME]
+        # Switch to Grid based design
         self.pack_start(self._get_activity_widget(fact), True, True, 0)
         self.pack_start(self._get_tags_widget(fact), True, True, 0)
         if fact.description:
@@ -441,6 +473,10 @@ class FactBox(Gtk.Box):
 
     def _get_activity_widget(self, fact):
         """Return widget to render the activity, including its related category."""
+        # [FIXME]
+        # Once 'preferences/config' is live, we can change this.
+        # Most likly we do not actually need to jump through extra hoops as
+        # legacy hamster did but just use a i18n'ed string and be done.
         if not fact.category:
             category = 'not categorised'
         else:
@@ -470,6 +506,8 @@ class FactBox(Gtk.Box):
 
         tags_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         # Just a pseudo tag for now to illustrate styling.
+        # [FIXME]
+        # Switch to Grid based layout.
         tags_box.pack_start(get_tag_widget('pseudo tag'), False, False, 0)
         return tags_box
 
@@ -510,6 +548,8 @@ class Charts(Gtk.Grid):
         """Initialize widget."""
         super(Charts, self).__init__()
         self.attach(self._get_category_widget(totals.category), 0, 0, 1, 1)
+        # [FIXME]
+        # Add analogous widgets for tags and activities?
 
     def _get_category_widget(self, category_totals):
         """Return a widget to represent all categories in a column."""
@@ -530,12 +570,13 @@ class Charts(Gtk.Grid):
             row += 1
         return grid
 
-    # [FIXME] Place in a proper helper module. Maybe even in ``hamster-lib``?
+    # [FIXME]
+    # Place in a proper helper module. Maybe even in ``hamster-lib``?
     # In that case make sure to check if we can refactor
     # ``Fact.get_string_delta``!
     def _get_delta_string(self, delta):
         """
-        Return a human readable string representation of ``datetime.timedelta`` instance.
+        Return a human readable representation of ``datetime.timedelta`` instance.
 
         In most contexts its not that useful to present the delta in seconds.
         Instead we return the delta either in minutes or ``hours:minutes`` depending on the

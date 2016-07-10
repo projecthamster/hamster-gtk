@@ -23,7 +23,7 @@
 import datetime
 from gettext import gettext as _
 
-from gi.repository import Gtk
+from gi.repository import GObject, Gtk
 from hamster_lib import Fact
 
 import hamster_gtk.helpers as helpers
@@ -32,30 +32,31 @@ import hamster_gtk.helpers as helpers
 class TrackingScreen(Gtk.Stack):
     """Main container for the tracking screen."""
 
-    def __init__(self, parent, app):
+    def __init__(self, app, *args, **kwargs):
         """Setup widget."""
         super(TrackingScreen, self).__init__()
-        self._parent = parent
-        self._app = app
+        self.app = app
 
-        self.main_window = parent
+        self.main_window = self.get_parent()
         self.set_transition_type(Gtk.StackTransitionType.SLIDE_UP)
         self.set_transition_duration(1000)
-        self.current_fact_view = CurrentFactBox(self, self._app)
-        self.start_tracking_view = StartTrackingBox(self, self._app)
+        self.current_fact_view = CurrentFactBox(self.app.controler)
+        self.current_fact_view.connect('tracking-stopped', self.update)
+        self.start_tracking_view = StartTrackingBox(self.app.controler)
+        self.start_tracking_view.connect('tracking-started', self.update)
         self.add_titled(self.start_tracking_view, 'start tracking', _("Start Tracking"))
         self.add_titled(self.current_fact_view, 'ongoing fact', _("Show Ongoing Fact"))
         self.update()
         self.show_all()
 
-    def update(self):
+    def update(self, evt=None):
         """
         Determine which widget should be displayed.
 
         This depends on wether there exists an *ongoing fact* or not.
         """
         try:
-            current_fact = self._app.controler.store.facts.get_tmp_fact()
+            current_fact = self.app.controler.store.facts.get_tmp_fact()
         except KeyError:
             self.start_tracking_view.show()
             self.set_visible_child(self.start_tracking_view)
@@ -69,16 +70,19 @@ class TrackingScreen(Gtk.Stack):
 class CurrentFactBox(Gtk.Box):
     """Box to be used if current fact is present."""
 
-    def __init__(self, parent, app):
+    __gsignals__ = {
+        'tracking-stopped': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, ()),
+    }
+
+    def __init__(self, controler):
         """Setup widget."""
         # We need to wrap this in a vbox to limit its vertical expansion.
+        # [FIXME]
+        # Switch to Grid based layout.
         super(CurrentFactBox, self).__init__(orientation=Gtk.Orientation.VERTICAL, spacing=10)
-        self.parent = parent
-        self._app = app
-        self.main_window = parent.main_window
+        self._controler = controler
         self.content = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.pack_start(self.content, False, False, 0)
-        self.update()
 
     def update(self, fact=None):
         """Update widget content."""
@@ -87,16 +91,15 @@ class CurrentFactBox(Gtk.Box):
 
         if not fact:
             try:
-                fact = self.fact = self._app.controler.store.facts.get_tmp_fact()
+                fact = self._controler.store.facts.get_tmp_fact()
             except KeyError:
                 # This should never be seen by the user. It would mean that a
                 # switch to this screen has been triggered without an ongoing
                 # fact existing.
                 self.content.pack_start(self._get_invalid_label(), True, True, 0)
-        else:
-            self.content.pack_start(self._get_fact_label(fact), True, True, 0)
-            self.content.pack_start(self._get_cancel_button(), False, False, 0)
-            self.content.pack_start(self._get_save_button(), False, False, 0)
+        self.content.pack_start(self._get_fact_label(fact), True, True, 0)
+        self.content.pack_start(self._get_cancel_button(), False, False, 0)
+        self.content.pack_start(self._get_save_button(), False, False, 0)
 
     def _get_fact_label(self, fact):
         text = '{fact}'.format(fact=fact)
@@ -116,15 +119,15 @@ class CurrentFactBox(Gtk.Box):
         """Return placeholder in case there is no current ongoing fact present."""
         return Gtk.Label(_("There currently is no ongoing fact that could be displayed."))
 
-    # Button methods
+    # Callbacks
     def _on_cancel_button(self, button):
         """
         Triggerd when 'cancel' button clicked.
 
         Discard current *ongoing fact* without saving.
         """
-        self.main_window._app.store.facts.cancel_tmp_fact()
-        self.parent.switch()
+        self._controler.store.facts.cancel_tmp_fact()
+        self.emit('tracking-stopped')
 
     def _on_save_button(self, button):
         """
@@ -133,28 +136,34 @@ class CurrentFactBox(Gtk.Box):
         Save *ongoing fact* to storage.
         """
         try:
-            self.main_window._app.store.facts.stop_tmp_fact()
+            self._controler.store.facts.stop_tmp_fact()
         except Exception as error:
-            helpers.show_error(self.main_window, error)
+            helpers.show_error(self.get_toplevel(), error)
         else:
-            self.parent.update()
-            # Inform the main window about the chance.
-            self._app.controler.signal_handler.emit('facts-changed')
+            self.emit('tracking-stopped')
+            # Inform the controller about the chance.
+            self._controler.signal_handler.emit('facts-changed')
 
 
 class StartTrackingBox(Gtk.Box):
     """Box to be used if no *ongoing fact* is present."""
 
-    def __init__(self, parent, app, *args, **kwargs):
+    __gsignals__ = {
+        'tracking-started': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, ()),
+    }
+
+    # [FIXME]
+    # Switch to Grid based layout.
+
+    def __init__(self, controler, *args, **kwargs):
         """Setup widget."""
         super(StartTrackingBox, self).__init__(orientation=Gtk.Orientation.VERTICAL,
                                                spacing=10, *args, **kwargs)
-        self.parent = parent
-        self._app = app
-
-        self.main_window = parent.main_window
+        self._controler = controler
         self.set_homogeneous(False)
 
+        # [FIXME]
+        # Refactor to call separate 'get_widget' methods instead.
         # Introduction text
         text = _('Currently no tracked activity. Want to start one?')
         self.current_fact_label = Gtk.Label(text)
@@ -178,26 +187,35 @@ class StartTrackingBox(Gtk.Box):
             information encoded in the string. Unlike legacy hamster we *only*
             deal with *ongoing facts* in this widget.
         """
+        # [FIXME]
+        # This should be done in one place only. And the hamster-lib. If at all
+        # via hamster-lib.helpers.
         def complete_tmp_fact(fact):
             """Apply fallback logic in case no start time has been encoded."""
             if not fact.start:
                 fact.start = datetime.datetime.now()
-            # Make sure we dismuss any extracted end information.
+            # Make sure we dismiss any extracted end information.
             fact.end = None
             return fact
 
-        raw_fact = self.raw_fact_entry.props.text
+        raw_fact = self.raw_fact_entry.props.text.decode('utf-8')
 
         try:
             fact = Fact.create_from_raw_fact(raw_fact)
         except Exception as error:
-            helpers.show_error(self.main_window, error)
+            helpers.show_error(self.get_toplevel(), error)
         else:
             fact = complete_tmp_fact(fact)
 
             try:
-                fact = self.main_window._app.store.facts.save(fact)
+                fact = self._controler.store.facts.save(fact)
             except Exception as error:
-                helpers.show_error(self.main_window, error)
+                helpers.show_error(self.get_top_level(), error)
             else:
-                self.parent.update()
+                self.emit('tracking-started')
+                self._controler.signal_handler.emit('facts-changed')
+                self.reset()
+
+    def reset(self):
+        """Clear all data entry fields."""
+        self.raw_fact_entry.props.text = ''

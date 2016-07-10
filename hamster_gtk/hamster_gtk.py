@@ -20,16 +20,15 @@
 """Main module for 'hamster-gtk'. Provides central ``Gtk.Application`` instance."""
 
 
-from __future__ import unicode_literals
+from __future__ import absolute_import, unicode_literals
 
 import traceback
-
 from gettext import gettext as _
 
 import gi
+import hamster_lib
 gi.require_version('Gdk', '3.0')  # NOQA
 gi.require_version('Gtk', '3.0')  # NOQA
-import hamster_lib
 from gi.repository import Gdk, GObject, Gtk
 
 from . import helpers
@@ -44,25 +43,26 @@ DEFAULT_WINDOW_SIZE = (400, 200)
 class HeaderBar(Gtk.HeaderBar):
     """Header bar for the main application window."""
 
-    def __init__(self, parent, app, **kwargs):
+    def __init__(self, *args, **kwargs):
         """Initialize header bar."""
-        super(HeaderBar, self).__init__(**kwargs)
-        self._parent = parent
-        self._app = app
+        super(HeaderBar, self).__init__(*args, **kwargs)
 
         self.set_title(_("Hamster-GTK"))
         self.set_subtitle(_("Your friendly time tracker."))
         self.set_show_close_button(True)
 
-        overview_button = Gtk.Button('Overview')
-        overview_button.connect('clicked', self._on_overview_button)
-        self.pack_end(overview_button)
+        self.pack_end(self._get_overview_button())
+
+    def _get_overview_button(self):
+        """Return a button to open the ``Overview`` dialog."""
+        button = Gtk.Button(_("Overview"))
+        button.connect('clicked', self._on_overview_button)
+        return button
 
     def _on_overview_button(self, button):
         """Callback for overview button."""
-        if not self._parent._overview_window:
-            self._parent._overview_window = OverviewScreen(self._parent, self._app)
-        self._parent._overview_window.present()
+        parent = self.get_parent()
+        OverviewScreen(parent, parent.app)
 
 
 class MainWindow(Gtk.ApplicationWindow):
@@ -72,12 +72,12 @@ class MainWindow(Gtk.ApplicationWindow):
         """Initialize window."""
         super(MainWindow, self).__init__(*args, application=app, **kwargs)
         # Some basic inventory
-        self._app = app
+        self.app = app
         self._overview_window = None
 
         # Styling
         self.set_position(Gtk.WindowPosition.CENTER)
-        self.set_titlebar(HeaderBar(self, self._app))
+        self.set_titlebar(HeaderBar())
         self.set_default_size(*DEFAULT_WINDOW_SIZE)
 
         # Setup css
@@ -90,7 +90,7 @@ class MainWindow(Gtk.ApplicationWindow):
         )
 
         # Set tracking as default screen at startup.
-        self.add(TrackingScreen(self, self._app))
+        self.add(TrackingScreen(self.app))
 
     def _get_css(self):
         """
@@ -151,8 +151,8 @@ class SignalHandler(GObject.GObject):
     """
 
     __gsignals__ = {
-        str('facts-changed'): (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, ()),
-        str('daterange-changed'): (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, ()),
+        str('facts-changed'): (GObject.SIGNAL_RUN_LAST, None, ()),
+        str('daterange-changed'): (GObject.SIGNAL_RUN_LAST, None, (GObject.TYPE_PYOBJECT,)),
     }
 
     def __init__(self):
@@ -178,6 +178,8 @@ class HamsterGTK(Gtk.Application):
         self.controler = hamster_lib.HamsterControl(helpers._get_config())
         self.controler.signal_handler = SignalHandler()
         # For convenience only
+        # [FIXME]
+        # Pick one canonical path and stick to it!
         self.store = self.controler.store
 
         # Reference to any existing overview dialog.
@@ -186,7 +188,7 @@ class HamsterGTK(Gtk.Application):
     def _activate(self, app):
         """Triggered in regular use after startup."""
         if not self.window:
-            # We wamt to make sure that we leave the mainloop if anything goes
+            # We want to make sure that we leave the mainloop if anything goes
             # wrong setting up the actual window.
             try:
                 self.window = MainWindow(app)
