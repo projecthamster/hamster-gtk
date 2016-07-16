@@ -20,6 +20,8 @@
 """Screen to handle tracking of an *ongoing fact*."""
 
 
+from __future__ import absolute_import, unicode_literals
+
 import datetime
 from gettext import gettext as _
 
@@ -71,7 +73,7 @@ class CurrentFactBox(Gtk.Box):
     """Box to be used if current fact is present."""
 
     __gsignals__ = {
-        'tracking-stopped': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, ()),
+        str('tracking-stopped'): (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, ()),
     }
 
     def __init__(self, controler):
@@ -149,7 +151,7 @@ class StartTrackingBox(Gtk.Box):
     """Box to be used if no *ongoing fact* is present."""
 
     __gsignals__ = {
-        'tracking-started': (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, ()),
+        str('tracking-started'): (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, ()),
     }
 
     # [FIXME]

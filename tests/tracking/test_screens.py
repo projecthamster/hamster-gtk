@@ -5,7 +5,7 @@ from __future__ import absolute_import, unicode_literals
 from gi.repository import Gtk
 from six import text_type
 
-from hamster_gtk.screens import tracking
+from hamster_gtk.tracking import screens
 
 
 class TestTrackingScreen(object):
@@ -13,8 +13,8 @@ class TestTrackingScreen(object):
 
     def test_init(self, app):
         """Make sure instance matches expectation."""
-        result = tracking.TrackingScreen(app)
-        assert isinstance(result, tracking.TrackingScreen)
+        result = screens.TrackingScreen(app)
+        assert isinstance(result, screens.TrackingScreen)
         assert len(result.get_children()) == 2
 
     def test_update_with_ongoing_fact(self, tracking_screen, fact, mocker):
@@ -25,7 +25,7 @@ class TestTrackingScreen(object):
         tracking_screen.update()
         result = tracking_screen.get_visible_child()
         assert result == tracking_screen.current_fact_view
-        assert isinstance(result, tracking.CurrentFactBox)
+        assert isinstance(result, screens.CurrentFactBox)
 
     def test_update_with_no_ongoing_fact(self, tracking_screen, mocker):
         """Make sure start tracking view is shown."""
@@ -34,7 +34,7 @@ class TestTrackingScreen(object):
         tracking_screen.update()
         result = tracking_screen.get_visible_child()
         assert result == tracking_screen.start_tracking_view
-        assert isinstance(result, tracking.StartTrackingBox)
+        assert isinstance(result, screens.StartTrackingBox)
 
 
 class TestStartTrackingBox(object):
@@ -42,8 +42,8 @@ class TestStartTrackingBox(object):
 
     def test_init(self, app):
         """Make sure instances matches expectation."""
-        result = tracking.StartTrackingBox(app.controler)
-        assert isinstance(result, tracking.StartTrackingBox)
+        result = screens.StartTrackingBox(app.controler)
+        assert isinstance(result, screens.StartTrackingBox)
         assert len(result.get_children()) == 3
 
     def test__on_start_tracking_button(self, start_tracking_box, fact, mocker):
@@ -67,8 +67,8 @@ class TestCurrentFactBox(object):
     """Unittests for CurrentFactBox."""
 
     def test_init(self, app):
-        result = tracking.CurrentFactBox(app.controler)
-        assert isinstance(result, tracking.CurrentFactBox)
+        result = screens.CurrentFactBox(app.controler)
+        assert isinstance(result, screens.CurrentFactBox)
 
     def test_update_initial_fact(self, current_fact_box, fact):
         """Make sure update re-creates as widgets as expected."""
