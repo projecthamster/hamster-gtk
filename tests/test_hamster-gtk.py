@@ -6,7 +6,7 @@ from gi.repository import Gtk
 from six import text_type
 
 from hamster_gtk import hamster_gtk
-from hamster_gtk.screens.tracking import TrackingScreen
+from hamster_gtk.tracking import TrackingScreen
 
 
 class TestHamsterGTK(object):
@@ -54,18 +54,6 @@ class TestHeaderBar(object):
     def test__on_overview_button(self, main_window, mocker):
         """Make sure a new overview is created if none exist."""
         bar = main_window.get_titlebar()
-        overview_class = mocker.patch('hamster_gtk.hamster_gtk.OverviewScreen')
+        overview_class = mocker.patch('hamster_gtk.hamster_gtk.OverviewDialog')
         bar._on_overview_button(None)
         assert overview_class.called
-
-
-class TestOverviewScreen(object):
-    """Unittests for the overview dialog."""
-
-    def test_daterange(self, request):
-        """Test that we return the right attribute."""
-        pass
-
-    def test_daterange_emit_signal(self, request):
-        """Test that setting a daterange emit the right signal."""
-        pass

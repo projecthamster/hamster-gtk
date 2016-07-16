@@ -31,9 +31,9 @@ gi.require_version('Gdk', '3.0')  # NOQA
 gi.require_version('Gtk', '3.0')  # NOQA
 from gi.repository import Gdk, GObject, Gtk
 
+from hamster_gtk.overview import OverviewDialog
+from hamster_gtk.tracking import TrackingScreen
 from . import helpers
-from .screens.overview import OverviewScreen
-from .screens.tracking import TrackingScreen
 
 
 APP_NAME = 'Hamster-GTK'
@@ -62,7 +62,7 @@ class HeaderBar(Gtk.HeaderBar):
     def _on_overview_button(self, button):
         """Callback for overview button."""
         parent = self.get_parent()
-        OverviewScreen(parent, parent.app)
+        OverviewDialog(parent, parent.app)
 
 
 class MainWindow(Gtk.ApplicationWindow):
