@@ -15,6 +15,14 @@ hamster-gtk
 
 A GTK interface to the hamster time tracker.
 
+**IMPORTANT**
+At this early stage ``hamster-gtk`` is pre-alpha software. As such you are very
+welcome to take it our for a spin and submit feedback, however you should not
+rely on it to work properly and most certainly you should not use it in an
+production environment!
+You have been warned.
+
+
 * Free software: GPL3
 
 .. * Documentation: https://hamster-gtk.readthedocs.org.
