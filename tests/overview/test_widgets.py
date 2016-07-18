@@ -60,6 +60,33 @@ class TestFactListBox(object):
         fact_list_box._on_activate(None, row)
         assert fact_list_box._update_fact.called
 
+    def test__delete_fact(self, request, fact_list_box, fact, mocker):
+        """Make sure that ``facts_changed`` signal is emitted."""
+        fact_list_box._controler.store.facts.remove = mocker.MagicMock()
+        fact_list_box.emit = mocker.MagicMock()
+        result = fact_list_box._delete_fact(fact)
+        assert fact_list_box._controler.store.facts.remove.called
+        assert result is result
+        assert fact_list_box.emit.called_with('facts_changed')
+
+    @pytest.mark.parametrize('exception', (KeyError, ValueError))
+    def test__delete_fact_expected_exception(self, request, fact_list_box, exception, fact,
+            mocker):
+        """Make sure that we show error dialog if we encounter an expected exception."""
+        fact_list_box._controler.store.facts.remove = mocker.MagicMock(side_effect=exception)
+        show_error = mocker.patch('hamster_gtk.overview.widgets.fact_grid.helpers.show_error')
+        fact_list_box.emit = mocker.MagicMock()
+        result = fact_list_box._delete_fact(fact)
+        assert result is None
+        assert show_error.called
+        assert fact_list_box.emit.called is False
+
+    def test__delete_fact_unexpected_exception(self, request, fact_list_box, fact, mocker):
+        """Make sure that we do not intercept unexpected exceptions."""
+        fact_list_box._controler.store.facts.remove = mocker.MagicMock(side_effect=Exception)
+        with pytest.raises(Exception):
+            fact_list_box._on_cancel_button(fact)
+
 
 class TestFactListRow(object):
     """Unittests for FactListRow."""

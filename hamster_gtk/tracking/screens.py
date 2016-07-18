@@ -128,8 +128,12 @@ class CurrentFactBox(Gtk.Box):
 
         Discard current *ongoing fact* without saving.
         """
-        self._controler.store.facts.cancel_tmp_fact()
-        self.emit('tracking-stopped')
+        try:
+            self._controler.store.facts.cancel_tmp_fact()
+        except KeyError as err:
+            helpers.show_error(self.get_toplevel(), err)
+        else:
+            self.emit('tracking-stopped')
 
     def _on_save_button(self, button):
         """

@@ -4,6 +4,7 @@ from __future__ import absolute_import, unicode_literals
 
 from gi.repository import Gtk
 from six import text_type
+import pytest
 
 from hamster_gtk.tracking import screens
 
@@ -99,3 +100,30 @@ class TestCurrentFactBox(object):
         """Make sure widget matches expectation."""
         result = current_fact_box._get_invalid_label()
         assert isinstance(result, Gtk.Label)
+
+    def test_on_cancel_buton(self, request, current_fact_box, mocker):
+        """Make sure that 'tracking-stopped' signal is emitted."""
+        current_fact_box._controler.store.facts.cancel_tmp_fact = mocker.MagicMock()
+        current_fact_box.emit = mocker.MagicMock()
+        result = current_fact_box._on_cancel_button(None)
+        assert current_fact_box._controler.store.facts.cancel_tmp_fact.called
+        assert result is None
+        assert current_fact_box.emit.called_with('tracking-stopped')
+
+    def test_on_cancel_buton_expected_exception(self, request, current_fact_box, mocker):
+        """Make sure that we show error dialog if we encounter an expected exception."""
+        current_fact_box._controler.store.facts.cancel_tmp_fact = mocker.MagicMock(
+            side_effect=KeyError)
+        show_error = mocker.patch('hamster_gtk.tracking.screens.helpers.show_error')
+        current_fact_box.emit = mocker.MagicMock()
+        result = current_fact_box._on_cancel_button(None)
+        assert result is None
+        assert show_error.called
+        assert current_fact_box.emit.called is False
+
+    def test_on_cancel_buton_unexpected_exception(self, request, current_fact_box, mocker):
+        """Make sure that we do not intercept unexpected exceptions."""
+        current_fact_box._controler.store.facts.cancel_tmp_fact = mocker.MagicMock(
+            side_effect=Exception)
+        with pytest.raises(Exception):
+            current_fact_box._on_cancel_button(None)

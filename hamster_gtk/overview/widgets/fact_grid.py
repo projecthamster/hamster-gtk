@@ -123,9 +123,13 @@ class FactListBox(Gtk.ListBox):
 
     def _delete_fact(self, fact):
         """Delete fact from the backend. No further confirmation is required."""
-        result = self._controler.store.facts.remove(fact)
-        self._controler.signal_handler.emit('facts_changed')
-        return result
+        try:
+            result = self._controler.store.facts.remove(fact)
+        except (ValueError, KeyError) as error:
+            helpers.show_error(self.get_toplevel(), error)
+        else:
+            self._controler.signal_handler.emit('facts_changed')
+            return result
 
 
 class FactListRow(Gtk.ListBoxRow):

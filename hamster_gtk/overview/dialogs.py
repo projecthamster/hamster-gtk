@@ -133,9 +133,19 @@ class OverviewDialog(Gtk.Dialog):
             self.show_all()
 
     def _get_facts(self):
-        """Collect and return all facts too be shown, not necessarily be visible."""
+        """
+        Collect and return all facts too be shown, not necessarily be visible.
+
+        A TypeError may indicated that the passed daterange istances may be of
+        invalid type. A ValueError that end is before start.
+        """
         start, end = self._daterange
-        return self._app.store.facts.get_all(start, end)
+        try:
+            result = self._app.store.facts.get_all(start, end)
+        except (TypeError, ValueError) as error:
+            helpers.show_error(self.get_toplevel(), error)
+        else:
+            return result
 
     def _group_facts(self):
         """
