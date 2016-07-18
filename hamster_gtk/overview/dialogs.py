@@ -35,6 +35,7 @@ import operator
 from collections import defaultdict, namedtuple
 
 from gi.repository import Gtk
+from hamster_lib import reports
 
 from . import widgets
 from .. import helpers
@@ -132,6 +133,9 @@ class OverviewDialog(Gtk.Dialog):
             self.main_box.pack_start(self._charts, False, False, 0)
             self.show_all()
 
+    # [FIXME]
+    # To avoid multiple falls to the backend, maybe some rudimentaty chaching
+    # would be sensible.
     def _get_facts(self):
         """
         Collect and return all facts too be shown, not necessarily be visible.
@@ -231,6 +235,16 @@ class OverviewDialog(Gtk.Dialog):
         orig_start, orig_end = self._daterange
         offset = (orig_end - orig_start) + datetime.timedelta(days=1)
         self._daterange = (orig_start + offset, orig_end + offset)
+
+    def _export_facts(self, target_path):
+        """
+        Export current set of facts to file.
+
+        Args:
+            target_path (text_type): Location to export to.
+        """
+        writer = reports.TSVWriter(target_path)
+        writer.write_report(self._get_facts())
 
     # Widgets
     def _get_summery_widget(self, category_totals):

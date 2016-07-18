@@ -39,10 +39,17 @@ class HeaderBar(Gtk.HeaderBar):
         self.pack_start(self._get_prev_daterange_button())
         self.pack_start(self._get_next_daterange_button())
         self.pack_start(self._daterange_button)
+        self.pack_end(self._get_export_button())
 
         controler.signal_handler.connect('daterange-changed', self._on_daterange_changed)
 
     # Widgets
+    def _get_export_button(self):
+        """Return a button to export facts."""
+        button = Gtk.Button(_("Export"))
+        button.connect('clicked', self._on_export_button_clicked)
+        return button
+
     def _get_daterange_button(self):
         """Return a button that opens the *select daterange* dialog."""
         # We add a dummy label which will be set properly once a daterange is
@@ -91,6 +98,26 @@ class HeaderBar(Gtk.HeaderBar):
     def _on_next_daterange_button_clicked(self, button):
         """Callback for when the 'next' button is clicked."""
         self.get_parent().apply_next_daterange()
+
+    def _on_export_button_clicked(self, button):
+        """
+        Trigger fact export if button clicked.
+
+        This is the place to run extra logic about where to save/which format.
+        ``parent._export_facts`` only deals with the actual export.
+        """
+        parent = self.get_parent()
+        dialog = Gtk.FileChooserDialog(_("Please Choose where to export to"), parent,
+            Gtk.FileChooserAction.SAVE, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
+                                         Gtk.STOCK_SAVE, Gtk.ResponseType.OK))
+        dialog.set_current_name('{}.csv'.format(_("hamster_export")))
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            target_path = dialog.get_filename()
+            parent._export_facts(target_path)
+        else:
+            pass
+        dialog.destroy()
 
 
 class Summary(Gtk.Box):
