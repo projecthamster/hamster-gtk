@@ -6,6 +6,7 @@ from gi.repository import Gtk
 from six import text_type
 import pytest
 
+from hamster_gtk.helpers import _u
 from hamster_gtk.tracking import screens
 
 
@@ -78,13 +79,13 @@ class TestCurrentFactBox(object):
         assert len(current_fact_box.content.get_children()) == 3
         label = current_fact_box.content.get_children()[0]
         expectation = '{activity.name}@{activity.category}'.format(activity=fact.activity)
-        assert expectation in label.get_text().decode('utf-8')
+        assert expectation in _u(label.get_text())
 
     def test__get_fact_label(self, current_fact_box, fact):
         """Make sure that the label matches expectations."""
         result = current_fact_box._get_fact_label(fact)
         assert isinstance(result, Gtk.Label)
-        assert result.get_text().decode('utf-8') == text_type(fact)
+        assert _u(result.get_text()) == text_type(fact)
 
     def test__get_cancel_button(self, current_fact_box):
         """Make sure widget matches expectation."""

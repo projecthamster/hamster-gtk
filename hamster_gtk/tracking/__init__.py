@@ -17,4 +17,6 @@
 
 """This sub module provides class suitable to track the 'ongoing fact'."""
 
-from .sceens import TrackingScreen  # NOQA
+from __future__ import absolute_import, unicode_literals
+
+from .screens import TrackingScreen  # NOQA

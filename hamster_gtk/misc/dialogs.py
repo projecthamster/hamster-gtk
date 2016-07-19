@@ -33,6 +33,7 @@ from hamster_lib import Fact
 from six import text_type
 
 from hamster_gtk import helpers
+from hamster_gtk.helpers import _u
 
 
 class ErrorDialog(Gtk.MessageDialog):
@@ -261,14 +262,14 @@ class EditFactDialog(Gtk.Dialog):
         """Fact instance using values at the time of accessing it."""
         def get_raw_fact_value():
             """Get text from raw fact entry field."""
-            return self._raw_fact_widget.get_text().decode('utf-8')
+            return _u(self._raw_fact_widget.get_text())
 
         def get_description_value():
             """Get unicode value from widget."""
             text_view = self._description_widget.get_child()
             text_buffer = text_view.get_buffer()
             start, end = text_buffer.get_bounds()
-            return text_buffer.get_text(start, end, True).decode('utf-8')
+            return _u(text_buffer.get_text(start, end, True))
 
         # Create a new fact instance from the provided raw string.
         fact = Fact.create_from_raw_fact(get_raw_fact_value())

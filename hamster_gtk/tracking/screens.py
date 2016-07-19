@@ -27,6 +27,7 @@ from gettext import gettext as _
 
 from gi.repository import GObject, Gtk
 from hamster_lib import Fact
+from hamster_gtk.helpers import _u
 
 import hamster_gtk.helpers as helpers
 
@@ -204,7 +205,7 @@ class StartTrackingBox(Gtk.Box):
             fact.end = None
             return fact
 
-        raw_fact = self.raw_fact_entry.props.text.decode('utf-8')
+        raw_fact = _u(self.raw_fact_entry.props.text)
 
         try:
             fact = Fact.create_from_raw_fact(raw_fact)

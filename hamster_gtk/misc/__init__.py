@@ -17,4 +17,6 @@
 
 """This module provides several multi purpose dialoges and widgets."""
 
-from dialogs import DateRangeSelectDialog, EditFactDialog, ErrorDialog  # NOQA
+from __future__ import absolute_import, unicode_literals
+
+from .dialogs import DateRangeSelectDialog, EditFactDialog, ErrorDialog  # NOQA
