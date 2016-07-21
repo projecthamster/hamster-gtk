@@ -5,8 +5,8 @@ hamster-gtk
 .. .. image:: https://img.shields.io/pypi/v/hamster-gtk.svg
         :target: https://pypi.python.org/pypi/hamster-gtk
 
-.. image:: https://img.shields.io/travis/elbenfreund/hamster-gtk.svg
-        :target: https://travis-ci.org/elbenfreund/hamster-gtk
+.. image:: https://img.shields.io/travis/projecthamster/hamster-gtk.svg
+        :target: https://travis-ci.org/projecthamster/hamster-gtk
 
 .. .. image:: https://readthedocs.org/projects/hamster-gtk/badge/?version=latest
         :target: https://readthedocs.org/projects/hamster-gtk/?badge=latest
