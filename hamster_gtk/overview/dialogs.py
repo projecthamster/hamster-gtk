@@ -82,6 +82,7 @@ class OverviewDialog(Gtk.Dialog):
 
     def _connect_signals(self):
         """Connect signals this instance listens for."""
+        self._app.controler.signal_handler.connect('config-changed', self._on_config_changed)
         self._app.controler.signal_handler.connect('facts-changed', self._on_facts_changed)
         self._app.controler.signal_handler.connect('daterange-changed', self._on_daterange_changed)
 
@@ -89,6 +90,10 @@ class OverviewDialog(Gtk.Dialog):
         """Return the default daterange used when none has been selected by user."""
         today = datetime.date.today()
         return (today, today)
+
+    def _on_config_changed(self, sender):
+        """Callback to be triggered if the applications config has changed."""
+        self.refresh()
 
     def _on_facts_changed(self, sender):
         """Callback to be triggered if stored facts have been changed."""

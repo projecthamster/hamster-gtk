@@ -224,7 +224,7 @@ class HamsterGTK(Gtk.Application):
             dict: Dictionary of config keys and values.
         """
         cp_instance = self._config_to_configparser(config)
-        config_helpers.write_config_file(cp_instance)
+        config_helpers.write_config_file(cp_instance, 'hamster-gtk', 'hamster-gtk.conf')
         self.controler.signal_handler.emit('config-changed')
 
     def _startup(self, app):
@@ -233,7 +233,7 @@ class HamsterGTK(Gtk.Application):
         self._reload_config()
         self.controler = hamster_lib.HamsterControl(self._config)
         self.controler.signal_handler = SignalHandler()
-        self.controler.signal_handler.connect('config-changed', self._reload_config)
+        self.controler.signal_handler.connect('config-changed', self._config_changed)
         # For convenience only
         # [FIXME]
         # Pick one canonical path and stick to it!
@@ -262,11 +262,19 @@ class HamsterGTK(Gtk.Application):
         print('Hamster-GTK shut down.')  # NOQA
 
     # We use sender=None for it to be called as a method as well.
-    def _reload_config(self, sender=None):
+    def _reload_config(self):
         """Reload configuration from designated store."""
         config = self._get_config_from_file()
         self._config = config
         return config
+
+    def _config_changed(self, sender):
+        """Callback triggered when config has been changed."""
+        self._reload_config()
+        # [FIXME]
+        # hamster-lib currentl provides no proper way to update its config
+        # See: https://github.com/projecthamster/hamster-lib/issues/190
+        # We want something like ``self.controler.update_config(self._config)``
 
     def _get_default_config(self):
         """
