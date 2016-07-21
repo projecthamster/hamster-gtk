@@ -103,8 +103,9 @@ def get_config_instance(fallback_config_instance, app_name, file_name):
     from hamster_lib.helpers import config_helpers
     from backports.configparser import SafeConfigParser
     config = SafeConfigParser()
-    path = config_helpers.get_config_path(app_name)
-    if not config.read(path):
+    path = config_helpers.get_config_path(app_name, file_name)
+    existing_config = config.read(path)
+    if not existing_config:
         config = config_helpers.write_config_file(fallback_config_instance, app_name,
                                                   file_name=file_name)
     return config
