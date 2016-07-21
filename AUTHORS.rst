@@ -5,7 +5,7 @@ Credits
 Development Lead
 ----------------
 
-* Eric Goller <Elbenfreund@DenkenInEchtzeit.net>
+* Eric Goller <eric.goller@ninjaduck.solutions>
 
 Contributors
 ------------
