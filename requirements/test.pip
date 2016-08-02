@@ -13,4 +13,4 @@ pytest-factoryboy==1.2.2
 tox==2.3.1
 future==0.15.2
 freezegun==0.3.7
-pytest-mock==1.1
+pytest-mock==1.2
