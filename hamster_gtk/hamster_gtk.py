@@ -43,6 +43,7 @@ from six import text_type
 # [FIXME]
 # Remove once hamster-lib has been patched
 from hamster_gtk.helpers import _u, get_config_instance
+from hamster_gtk.misc import HamsterAboutDialog as AboutDialog
 from hamster_gtk.overview import OverviewDialog
 from hamster_gtk.tracking import TrackingScreen
 
@@ -66,6 +67,7 @@ class HeaderBar(Gtk.HeaderBar):
 
         self.pack_end(self._get_preferences_button())
         self.pack_end(self._get_overview_button())
+        self.pack_end(self._get_about_button())
 
     def _get_overview_button(self):
         """Return a button to open the ``Overview`` dialog."""
@@ -77,6 +79,12 @@ class HeaderBar(Gtk.HeaderBar):
         """Return a button to bring up the preferences dialog."""
         button = Gtk.Button(_("Preferences"))
         button.connect('clicked', self._on_preferences_button)
+        return button
+
+    def _get_about_button(self):
+        """Return a button to bring up the about dialog."""
+        button = Gtk.Button(_("About"))
+        button.connect('clicked', self._on_about_button)
         return button
 
     def _on_overview_button(self, button):
@@ -96,6 +104,15 @@ class HeaderBar(Gtk.HeaderBar):
             config = dialog.get_config()
             self._app.save_config(config)
         else:
+            pass
+        dialog.destroy()
+
+    def _on_about_button(self, button):
+        """Bring up, process and shut down about dialog."""
+        parent = self.get_parent()
+        dialog = AboutDialog(parent)
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
             pass
         dialog.destroy()
 

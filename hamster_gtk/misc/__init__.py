@@ -19,4 +19,5 @@
 
 from __future__ import absolute_import, unicode_literals
 
+from .dialogs import HamsterAboutDialog  # NOQA
 from .dialogs import DateRangeSelectDialog, EditFactDialog, ErrorDialog  # NOQA

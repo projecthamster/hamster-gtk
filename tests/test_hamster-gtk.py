@@ -84,7 +84,7 @@ class TestHeaderBar(object):
         assert header_bar.props.title == 'Hamster-GTK'
         assert header_bar.props.subtitle == 'Your friendly time tracker.'
         assert header_bar.props.show_close_button
-        assert len(header_bar.get_children()) == 2
+        assert len(header_bar.get_children()) == 3
 
     def test__get_overview_button(self, header_bar, mocker):
         """Test that that button returned matches expectation."""

@@ -2,9 +2,9 @@
 
 from __future__ import absolute_import, unicode_literals
 
+import pytest
 from gi.repository import Gtk
 from six import text_type
-import pytest
 
 from hamster_gtk.helpers import _u
 from hamster_gtk.tracking import screens

@@ -26,12 +26,15 @@ from __future__ import absolute_import, unicode_literals
 
 import calendar
 import datetime
+import sys
 from gettext import gettext as _
 
+import hamster_lib
 from gi.repository import Gtk
 from hamster_lib import Fact
 from six import text_type
 
+import hamster_gtk
 from hamster_gtk import helpers
 from hamster_gtk.helpers import _u
 
@@ -347,3 +350,42 @@ class EditFactDialog(Gtk.Dialog):
     def _get_cancel_button(self):
         """Return a *cancel* button."""
         return Gtk.Button.new_from_stock(Gtk.STOCK_CANCEL)
+
+
+class HamsterAboutDialog(Gtk.AboutDialog):
+    """Basic 'About'-dialog class using Gtk default dialog."""
+
+    # Whilst we are not perfectly happy with the layout and general
+    # structure of the dialog it is little effort and works for now.
+    # Alternatively we could either try to customize is to match our
+    # expectations or construct our own from scratch.
+
+    def __init__(self, parent, *args, **kwargs):
+        """Initialize the dialog."""
+        super(HamsterAboutDialog, self).__init__(*args, **kwargs)
+        authors = ['Eric Goller <eric.goller@ninjaduck.solutions>']
+        python_version_string = '{}.{}.{}'.format(
+            sys.version_info.major, sys.version_info.minor, sys.version_info.micro
+        )
+        comments = _(
+            "Thank you for using 'Hamster-GTK.'"
+            " Your current runtime uses 'hamster-lib' {lib_version} and is interpretet by"
+            " Python {python_version}.").format(lib_version=hamster_lib.__version__,
+                                                python_version=python_version_string)
+
+        meta = {
+            'program-name': "Hamster-GTK",
+            'version': hamster_gtk.__version__,
+            'copyright': "Copyright © 2015–2016 Eric Goller / ninjaduck.solutions",
+            'website': "http://projecthamster.org",
+            'website-label': _("Visit Project Hamster Website"),
+            'title': _("About Hamster-GTK"),
+            'license-type': Gtk.License.GPL_3_0,
+            'authors': authors,
+            'comments': comments,
+        }
+
+        for key, value in meta.items():
+            self.set_property(key, value)
+
+        self.show_all()
