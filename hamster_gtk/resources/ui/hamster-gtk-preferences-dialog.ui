@@ -19,6 +19,7 @@
 	<object class="GtkDialog" id="preferences-dialog">
 		<property name="can_focus">False</property>
 		<property name="type_hint">dialog</property>
+		<property name="title" translatable="yes">Preferences</property>
 		<child internal-child="vbox">
 			<object class="GtkBox">
 				<property name="can_focus">False</property>
