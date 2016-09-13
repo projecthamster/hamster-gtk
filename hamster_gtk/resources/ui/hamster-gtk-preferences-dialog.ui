@@ -80,7 +80,7 @@
 									<object class="GtkLabel">
 										<property name="visible">True</property>
 										<property name="can_focus">False</property>
-										<property name="label" translatable="yes">_Day Start (HH:MM:SS)</property>
+										<property name="label" translatable="yes" comments="Do not change the time format, the application currently expects input in the form HH:MM:SS.">_Day Start (HH:MM:SS)</property>
 										<property name="use_underline">True</property>
 										<property name="mnemonic_widget">day_start</property>
 									</object>
