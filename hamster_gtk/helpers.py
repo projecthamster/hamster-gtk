@@ -22,6 +22,7 @@
 import datetime
 
 import six
+import os.path
 
 from . import dialogs
 
@@ -109,3 +110,8 @@ def get_config_instance(fallback_config_instance, app_name, file_name):
         config = config_helpers.write_config_file(fallback_config_instance, app_name,
                                                   file_name=file_name)
     return config
+
+
+def get_resource_path(file_name):
+    """Return path to a resource file."""
+    return os.path.join(os.path.dirname(__file__), 'resources', file_name)

@@ -38,6 +38,7 @@ import hamster_lib
 from backports.configparser import SafeConfigParser
 from gi.repository import Gdk, GObject, Gtk
 from hamster_lib.helpers import config_helpers
+from hamster_gtk.helpers import get_resource_path
 from six import text_type
 
 # [FIXME]
@@ -117,7 +118,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Setup css
         style_provider = Gtk.CssProvider()
-        style_provider.load_from_data(self._get_css().encode())
+        style_provider.load_from_path(get_resource_path('css/hamster-gtk.css'))
         Gtk.StyleContext.add_provider_for_screen(
             Gdk.Screen.get_default(),
             style_provider,
@@ -126,55 +127,6 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Set tracking as default screen at startup.
         self.add(TrackingScreen(self.app))
-
-    def _get_css(self):
-        """
-        Return a string representing our CSS definitions.
-
-        This will be obsolete in the future, once we move it to a dedicated file.
-        See Issue #4.
-        """
-        return """
-            #DayRowDateBox {
-                background: #dfdfdf;
-            }
-
-            #OverviewDateLabel {
-                padding-left: 10px;
-                padding-right: 10px;
-            }
-
-            #OverviewTagLabel {
-                padding: 2px;
-            }
-
-            #OverviewDescriptionLabel {
-                padding-bottom: 20px;
-            }
-
-            #OverviewTagBox {
-                background: gray;
-                border-radius: 5px;
-                border-color: gray;
-                border-width: 1px 1px 1px 1px;
-                border-style: solid;
-                color: white;
-            }
-
-            #OverviewFactList {
-                background: @bg_color;
-            }
-
-            #OverviewFactBox {
-                padding-left: 10px;
-                padding-right: 10px;
-            }
-
-            /* EditDialog */
-            #EditDialogMainBox {
-                padding: 15px;
-            }
-            """
 
 
 # [FIXME]

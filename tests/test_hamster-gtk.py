@@ -71,10 +71,6 @@ class TestMainWindow(object):
         assert isinstance(window.app, hamster_gtk.HamsterGTK)
         assert isinstance(window.get_children()[0], TrackingScreen)
 
-    def test_get_css(self, main_window):
-        """Make sure a string is returned."""
-        assert isinstance(main_window._get_css(), text_type)
-
 
 class TestHeaderBar(object):
     """Unittests for main window titlebar."""
