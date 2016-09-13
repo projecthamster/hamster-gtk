@@ -3,6 +3,7 @@
 	<template class="EditableFileChooser" parent="GtkGrid">
 		<property name="visible">True</property>
 		<property name="can_focus">False</property>
+		<signal name="mnemonic-activate" handler="on_mnemonic_activate" object="EditableFileChooser" swapped="no"/>
 		<child>
 			<object class="GtkEntry" id="entry">
 				<property name="visible">True</property>

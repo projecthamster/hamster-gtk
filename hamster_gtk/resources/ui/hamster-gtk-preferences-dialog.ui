@@ -79,7 +79,9 @@
 									<object class="GtkLabel">
 										<property name="visible">True</property>
 										<property name="can_focus">False</property>
-										<property name="label" translatable="yes">Day Start (HH:MM:SS)</property>
+										<property name="label" translatable="yes">_Day Start (HH:MM:SS)</property>
+										<property name="use_underline">True</property>
+										<property name="mnemonic_widget">day_start</property>
 									</object>
 									<packing>
 										<property name="left_attach">0</property>
@@ -100,7 +102,9 @@
 									<object class="GtkLabel">
 										<property name="visible">True</property>
 										<property name="can_focus">False</property>
-										<property name="label" translatable="yes">Minimal Fact Duration</property>
+										<property name="label" translatable="yes">_Minimal Fact Duration</property>
+										<property name="use_underline">True</property>
+										<property name="mnemonic_widget">fact_min_delta</property>
 									</object>
 									<packing>
 										<property name="left_attach">0</property>
@@ -138,7 +142,9 @@
 									<object class="GtkLabel">
 										<property name="visible">True</property>
 										<property name="can_focus">False</property>
-										<property name="label" translatable="yes">Store</property>
+										<property name="label" translatable="yes">_Store</property>
+										<property name="use_underline">True</property>
+										<property name="mnemonic_widget">store</property>
 									</object>
 									<packing>
 										<property name="left_attach">0</property>
@@ -159,7 +165,9 @@
 									<object class="GtkLabel">
 										<property name="visible">True</property>
 										<property name="can_focus">False</property>
-										<property name="label" translatable="yes">DB Engine</property>
+										<property name="label" translatable="yes">DB _Engine</property>
+										<property name="use_underline">True</property>
+										<property name="mnemonic_widget">db_engine</property>
 									</object>
 									<packing>
 										<property name="left_attach">0</property>
@@ -180,7 +188,9 @@
 									<object class="GtkLabel">
 										<property name="visible">True</property>
 										<property name="can_focus">False</property>
-										<property name="label" translatable="yes">DB Path</property>
+										<property name="label" translatable="yes">DB _Path</property>
+										<property name="use_underline">True</property>
+										<property name="mnemonic_widget">db_path</property>
 									</object>
 									<packing>
 										<property name="left_attach">0</property>
@@ -201,7 +211,9 @@
 									<object class="GtkLabel">
 										<property name="visible">True</property>
 										<property name="can_focus">False</property>
-										<property name="label" translatable="yes">Temporary file</property>
+										<property name="label" translatable="yes">_Temporary file</property>
+										<property name="use_underline">True</property>
+										<property name="mnemonic_widget">tmpfile_path</property>
 									</object>
 									<packing>
 										<property name="left_attach">0</property>

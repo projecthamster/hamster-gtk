@@ -72,3 +72,8 @@ class EditableFileChooser(Gtk.Grid, WidgetConfig):
             self.entry.set_text(text_type(dialog.get_filename()))
 
         dialog.destroy()
+
+    @GtkTemplate.Callback
+    def on_mnemonic_activate(self, widget, arg1, template):
+        """Mnemonic associated with this widget was activated."""
+        return self.entry.do_mnemonic_activate(self.entry, False)
