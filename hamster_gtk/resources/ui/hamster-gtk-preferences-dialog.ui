@@ -1,0 +1,244 @@
+<interface>
+	<requires lib="gtk+" version="3.20"/>
+	<object class="GtkImage" id="icon-apply">
+		<property name="visible">True</property>
+		<property name="can_focus">False</property>
+		<property name="icon_name">dialog-ok</property>
+	</object>
+	<object class="GtkImage" id="icon-cancel">
+		<property name="visible">True</property>
+		<property name="can_focus">False</property>
+		<property name="icon_name">dialog-cancel</property>
+	</object>
+	<object class="GtkAdjustment" id="delta-adjustment">
+		<property name="lower">0</property>
+		<property name="upper">999999</property>
+		<property name="step_increment">1</property>
+		<property name="page_increment">10</property>
+	</object>
+	<object class="GtkDialog" id="preferences-dialog">
+		<property name="can_focus">False</property>
+		<property name="type_hint">dialog</property>
+		<child internal-child="vbox">
+			<object class="GtkBox">
+				<property name="can_focus">False</property>
+				<property name="orientation">vertical</property>
+				<property name="spacing">2</property>
+				<child internal-child="action_area">
+					<object class="GtkButtonBox">
+						<property name="can_focus">False</property>
+						<property name="layout_style">end</property>
+						<child>
+							<object class="GtkButton" id="preferences-cancel">
+								<property name="label" translatable="yes">_Cancel</property>
+								<property name="visible">True</property>
+								<property name="can_focus">True</property>
+								<property name="receives_default">True</property>
+								<property name="use_underline">True</property>
+								<property name="image">icon-cancel</property>
+								<signal name="clicked" handler="on_cancel_clicked" swapped="no"/>
+							</object>
+							<packing>
+								<property name="expand">True</property>
+								<property name="fill">True</property>
+								<property name="position">0</property>
+							</packing>
+						</child>
+						<child>
+							<object class="GtkButton" id="preferences-apply">
+								<property name="label" translatable="yes">_Apply</property>
+								<property name="visible">True</property>
+								<property name="can_focus">True</property>
+								<property name="receives_default">True</property>
+								<property name="use_underline">True</property>
+								<property name="image">icon-apply</property>
+								<signal name="clicked" handler="on_apply_clicked" swapped="no"/>
+							</object>
+							<packing>
+								<property name="expand">True</property>
+								<property name="fill">True</property>
+								<property name="position">1</property>
+							</packing>
+						</child>
+					</object>
+					<packing>
+						<property name="expand">False</property>
+						<property name="fill">False</property>
+						<property name="position">0</property>
+					</packing>
+				</child>
+				<child>
+					<object class="GtkNotebook">
+						<property name="visible">True</property>
+						<property name="can_focus">True</property>
+						<child>
+							<object class="GtkGrid">
+								<property name="visible">True</property>
+								<property name="can_focus">False</property>
+								<child>
+									<object class="GtkLabel">
+										<property name="visible">True</property>
+										<property name="can_focus">False</property>
+										<property name="label" translatable="yes">Day Start (HH:MM:SS)</property>
+									</object>
+									<packing>
+										<property name="left_attach">0</property>
+										<property name="top_attach">0</property>
+									</packing>
+								</child>
+								<child>
+									<object class="TimeEntry" id="day_start">
+										<property name="visible">True</property>
+										<property name="can_focus">True</property>
+									</object>
+									<packing>
+										<property name="left_attach">1</property>
+										<property name="top_attach">0</property>
+									</packing>
+								</child>
+								<child>
+									<object class="GtkLabel">
+										<property name="visible">True</property>
+										<property name="can_focus">False</property>
+										<property name="label" translatable="yes">Minimal Fact Duration</property>
+									</object>
+									<packing>
+										<property name="left_attach">0</property>
+										<property name="top_attach">1</property>
+									</packing>
+								</child>
+								<child>
+									<object class="SpinButtonConfig" id="fact_min_delta">
+										<property name="visible">True</property>
+										<property name="can_focus">True</property>
+										<property name="adjustment">delta-adjustment</property>
+									</object>
+									<packing>
+										<property name="left_attach">1</property>
+										<property name="top_attach">1</property>
+									</packing>
+								</child>
+							</object>
+						</child>
+						<child type="tab">
+							<object class="GtkLabel">
+								<property name="visible">True</property>
+								<property name="can_focus">False</property>
+								<property name="label" translatable="yes">Tracking</property>
+							</object>
+							<packing>
+								<property name="tab_fill">False</property>
+							</packing>
+						</child>
+						<child>
+							<object class="GtkGrid">
+								<property name="visible">True</property>
+								<property name="can_focus">False</property>
+								<child>
+									<object class="GtkLabel">
+										<property name="visible">True</property>
+										<property name="can_focus">False</property>
+										<property name="label" translatable="yes">Store</property>
+									</object>
+									<packing>
+										<property name="left_attach">0</property>
+										<property name="top_attach">0</property>
+									</packing>
+								</child>
+								<child>
+									<object class="ComboBoxTextConfig" id="store">
+										<property name="visible">True</property>
+										<property name="can_focus">False</property>
+									</object>
+									<packing>
+										<property name="left_attach">1</property>
+										<property name="top_attach">0</property>
+									</packing>
+								</child>
+								<child>
+									<object class="GtkLabel">
+										<property name="visible">True</property>
+										<property name="can_focus">False</property>
+										<property name="label" translatable="yes">DB Engine</property>
+									</object>
+									<packing>
+										<property name="left_attach">0</property>
+										<property name="top_attach">1</property>
+									</packing>
+								</child>
+								<child>
+									<object class="ComboBoxTextConfig" id="db_engine">
+										<property name="visible">True</property>
+										<property name="can_focus">False</property>
+									</object>
+									<packing>
+										<property name="left_attach">1</property>
+										<property name="top_attach">1</property>
+									</packing>
+								</child>
+								<child>
+									<object class="GtkLabel">
+										<property name="visible">True</property>
+										<property name="can_focus">False</property>
+										<property name="label" translatable="yes">DB Path</property>
+									</object>
+									<packing>
+										<property name="left_attach">0</property>
+										<property name="top_attach">2</property>
+									</packing>
+								</child>
+								<child>
+									<object class="EditableFileChooser" id="db_path">
+										<property name="visible">True</property>
+										<property name="can_focus">False</property>
+									</object>
+									<packing>
+										<property name="left_attach">1</property>
+										<property name="top_attach">2</property>
+									</packing>
+								</child>
+								<child>
+									<object class="GtkLabel">
+										<property name="visible">True</property>
+										<property name="can_focus">False</property>
+										<property name="label" translatable="yes">Temporary file</property>
+									</object>
+									<packing>
+										<property name="left_attach">0</property>
+										<property name="top_attach">3</property>
+									</packing>
+								</child>
+								<child>
+									<object class="EditableFileChooser" id="tmpfile_path">
+										<property name="visible">True</property>
+										<property name="can_focus">False</property>
+									</object>
+									<packing>
+										<property name="left_attach">1</property>
+										<property name="top_attach">3</property>
+									</packing>
+								</child>
+							</object>
+						</child>
+						<child type="tab">
+							<object class="GtkLabel">
+								<property name="visible">True</property>
+								<property name="can_focus">False</property>
+								<property name="label" translatable="yes">Storage</property>
+							</object>
+							<packing>
+								<property name="position">1</property>
+								<property name="tab_fill">False</property>
+							</packing>
+						</child>
+					</object>
+					<packing>
+						<property name="expand">True</property>
+						<property name="fill">True</property>
+						<property name="position">1</property>
+					</packing>
+				</child>
+			</object>
+		</child>
+	</object>
+</interface>

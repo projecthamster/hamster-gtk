@@ -6,7 +6,6 @@ import datetime
 import os.path
 
 from gi.repository import Gtk
-from six import text_type
 
 import hamster_gtk.hamster_gtk as hamster_gtk
 from hamster_gtk.tracking import TrackingScreen

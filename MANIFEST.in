@@ -10,6 +10,7 @@ include .editorconfig
 recursive-include tests *
 recursive-include hamster_gtk *.py
 recursive-include hamster_gtk/resources/css *.css
+recursive-include hamster_gtk/resources/ui *.ui
 recursive-include requirements *.pip
 recursive-include docs *.rst conf.py Makefile make.bat
 
