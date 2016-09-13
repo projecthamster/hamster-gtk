@@ -22,6 +22,12 @@ register(factories.FactFactory)
 
 
 @pytest.fixture
+def file_path(request, faker):
+    """Return a file path."""
+    return faker.uri_path()
+
+
+@pytest.fixture
 def appdirs(request):
     """Return HamsterAppDirs instance."""
     return HamsterAppDirs('hamster-gtk')

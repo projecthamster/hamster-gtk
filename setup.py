@@ -45,5 +45,8 @@ setup(
     entry_points='''
     [gui_scripts]
     hamster-gtk=hamster_gtk.hamster_gtk:_main
-    '''
+    ''',
+    package_data={'hamster_gtk': [
+        'resources/css/*.css'
+    ]}
 )
