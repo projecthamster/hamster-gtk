@@ -6,7 +6,6 @@ import datetime
 import os.path
 
 from gi.repository import Gtk
-from six import text_type
 
 import hamster_gtk.hamster_gtk as hamster_gtk
 from hamster_gtk.tracking import TrackingScreen
@@ -71,10 +70,6 @@ class TestMainWindow(object):
         assert isinstance(window.app, hamster_gtk.HamsterGTK)
         assert isinstance(window.get_children()[0], TrackingScreen)
 
-    def test_get_css(self, main_window):
-        """Make sure a string is returned."""
-        assert isinstance(main_window._get_css(), text_type)
-
 
 class TestHeaderBar(object):
     """Unittests for main window titlebar."""
@@ -127,9 +122,10 @@ class TestPreferencesDialog(object):
     def test_init(self, dummy_window, app, config):
         """Make instantiation works as expected."""
         result = hamster_gtk.PreferencesDialog(dummy_window, app, config)
-        grid = result.get_content_area().get_children()[0]
+        grids = result.dialog.get_content_area().get_children()[0].get_children()
         # This assumes 2 children per config entry (label and widget).
-        assert len(grid.get_children()) / 2 == len(config.keys())
+        grid_entry_counts = map(lambda g: len(g.get_children()) / 2, grids)
+        assert sum(grid_entry_counts) == len(config.keys())
 
     def test_get_config(self, dummy_window, app, initial_config_parametrized):
         """
@@ -141,39 +137,3 @@ class TestPreferencesDialog(object):
         dialog = hamster_gtk.PreferencesDialog(dummy_window, app, initial_config_parametrized)
         result = dialog.get_config()
         assert result == initial_config_parametrized
-
-    def test_get_store_widget(self, preferences_dialog):
-        """Make sure widgets match expectation."""
-        label, widget = preferences_dialog._get_store_widget()
-        assert isinstance(label, Gtk.Label)
-        assert isinstance(widget, Gtk.ComboBoxText)
-
-    def test_get_day_start_widget(self, preferences_dialog):
-        """Make sure widgets match expectation."""
-        label, widget = preferences_dialog._get_day_start_widget()
-        assert isinstance(label, Gtk.Label)
-        assert isinstance(widget, Gtk.Entry)
-
-    def test_get_fact_min_delta_widget(self, preferences_dialog):
-        """Make sure widgets match expectation."""
-        label, widget = preferences_dialog._get_fact_min_delta_widget()
-        assert isinstance(label, Gtk.Label)
-        assert isinstance(widget, Gtk.Entry)
-
-    def test_get_tmpfile_path_widget(self, preferences_dialog):
-        """Make sure widgets match expectation."""
-        label, widget = preferences_dialog._get_tmpfile_path_widget()
-        assert isinstance(label, Gtk.Label)
-        assert isinstance(widget, Gtk.Grid)
-
-    def test_get_db_engine_widget(self, preferences_dialog):
-        """Make sure widgets match expectation."""
-        label, widget = preferences_dialog._get_db_engine_widget()
-        assert isinstance(label, Gtk.Label)
-        assert isinstance(widget, Gtk.ComboBoxText)
-
-    def test_get_db_path_widget(self, preferences_dialog):
-        """Make sure widgets match expectation."""
-        label, widget = preferences_dialog._get_db_path_widget()
-        assert isinstance(label, Gtk.Label)
-        assert isinstance(widget, Gtk.Grid)
