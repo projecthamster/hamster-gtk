@@ -6,7 +6,6 @@ import datetime
 import os.path
 
 from gi.repository import Gtk
-from six import text_type
 
 import hamster_gtk.hamster_gtk as hamster_gtk
 from hamster_gtk.tracking import TrackingScreen
@@ -70,10 +69,6 @@ class TestMainWindow(object):
         assert isinstance(window.get_titlebar(), hamster_gtk.HeaderBar)
         assert isinstance(window.app, hamster_gtk.HamsterGTK)
         assert isinstance(window.get_children()[0], TrackingScreen)
-
-    def test_get_css(self, main_window):
-        """Make sure a string is returned."""
-        assert isinstance(main_window._get_css(), text_type)
 
 
 class TestHeaderBar(object):
