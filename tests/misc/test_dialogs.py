@@ -181,17 +181,19 @@ class TestEditFactDialog(object):
     # Add tests for changed values.
     def test_updated_fact_same(self, dummy_window, fact):
         """
-        Make sure the property returns Fact matching field values.
+        Make sure the property returns Fact with matching field values.
 
         We need to jump through some extra hoops because we the current
         implementation will always set the edited fact to today as well as ignore
         all 'second' time info.
         """
         dialog = dialogs.EditFactDialog(dummy_window, fact)
-        today = datetime.date.today()
-        fact.start = datetime.datetime.combine(today, fact.start.time()).replace(second=0)
-        fact.end = datetime.datetime.combine(today, fact.end.time()).replace(second=0)
         result = dialog.updated_fact
+        # The default 'raw fact' used in populating the entry field does discard
+        # the original facts timeinfos seconds. This would couse a mismatch, so
+        # we account for it manually.
+        fact.start = fact.start.replace(second=0)
+        fact.end = fact.end.replace(second=0)
         assert result.as_tuple() == fact.as_tuple()
 
 
