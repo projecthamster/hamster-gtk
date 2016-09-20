@@ -34,7 +34,7 @@ import datetime
 import operator
 from collections import defaultdict, namedtuple
 
-from gi.repository import Gtk
+from gi.repository import GObject, Gtk
 from hamster_lib import reports
 
 from . import widgets
@@ -258,7 +258,7 @@ class OverviewDialog(Gtk.Dialog):
         box = Gtk.Box
         for category, total in category_totals:
             label = Gtk.Label()
-            label.set_markup("<b>{}:</b> {} minutes".format(category,
+            label.set_markup("<b>{}:</b> {} minutes".format(GObject.markup_escape_text(category),
                                                             int(total.total_seconds() / 60)))
             box.pack_start(label, False, False, 10)
         return box

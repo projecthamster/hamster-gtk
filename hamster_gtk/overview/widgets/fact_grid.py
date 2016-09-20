@@ -22,7 +22,7 @@
 # have a unicode issue!
 from __future__ import absolute_import
 
-from gi.repository import Gtk
+from gi.repository import GObject, Gtk
 
 from hamster_gtk import helpers
 from hamster_gtk.misc.dialogs import EditFactDialog
@@ -61,7 +61,7 @@ class FactGrid(Gtk.Grid):
         date_box.set_name('DayRowDateBox')
         date_label = Gtk.Label()
         date_label.set_name('OverviewDateLabel')
-        date_label.set_markup("<b>{}</b>".format(date_string))
+        date_label.set_markup("<b>{}</b>".format(GObject.markup_escape_text(date_string)))
         date_label.set_valign(Gtk.Align.START)
         date_label.set_justify(Gtk.Justification.RIGHT)
         date_box.add(date_label)
@@ -207,7 +207,8 @@ class FactBox(Gtk.Box):
             category = str(fact.category)
         activity_label = Gtk.Label()
         activity_label.set_markup("{activity} - {category}".format(
-            activity=fact.activity.name, category=category))
+            activity=GObject.markup_escape_text(fact.activity.name),
+            category=GObject.markup_escape_text(category)))
         activity_label.props.halign = Gtk.Align.START
         return activity_label
 
@@ -221,7 +222,7 @@ class FactBox(Gtk.Box):
         """
         def get_tag_widget(name):
             tag_label = Gtk.Label()
-            tag_label.set_markup("<small>{}</small>".format(name))
+            tag_label.set_markup("<small>{}</small>".format(GObject.markup_escape_text(name)))
             tag_label.set_name('OverviewTagLabel')
             tag_box = Gtk.EventBox()
             tag_box.set_name('OverviewTagBox')
@@ -240,6 +241,7 @@ class FactBox(Gtk.Box):
         description_label = Gtk.Label()
         description_label.set_name('OverviewDescriptionLabel')
         description_label.set_line_wrap(True)
-        description_label.set_markup("<small><i>{}</i></small>".format(fact.description))
+        description_label.set_markup("<small><i>{}</i></small>".format(
+            GObject.markup_escape_text(fact.description)))
         description_label.props.halign = Gtk.Align.START
         return description_label
