@@ -113,7 +113,7 @@ class DateRangeSelectDialog(Gtk.Dialog):
 
     # Widgets
     def _get_apply_button(self):
-        button = Gtk.Button.new_from_stock(Gtk.STOCK_APPLY)
+        button = Gtk.Button(_('_Apply'))
         return button
 
     def _get_today_widget(self):
@@ -341,15 +341,15 @@ class EditFactDialog(Gtk.Dialog):
 
     def _get_delete_button(self):
         """Return a *delete* button."""
-        return Gtk.Button.new_from_stock(Gtk.STOCK_DELETE)
+        return Gtk.Button(_('_Delete'))
 
     def _get_apply_button(self):
         """Return a *apply* button."""
-        return Gtk.Button.new_from_stock(Gtk.STOCK_APPLY)
+        return Gtk.Button(_('_Apply'))
 
     def _get_cancel_button(self):
         """Return a *cancel* button."""
-        return Gtk.Button.new_from_stock(Gtk.STOCK_CANCEL)
+        return Gtk.Button(_('_Cancel'))
 
 
 class HamsterAboutDialog(Gtk.AboutDialog):
