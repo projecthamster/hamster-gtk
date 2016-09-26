@@ -21,7 +21,7 @@ from __future__ import absolute_import, unicode_literals
 
 from gettext import gettext as _
 
-from gi.repository import Gtk
+from gi.repository import GObject, Gtk
 from six import text_type
 
 from hamster_gtk.misc.dialogs import DateRangeSelectDialog
@@ -129,6 +129,7 @@ class Summary(Gtk.Box):
 
         for category, total in category_totals:
             label = Gtk.Label()
-            label.set_markup("<b>{}:</b> {} minutes".format(category,
-                                                            int(total.total_seconds() / 60)))
+            label.set_markup("<b>{}:</b> {} minutes".format(
+                GObject.markup_escape_text(text_type(category)),
+                int(total.total_seconds() / 60)))
             self.pack_start(label, False, False, 10)
