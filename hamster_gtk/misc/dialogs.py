@@ -314,12 +314,22 @@ class EditFactDialog(Gtk.Dialog):
         # [FIXME]
         # Maybe it would be sensible to have a serialization helper method as
         # part of ``hamster-lib``?!
-        label = '{start} - {end} {activity}@{category}'.format(
-            start=self._fact.start.strftime('%Y-%m-%d %H:%M'),
-            end=self._fact.end.strftime("%Y-%m-%d %H:%M"),
-            activity=text_type(self._fact.activity.name),
-            category=text_type(self._fact.category.name)
-        )
+        start_string = self._fact.start.strftime('%Y-%m-%d %H:%M')
+        end_string = self._fact.end.strftime("%Y-%m-%d %H:%M")
+        if self._fact.category is None:
+            label = '{start} - {end} {activity}'.format(
+                start=start_string,
+                end=end_string,
+                activity=text_type(self._fact.activity.name)
+            )
+        else:
+            label = '{start} - {end} {activity}@{category}'.format(
+                start=start_string,
+                end=end_string,
+                activity=text_type(self._fact.activity.name),
+                category=text_type(self._fact.category.name)
+            )
+
         entry.set_text(label)
         entry.set_name('EditDialogRawFactEntry')
         return entry
