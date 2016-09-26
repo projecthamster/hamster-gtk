@@ -152,7 +152,7 @@ class OverviewDialog(Gtk.Dialog):
         try:
             result = self._app.store.facts.get_all(start, end)
         except (TypeError, ValueError) as error:
-            helpers.show_error(self.get_toplevel(), error)
+            helpers.show_error(helpers.get_parent_window(self), error)
         else:
             return result
 

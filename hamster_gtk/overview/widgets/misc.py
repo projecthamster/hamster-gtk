@@ -24,6 +24,7 @@ from gettext import gettext as _
 from gi.repository import GObject, Gtk
 from six import text_type
 
+from hamster_gtk.helpers import get_parent_window
 from hamster_gtk.misc.dialogs import DateRangeSelectDialog
 
 
@@ -73,7 +74,7 @@ class HeaderBar(Gtk.HeaderBar):
     # Callbacks
     def _on_daterange_button_clicked(self, button):
         """Callback for when the 'daterange' button is clicked."""
-        parent = self.get_parent()
+        parent = get_parent_window(self)
         dialog = DateRangeSelectDialog(parent)
         response = dialog.run()
         if response == Gtk.ResponseType.APPLY:
@@ -93,11 +94,11 @@ class HeaderBar(Gtk.HeaderBar):
 
     def _on_previous_daterange_button_clicked(self, button):
         """Callback for when the 'previous' button is clicked."""
-        self.get_parent().apply_previous_daterange()
+        get_parent_window(self).apply_previous_daterange()
 
     def _on_next_daterange_button_clicked(self, button):
         """Callback for when the 'next' button is clicked."""
-        self.get_parent().apply_next_daterange()
+        get_parent_window(self).apply_next_daterange()
 
     def _on_export_button_clicked(self, button):
         """
@@ -106,7 +107,7 @@ class HeaderBar(Gtk.HeaderBar):
         This is the place to run extra logic about where to save/which format.
         ``parent._export_facts`` only deals with the actual export.
         """
-        parent = self.get_parent()
+        parent = get_parent_window(self)
         dialog = Gtk.FileChooserDialog(_("Please Choose where to export to"), parent,
             Gtk.FileChooserAction.SAVE, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                                          Gtk.STOCK_SAVE, Gtk.ResponseType.OK))
