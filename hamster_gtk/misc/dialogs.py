@@ -398,4 +398,5 @@ class HamsterAboutDialog(Gtk.AboutDialog):
         for key, value in meta.items():
             self.set_property(key, value)
 
+        self.set_transient_for(parent)
         self.show_all()
