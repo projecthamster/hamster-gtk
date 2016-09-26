@@ -89,6 +89,25 @@ def clear_children(widget):
     return widget
 
 
+def get_parent_window(widget):
+    """
+    Reliably determine parent window of a widget.
+
+    Just using :meth:`Gtk.Widget.get_toplevel` would return the widget itself
+    if it had no parent window.
+
+    On the other hand using :meth:`Gtk.Widget.get_ancestor` would return only
+    the closest :class:`Gtk.Window` in the hierarchy.
+
+    https://developer.gnome.org/gtk3/unstable/GtkWidget.html#gtk-widget-get-toplevel
+    """
+    toplevel = widget.get_toplevel()
+    if not toplevel.is_toplevel():
+        toplevel = None
+
+    return toplevel
+
+
 def calendar_date_to_datetime(date):
     """Convert :meth:`Gtk.Calendar.get_date` value to :class:`datetime.date`."""
     year, month, day = date

@@ -38,7 +38,7 @@ import hamster_lib
 from backports.configparser import SafeConfigParser
 from gi.repository import Gdk, GObject, Gtk
 from hamster_lib.helpers import config_helpers
-from hamster_gtk.helpers import get_resource_path
+from hamster_gtk.helpers import get_parent_window, get_resource_path
 from six import text_type
 
 # [FIXME]
@@ -90,7 +90,7 @@ class HeaderBar(Gtk.HeaderBar):
 
     def _on_overview_button(self, button):
         """Callback for overview button."""
-        parent = self.get_parent()
+        parent = get_parent_window(self)
         OverviewDialog(parent, parent.app)
 
     def _on_preferences_button(self, button):
@@ -98,7 +98,7 @@ class HeaderBar(Gtk.HeaderBar):
         def get_initial():
             """Return current values as a dict."""
             return self._app._config
-        parent = self.get_parent()
+        parent = get_parent_window(self)
         dialog = PreferencesDialog(parent, parent.app, get_initial())
         response = dialog.run()
         if response == Gtk.ResponseType.APPLY:
@@ -110,7 +110,7 @@ class HeaderBar(Gtk.HeaderBar):
 
     def _on_about_button(self, button):
         """Bring up, process and shut down about dialog."""
-        parent = self.get_parent()
+        parent = get_parent_window(self)
         dialog = AboutDialog(parent)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:

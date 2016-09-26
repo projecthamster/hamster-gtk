@@ -102,7 +102,7 @@ class FactListBox(Gtk.ListBox):
     # Signal callbacks
     def _on_activate(self, widget, row):
         """Callback trigger if a row is 'activated'."""
-        edit_dialog = EditFactDialog(self.get_toplevel(), row.fact)
+        edit_dialog = EditFactDialog(helpers.get_parent_window(self), row.fact)
         response = edit_dialog.run()
         if response == Gtk.ResponseType.CANCEL:
             pass
@@ -117,7 +117,7 @@ class FactListBox(Gtk.ListBox):
         try:
             self._controler.store.facts.save(fact)
         except (ValueError, KeyError) as message:
-            helpers.show_error(self, message)
+            helpers.show_error(helpers.get_parent_window(self), message)
         else:
             self._controler.signal_handler.emit('facts_changed')
 
@@ -126,7 +126,7 @@ class FactListBox(Gtk.ListBox):
         try:
             result = self._controler.store.facts.remove(fact)
         except (ValueError, KeyError) as error:
-            helpers.show_error(self.get_toplevel(), error)
+            helpers.show_error(helpers.get_parent_window(self), error)
         else:
             self._controler.signal_handler.emit('facts_changed')
             return result

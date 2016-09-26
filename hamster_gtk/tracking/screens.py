@@ -40,7 +40,7 @@ class TrackingScreen(Gtk.Stack):
         super(TrackingScreen, self).__init__()
         self.app = app
 
-        self.main_window = self.get_parent()
+        self.main_window = helpers.get_parent_window(self)
         self.set_transition_type(Gtk.StackTransitionType.SLIDE_UP)
         self.set_transition_duration(1000)
         self.current_fact_view = CurrentFactBox(self.app.controler)
@@ -132,7 +132,7 @@ class CurrentFactBox(Gtk.Box):
         try:
             self._controler.store.facts.cancel_tmp_fact()
         except KeyError as err:
-            helpers.show_error(self.get_toplevel(), err)
+            helpers.show_error(helpers.get_parent_window(self), err)
         else:
             self.emit('tracking-stopped')
 
@@ -145,7 +145,7 @@ class CurrentFactBox(Gtk.Box):
         try:
             self._controler.store.facts.stop_tmp_fact()
         except Exception as error:
-            helpers.show_error(self.get_toplevel(), error)
+            helpers.show_error(helpers.get_parent_window(self), error)
         else:
             self.emit('tracking-stopped')
             # Inform the controller about the chance.
@@ -210,7 +210,7 @@ class StartTrackingBox(Gtk.Box):
         try:
             fact = Fact.create_from_raw_fact(raw_fact)
         except Exception as error:
-            helpers.show_error(self.get_toplevel(), error)
+            helpers.show_error(helpers.get_parent_window(self), error)
         else:
             fact = complete_tmp_fact(fact)
 
