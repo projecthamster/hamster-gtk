@@ -42,7 +42,7 @@ class TimeEntry(Gtk.Entry, ConfigWidget):
         Return selected time.
 
         Returns:
-            :class:`datetime.time`: Selected time.
+            datetime.time: Selected time.
         """
         result = _u(self.get_text())
         # We are tollerant against malformed time information.
@@ -58,6 +58,6 @@ class TimeEntry(Gtk.Entry, ConfigWidget):
         Select given time.
 
         Args:
-            value: Time to be selected
+            value (datetime.time): Time to be selected
         """
         self.set_text(text_type(value.strftime('%H:%M:%S')))

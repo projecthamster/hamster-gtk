@@ -48,9 +48,9 @@ class DurationEntry(Gtk.SpinButton, ConfigWidget):
         Initialize widget.
 
         Args:
-            adj: Adjustment for the widget, either :class:`Gtk.Adjustment` or
-                a :class:`SimpleAdjustment`. See their respective documentation
-                for more information.
+            adj (Gtk.Adjustment, SimpleAdjustment): Adjustment for the widget, either
+                :class:`Gtk.Adjustment` or a :class:`SimpleAdjustment`.
+                See their respective documentation for more information.
         """
         super(Gtk.Entry, self).__init__()
 
@@ -82,7 +82,7 @@ class DurationEntry(Gtk.SpinButton, ConfigWidget):
         """Return selected value.
 
         Returns:
-            :class:`int`: Number entered into the widget
+            int: Number entered into the widget
         """
         return self.get_value_as_int()
 
@@ -91,6 +91,6 @@ class DurationEntry(Gtk.SpinButton, ConfigWidget):
         Set given value.
 
         Args:
-            value: Value to be set
+            value (int): Value to be set
         """
         self.set_value(int(value))

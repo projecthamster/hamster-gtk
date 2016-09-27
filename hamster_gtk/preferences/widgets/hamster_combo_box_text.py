@@ -39,7 +39,7 @@ class HamsterComboBoxText(Gtk.ComboBoxText, ConfigWidget):
         Initialize widget.
 
         Args:
-            items: Dict of ids/texts to be selectable.
+            items (dict): Dict of ids/texts to be selectable.
         """
         super(Gtk.ComboBoxText, self).__init__()
 
@@ -52,7 +52,7 @@ class HamsterComboBoxText(Gtk.ComboBoxText, ConfigWidget):
         Return the id of the selected item.
 
         Returns:
-            :class:`six.text_type`: Identifier of the selected item
+            six.text_type: Identifier of the selected item
         """
         return _u(self.get_active_id())
 
@@ -61,6 +61,6 @@ class HamsterComboBoxText(Gtk.ComboBoxText, ConfigWidget):
         Select item with a given id.
 
         Args:
-            id: Identifier of an item to be selected
+            id (six.text_type): Identifier of an item to be selected
         """
         self.set_active_id(id)

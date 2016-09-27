@@ -61,7 +61,7 @@ class EditableFileChooser(Gtk.Grid, ConfigWidget):
         Return the selected path.
 
         Returns:
-            :class:`six.text_type`: Selected file path.
+            six.text_type: Selected file path.
         """
         return _u(self._entry.get_text())
 
@@ -70,11 +70,10 @@ class EditableFileChooser(Gtk.Grid, ConfigWidget):
         Select given file path.
 
         Args:
-            path: Path to be selected
+            path (six.text_type): Path to be selected
         """
         self._entry.set_text(text_type(path))
 
-    # [FIXME] set current directory for the dialog
     def _on_choose_clicked(self, widget):
         """Open a dialog to select path and update entry widget with it."""
         toplevel = get_parent_window(self)
@@ -82,6 +81,7 @@ class EditableFileChooser(Gtk.Grid, ConfigWidget):
         dialog = Gtk.FileChooserDialog(_("Please choose a directory"), toplevel,
             Gtk.FileChooserAction.SAVE, (_("_Cancel"), Gtk.ResponseType.CANCEL,
                                          _("_Save"), Gtk.ResponseType.OK))
+        dialog.set_filename(self.get_config_value())
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             self._entry.set_text(text_type(dialog.get_filename()))

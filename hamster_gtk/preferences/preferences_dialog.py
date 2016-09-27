@@ -104,7 +104,7 @@ class PreferencesDialog(Gtk.Dialog):
         Go through widgets and set their values.
 
         Args:
-            values: Dictionary of config keys/values
+            values (dict): Dictionary of config keys/values
         """
         for key, (_label, widget) in self._fields.items():
             widget.set_config_value(values[key])
