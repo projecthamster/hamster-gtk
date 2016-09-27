@@ -28,9 +28,8 @@ from gettext import gettext as _
 import hamster_lib
 from gi.repository import GObject, Gtk
 
-from hamster_gtk.preferences.widgets import (ConfigComboBoxText, ConfigWidget,
-                                             DurationEntry,
-                                             EditableFileChooser, TimeEntry)
+from hamster_gtk.preferences.widgets import (DurationEntry, EditableFileChooser,
+                                             HamsterComboBoxText, SimpleAdjustment, TimeEntry)
 
 
 class PreferencesDialog(Gtk.Dialog):
@@ -61,9 +60,9 @@ class PreferencesDialog(Gtk.Dialog):
         self._fields = collections.OrderedDict([
             ('day_start', (_('_Day Start (HH:MM:SS)'), TimeEntry())),
             ('fact_min_delta', (_('_Minimal Fact Duration'),
-                DurationEntry(0, GObject.G_MAXDOUBLE, 1))),
-            ('store', (_('_Store'), ConfigComboBoxText(stores))),
-            ('db_engine', (_('DB _Engine'), ConfigComboBoxText(db_engines))),
+                DurationEntry(SimpleAdjustment(0, GObject.G_MAXDOUBLE, 1)))),
+            ('store', (_('_Store'), HamsterComboBoxText(stores))),
+            ('db_engine', (_('DB _Engine'), HamsterComboBoxText(db_engines))),
             ('db_path', (_('DB _Path'), EditableFileChooser())),
             ('tmpfile_path', (_('_Temporary file'), EditableFileChooser())),
         ])
@@ -79,7 +78,7 @@ class PreferencesDialog(Gtk.Dialog):
             grid.attach(widget, 1, row, 1, 1)
             row += 1
 
-        self.set_config(initial)
+        self._set_config(initial)
 
         self.get_content_area().add(grid)
         self.add_button(_('_Cancel'), Gtk.ResponseType.CANCEL)
@@ -88,19 +87,24 @@ class PreferencesDialog(Gtk.Dialog):
         self.show_all()
 
     def get_config(self):
-        """Parse config widgets and construct a {field: value} dict."""
+        """
+        Parse config widgets and construct a {field: value} dict.
+
+        Returns:
+            dict: Dictionary of config keys/values.
+        """
         result = {}
         for key, (_label, widget) in self._fields.items():
-            if not isinstance(widget, ConfigWidget):
-                raise TypeError(_("Unhandled widget class!"))
-
             result[key] = widget.get_config_value()
 
         return result
 
-    def set_config(self, values):
-        """Go through widgets and set their values."""
+    def _set_config(self, values):
+        """
+        Go through widgets and set their values.
+
+        Args:
+            values: Dictionary of config keys/values
+        """
         for key, (_label, widget) in self._fields.items():
-            if not isinstance(widget, ConfigWidget):
-                raise TypeError(_("Unhandled widget class!"))
             widget.set_config_value(values[key])

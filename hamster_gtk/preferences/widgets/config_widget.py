@@ -18,8 +18,14 @@
 """This module provides “interface” for config widgets."""
 
 
-class ConfigWidget():
-    """Abstract class representing widgets for changing preferences."""
+class ConfigWidget(object):
+    """
+    Abstract class defining unified setter/getter methods for accessing widget values.
+
+    Depending on a particular widget, the way a value is set/retrieved varies while the semantics
+    are rather constant. This class provides a consistent interface to be implemented by our custom
+    widgets, which should help in making the access to their values cleaner and more concise.
+    """
 
     def get_config_value(self):
         """Get widget value."""

@@ -15,14 +15,11 @@
 # You should have received a copy of the GNU General Public License
 # along with 'hamster-gtk'.  If not, see <http://www.gnu.org/licenses/>.
 
-"""This module provides a widget for entering time."""
+"""This module provides ComboBoxText widget extended to store preferences."""
 
 from __future__ import absolute_import
 
-import datetime
-
 from gi.repository import Gtk
-from six import text_type
 
 # [FIXME]
 # Remove once hamster-lib has been patched
@@ -31,33 +28,39 @@ from hamster_gtk.helpers import _u
 from .config_widget import ConfigWidget
 
 
-class TimeEntry(Gtk.Entry, ConfigWidget):
-    """A widget for entering time."""
+class HamsterComboBoxText(Gtk.ComboBoxText, ConfigWidget):
+    """A ComboBoxText that implements our unified customConfigWidget interface."""
 
     # Required else you would need to specify the full module name in ui file
-    __gtype_name__ = 'TimeEntry'
+    __gtype_name__ = 'HamsterComboBoxText'
+
+    def __init__(self, items=None):
+        """
+        Initialize widget.
+
+        Args:
+            items: Dict of ids/texts to be selectable.
+        """
+        super(Gtk.ComboBoxText, self).__init__()
+
+        if items is not None:
+            for id, text in items:
+                self.append(id, text)
 
     def get_config_value(self):
         """
-        Return selected time.
+        Return the id of the selected item.
 
         Returns:
-            :class:`datetime.time`: Selected time.
+            :class:`six.text_type`: Identifier of the selected item
         """
-        result = _u(self.get_text())
-        # We are tollerant against malformed time information.
-        try:
-            result = datetime.datetime.strptime(result, '%H:%M:%S').time()
-        except ValueError:
-            result = datetime.datetime.strptime(result, '%H:%M').time()
+        return _u(self.get_active_id())
 
-        return result
-
-    def set_config_value(self, value):
+    def set_config_value(self, id):
         """
-        Select given time.
+        Select item with a given id.
 
         Args:
-            value: Time to be selected
+            id: Identifier of an item to be selected
         """
-        self.set_text(text_type(value.strftime('%H:%M:%S')))
+        self.set_active_id(id)
