@@ -24,14 +24,7 @@ import math
 from gi.repository import Gtk
 
 from .config_widget import ConfigWidget
-from collections import namedtuple
-
-SimpleAdjustment = namedtuple('SimpleAdjustment', ('min', 'max', 'step'))
-"""Simpilified version of :class:`Gtk.Adjustment`."""
-SimpleAdjustment.min.__doc__ = """int: The minimum value."""
-SimpleAdjustment.max.__doc__ = """int: The maximum value."""
-SimpleAdjustment.step.__doc__ = """int: The amount the value will be increased/decreased
-when the corresponding buttons are clicked."""
+from .simple_adjustment import SimpleAdjustment
 
 
 class DurationEntry(Gtk.SpinButton, ConfigWidget):
@@ -49,7 +42,7 @@ class DurationEntry(Gtk.SpinButton, ConfigWidget):
 
         Args:
             adj (Gtk.Adjustment, SimpleAdjustment): Adjustment for the widget, either
-                :class:`Gtk.Adjustment` or a :class:`SimpleAdjustment`.
+                :class:`Gtk.Adjustment` or a :class:`.SimpleAdjustment`.
                 See their respective documentation for more information.
         """
         super(Gtk.Entry, self).__init__()

@@ -123,13 +123,13 @@ class TestDurationEntry(object):
 
     def test_params_constructor_overlapping_bounds(self, simple_adjustment):
         """Passing lower bound greater than upper bound to the constructor should fail."""
-        new_adj = simple_adjustment._replace(min=simple_adjustment.max, max=simple_adjustment.min)
+        new_adj = simple_adjustment.replace(min=simple_adjustment.max, max=simple_adjustment.min)
         with pytest.raises(ValueError):
             widgets.DurationEntry(new_adj)
 
     def test_params_constructor_zero_step(self, simple_adjustment):
         """Passing zero as a step to the constructor should fail."""
-        new_adj = simple_adjustment._replace(step=0)
+        new_adj = simple_adjustment.replace(step=0)
         with pytest.raises(ValueError):
             widgets.DurationEntry(new_adj)
 
@@ -143,13 +143,13 @@ class TestDurationEntry(object):
 
     def test_params_constructor_decimal_places(self, simple_adjustment):
         """When given a fractional step, the widget should show values at appropriate precision."""
-        new_adj = simple_adjustment._replace(step=1e-19)
+        new_adj = simple_adjustment.replace(step=1e-19)
         spin = widgets.DurationEntry(new_adj)
         assert spin.get_digits() == 19
 
     def test_params_constructor_clamped_digits(self, simple_adjustment):
         """When passing a step with too many decimal places, the precision is clamped."""
-        new_adj = simple_adjustment._replace(step=1e-25)
+        new_adj = simple_adjustment.replace(step=1e-25)
         spin = widgets.DurationEntry(new_adj)
         assert spin.get_digits() == widgets.DurationEntry.MAX_DIGITS
 

@@ -29,7 +29,7 @@ from .config_widget import ConfigWidget
 
 
 class HamsterComboBoxText(Gtk.ComboBoxText, ConfigWidget):
-    """A ComboBoxText that implements our unified customConfigWidget interface."""
+    """A ComboBoxText that implements our unified custom ConfigWidget interface."""
 
     # Required else you would need to specify the full module name in ui file
     __gtype_name__ = 'HamsterComboBoxText'
