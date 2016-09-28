@@ -8,6 +8,12 @@ language: python
 python:
     - "2.7"
 
+env:
+  - TOXENV=flake8
+  - TOXENV=pep257
+  - TOXENV=manifest
+  - TOXENV=docs
+
 cache: pip
 
 addons:
@@ -28,8 +34,7 @@ addons:
 virtualenv:
   system_site_packages: true
 
-before_install:
-    #- pip install codecov
+install:
   - pip install --upgrade pip
   - pip install -r requirements/test.pip
   - sudo apt-get install --only-upgrade libgtk-3-dev
@@ -38,7 +43,6 @@ before_script:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
   - sleep 3 # give xvfb some time to start
-# command to run tests, e.g. python setup.py test
+
 script:
     - tox
-#- py.test --verbose tests
