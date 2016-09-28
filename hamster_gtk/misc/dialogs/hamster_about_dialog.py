@@ -67,4 +67,3 @@ class HamsterAboutDialog(Gtk.AboutDialog):
             self.set_property(key, value)
 
         self.set_transient_for(parent)
-        self.show_all()
