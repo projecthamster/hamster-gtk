@@ -18,8 +18,7 @@
 """This module provides widgets to be used by the preferences dialog."""
 
 from .config_widget import ConfigWidget  # NOQA
-from .duration_entry import DurationEntry  # NOQA
+from .duration_entry import DurationEntry, SimpleAdjustment  # NOQA
 from .editable_file_chooser import EditableFileChooser  # NOQA
 from .hamster_combo_box_text import HamsterComboBoxText  # NOQA
-from .simple_adjustment import SimpleAdjustment  # NOQA
 from .time_entry import TimeEntry  # NOQA
