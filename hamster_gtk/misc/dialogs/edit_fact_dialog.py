@@ -156,12 +156,12 @@ class EditFactDialog(Gtk.Dialog):
 
     def _get_delete_button(self):
         """Return a *delete* button."""
-        return Gtk.Button(_('_Delete'))
+        return Gtk.Button(_('_Delete'), use_underline=True)
 
     def _get_apply_button(self):
         """Return a *apply* button."""
-        return Gtk.Button(_('_Apply'))
+        return Gtk.Button(_('_Apply'), use_underline=True)
 
     def _get_cancel_button(self):
         """Return a *cancel* button."""
-        return Gtk.Button(_('_Cancel'))
+        return Gtk.Button(_('_Cancel'), use_underline=True)

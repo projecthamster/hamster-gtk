@@ -87,7 +87,7 @@ class DateRangeSelectDialog(Gtk.Dialog):
 
     # Widgets
     def _get_apply_button(self):
-        button = Gtk.Button(_('_Apply'))
+        button = Gtk.Button(_('_Apply'), use_underline=True)
         return button
 
     def _get_today_widget(self):
