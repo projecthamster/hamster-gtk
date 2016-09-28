@@ -36,11 +36,11 @@ from hamster_gtk.helpers import _u
 from .config_widget import ConfigWidget
 
 
-class EditableFileChooser(Gtk.Grid, ConfigWidget):
+class ComboFileChooser(Gtk.Grid, ConfigWidget):
     """A file chooser that also has an entry for changing the path."""
 
     # Required else you would need to specify the full module name in ui file
-    __gtype_name__ = 'EditableFileChooser'
+    __gtype_name__ = 'ComboFileChooser'
 
     def __init__(self):
         """Initialize widget."""

@@ -38,11 +38,11 @@ Args:
 """
 
 
-class DurationEntry(Gtk.SpinButton, ConfigWidget):
+class HamsterSpinButton(Gtk.SpinButton, ConfigWidget):
     """A widget for entering a duration."""
 
     # Required else you would need to specify the full module name in ui file
-    __gtype_name__ = 'DurationEntry'
+    __gtype_name__ = 'HamsterSpinButton'
 
     MAX_DIGITS = 20
     """Maximum number of digits displayed after decimal point."""

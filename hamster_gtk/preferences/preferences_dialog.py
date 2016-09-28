@@ -28,8 +28,10 @@ from gettext import gettext as _
 import hamster_lib
 from gi.repository import GObject, Gtk
 
-from hamster_gtk.preferences.widgets import (DurationEntry, EditableFileChooser,
-                                             HamsterComboBoxText, SimpleAdjustment, TimeEntry)
+from hamster_gtk.preferences.widgets import (ComboFileChooser,
+                                             HamsterComboBoxText,
+                                             HamsterSpinButton,
+                                             SimpleAdjustment, TimeEntry)
 
 
 class PreferencesDialog(Gtk.Dialog):
@@ -60,11 +62,11 @@ class PreferencesDialog(Gtk.Dialog):
         self._fields = collections.OrderedDict([
             ('day_start', (_('_Day Start (HH:MM:SS)'), TimeEntry())),
             ('fact_min_delta', (_('_Minimal Fact Duration'),
-                DurationEntry(SimpleAdjustment(0, GObject.G_MAXDOUBLE, 1)))),
+                HamsterSpinButton(SimpleAdjustment(0, GObject.G_MAXDOUBLE, 1)))),
             ('store', (_('_Store'), HamsterComboBoxText(stores))),
             ('db_engine', (_('DB _Engine'), HamsterComboBoxText(db_engines))),
-            ('db_path', (_('DB _Path'), EditableFileChooser())),
-            ('tmpfile_path', (_('_Temporary file'), EditableFileChooser())),
+            ('db_path', (_('DB _Path'), ComboFileChooser())),
+            ('tmpfile_path', (_('_Temporary file'), ComboFileChooser())),
         ])
 
         grid = Gtk.Grid()
