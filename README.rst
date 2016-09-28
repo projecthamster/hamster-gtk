@@ -22,6 +22,14 @@ rely on it to work properly and most certainly you should not use it in an
 production environment!
 You have been warned.
 
+Dependencies
+-------------
+
+To Run the Testsuite
+~~~~~~~~~~~~~~~~~~~~~
+- make
+- xvfb
+
 First Steps
 ------------
 * Install dependencies (on debian if using virtualenvwrapper):
