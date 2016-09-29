@@ -25,3 +25,11 @@ class TestPreferencesDialog(object):
         dialog = PreferencesDialog(dummy_window, app, initial_config_parametrized)
         result = dialog.get_config()
         assert result == initial_config_parametrized
+
+    def test_set_config(self, dummy_window, app, initial_config_parametrized):
+        """Make sure setting the field values works as expected."""
+        dialog = PreferencesDialog(dummy_window, app, initial_config_parametrized)
+        another_config_parametrized = initial_config_parametrized
+        dialog._set_config(another_config_parametrized)
+        for key, (_label, widget) in dialog._fields.items():
+            assert widget.get_config_value() == initial_config_parametrized[key]
