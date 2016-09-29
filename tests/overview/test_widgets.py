@@ -140,7 +140,7 @@ class TestFactBox(object):
         # refactored.
         result = factbox._get_tags_widget(fact)
         assert isinstance(result, Gtk.Box)
-        assert len(result.get_children()) == 1
+        assert len(result.get_children()) == len(fact.tags)
 
     def test__get_desciption_widget(self, factbox, fact):
         """Make sure instantiated object matches expectations."""
