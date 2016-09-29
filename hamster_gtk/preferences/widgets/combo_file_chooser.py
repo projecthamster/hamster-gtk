@@ -84,7 +84,7 @@ class ComboFileChooser(Gtk.Grid, ConfigWidget):
         dialog.set_filename(self.get_config_value())
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            self._entry.set_text(text_type(dialog.get_filename()))
+            self._entry.set_text(_u(dialog.get_filename()))
 
         dialog.destroy()
 

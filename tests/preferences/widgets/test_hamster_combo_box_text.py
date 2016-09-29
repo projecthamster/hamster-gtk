@@ -29,20 +29,14 @@ class TestHamsterComboBoxText(object):
 
     def test_get_config_value(self, hamster_combo_box_text, combo_box_items):
         """Make sure the widget value is retrieved correctly."""
-        random_id = random.choice(combo_box_items)[0]
-        hamster_combo_box_text.set_active_id(random_id)
-        assert hamster_combo_box_text.get_config_value() == random_id
-
-        another_random_id = random.choice(combo_box_items)[0]
-        hamster_combo_box_text.set_active_id(another_random_id)
-        assert hamster_combo_box_text.get_config_value() == another_random_id
+        random.shuffle(combo_box_items)
+        for random_id, _text in combo_box_items:
+            hamster_combo_box_text.set_active_id(random_id)
+            assert hamster_combo_box_text.get_config_value() == random_id
 
     def test_set_config_value(self, hamster_combo_box_text, combo_box_items):
         """Make sure the widget value is set correctly."""
-        random_id = random.choice(combo_box_items)[0]
-        hamster_combo_box_text.set_config_value(random_id)
-        assert hamster_combo_box_text.get_active_id() == random_id
-
-        another_random_id = random.choice(combo_box_items)[0]
-        hamster_combo_box_text.set_config_value(another_random_id)
-        assert hamster_combo_box_text.get_active_id() == another_random_id
+        random.shuffle(combo_box_items)
+        for random_id, _text in combo_box_items:
+            hamster_combo_box_text.set_config_value(random_id)
+            assert hamster_combo_box_text.get_active_id() == random_id

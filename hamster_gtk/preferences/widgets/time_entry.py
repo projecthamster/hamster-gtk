@@ -39,10 +39,16 @@ class TimeEntry(Gtk.Entry, ConfigWidget):
 
     def get_config_value(self):
         """
-        Return selected time.
+        Return time entered into the widget.
+
+        The entered time has to match either ``HH:MM:SS`` or ``HH:MM`` form,
+        otherwise an error is thrown.
 
         Returns:
             datetime.time: Selected time.
+
+        Raises:
+            ValueError: When the text entered in the field does not constitute a valid time.
         """
         result = _u(self.get_text())
         # We are tollerant against malformed time information.

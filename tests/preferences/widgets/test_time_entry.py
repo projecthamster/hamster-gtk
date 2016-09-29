@@ -33,6 +33,12 @@ class TestTimeEntry(object):
             time_entry.set_text(time.strftime('%H:%M:%S'))
             assert time_entry.get_config_value() == time
 
+    def test_get_config_value_short(self, time_entry, times_without_seconds):
+        """Make sure the widget value is retrieved correctly when using the short time form."""
+        for time in times_without_seconds:
+            time_entry.set_text(time.strftime('%H:%M'))
+            assert time_entry.get_config_value() == time
+
     def test_set_config_value(self, time_entry, times):
         """Make sure the widget value is set correctly."""
         for time in times:

@@ -19,12 +19,11 @@
 
 from __future__ import absolute_import
 
-import math
+from collections import namedtuple
 
 from gi.repository import Gtk
 
 from .config_widget import ConfigWidget
-from collections import namedtuple
 
 SimpleAdjustment = namedtuple('SimpleAdjustment', ('min', 'max', 'step'))
 """
@@ -43,9 +42,6 @@ class HamsterSpinButton(Gtk.SpinButton, ConfigWidget):
 
     # Required else you would need to specify the full module name in ui file
     __gtype_name__ = 'HamsterSpinButton'
-
-    MAX_DIGITS = 20
-    """Maximum number of digits displayed after decimal point."""
 
     def __init__(self, adj=None):
         """
@@ -66,16 +62,7 @@ class HamsterSpinButton(Gtk.SpinButton, ConfigWidget):
                     raise ValueError('Step value has to be non-zero.')
 
                 adjustment = Gtk.Adjustment(adj.min, adj.min, adj.max, adj.step, 10 * adj.step, 0)
-
-                if abs(adj.step) >= 1:
-                    digits = 0
-                else:
-                    digits = abs(math.floor(math.log10(abs(adj.step))))
-
-                if digits > self.MAX_DIGITS:
-                    digits = self.MAX_DIGITS
-
-                self.configure(adjustment, adj.step, digits)
+                self.configure(adjustment, adj.step, 0)
                 self.set_numeric(True)
             elif isinstance(adj, Gtk.Adjustment):
                 self.set_adjustment(adj)

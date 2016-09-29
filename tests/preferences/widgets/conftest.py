@@ -91,3 +91,9 @@ def times(request, faker):
     """Return a list of random times."""
     amount = 3
     return [datetime.datetime.strptime(faker.time(), '%H:%M:%S').time() for i in range(amount)]
+
+
+@pytest.fixture
+def times_without_seconds(request, times):
+    """Return a list of random times rounded to whole minutes."""
+    return [time.replace(second=0) for time in times]
