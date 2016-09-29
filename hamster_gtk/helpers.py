@@ -24,8 +24,6 @@ import datetime
 import six
 import os.path
 
-from . import dialogs
-
 
 def _u(string):
     """
@@ -70,9 +68,12 @@ def show_error(parent, error, message=None):
     Returns:
         None
     """
+    # We can not import this on a global level due to circular imports.
+    from .misc import ErrorDialog
+
     if not message:
         message = error
-    dialog = dialogs.ErrorDialog(parent, message)
+    dialog = ErrorDialog(parent, message)
     dialog.run()
     dialog.destroy()
 
