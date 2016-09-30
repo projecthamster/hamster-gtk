@@ -58,9 +58,11 @@ class OverviewDialog(Gtk.Dialog):
         self.set_default_size(640, 800)
         self.set_titlebar(self.titlebar)
         self.main_box = self.get_content_area()
-        self._daterange = self._get_default_daterange()
-
+        # ``self._charts`` needs to be setup before we assign
+        # ``self._daterange`` as this will trigger ``self.refresh`` which
+        # expects ``self._charts``.
         self._charts = False
+        self._daterange = self._get_default_daterange()
 
         # [FIXME] Should be a property to make sure the signal is emitted
         self._facts = None
@@ -108,6 +110,8 @@ class OverviewDialog(Gtk.Dialog):
         self._grouped_facts, self._totals = self._group_facts()
 
         helpers.clear_children(self.main_box)
+        if self._charts:
+            self._charts = False
 
         facts_window = Gtk.ScrolledWindow()
         self.factlist = widgets.FactGrid(self._app.controler, self._grouped_facts.by_date)
