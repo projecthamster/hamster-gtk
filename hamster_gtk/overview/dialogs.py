@@ -120,9 +120,9 @@ class OverviewDialog(Gtk.Dialog):
         self.totals_panel = widgets.Summary(self._get_highest_totals(self._totals.category, 3))
         self.main_box.pack_start(self.totals_panel, False, False, 0)
 
-        # [FIXME]
-        # Only show button if there are facts.
         charts_button = Gtk.Button('click to show more details ...')
+        if not self._facts:
+            charts_button.set_sensitive(False)
         charts_button.connect('clicked', self._on_charts_button)
         self.main_box.pack_start(charts_button, False, True, 0)
 
