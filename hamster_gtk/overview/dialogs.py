@@ -66,7 +66,6 @@ class OverviewDialog(Gtk.Dialog):
         self._facts = None
         self._grouped_facts = None
 
-        self.refresh()
         self.show_all()
 
     @property
