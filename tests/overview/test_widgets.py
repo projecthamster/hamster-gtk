@@ -61,13 +61,13 @@ class TestFactListBox(object):
         assert fact_list_box._update_fact.called
 
     def test__delete_fact(self, request, fact_list_box, fact, mocker):
-        """Make sure that ``facts_changed`` signal is emitted."""
+        """Make sure that ``facts-changed`` signal is emitted."""
         fact_list_box._controler.store.facts.remove = mocker.MagicMock()
         fact_list_box.emit = mocker.MagicMock()
         result = fact_list_box._delete_fact(fact)
         assert fact_list_box._controler.store.facts.remove.called
         assert result is result
-        assert fact_list_box.emit.called_with('facts_changed')
+        assert fact_list_box.emit.called_with('facts-changed')
 
     @pytest.mark.parametrize('exception', (KeyError, ValueError))
     def test__delete_fact_expected_exception(self, request, fact_list_box, exception, fact,

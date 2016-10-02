@@ -119,7 +119,7 @@ class FactListBox(Gtk.ListBox):
         except (ValueError, KeyError) as message:
             helpers.show_error(helpers.get_parent_window(self), message)
         else:
-            self._controler.signal_handler.emit('facts_changed')
+            self._controler.signal_handler.emit('facts-changed')
 
     def _delete_fact(self, fact):
         """Delete fact from the backend. No further confirmation is required."""
@@ -128,7 +128,7 @@ class FactListBox(Gtk.ListBox):
         except (ValueError, KeyError) as error:
             helpers.show_error(helpers.get_parent_window(self), error)
         else:
-            self._controler.signal_handler.emit('facts_changed')
+            self._controler.signal_handler.emit('facts-changed')
             return result
 
 
