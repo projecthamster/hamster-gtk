@@ -176,7 +176,9 @@ class HamsterGTK(Gtk.Application):
         self.window = None
         # Which config backend to use.
         self.config_store = 'file'
-        self.config = self._reload_config()
+        # Yes this is redundent, but more transparent. And we can worry about
+        # this unwarrented assignment once it actually matters.
+        self._config = self._reload_config()
 
         self.connect('startup', self._startup)
         self.connect('activate', self._activate)
@@ -239,11 +241,7 @@ class HamsterGTK(Gtk.Application):
 
     def _config_changed(self, sender):
         """Callback triggered when config has been changed."""
-        self._reload_config()
-        # [FIXME]
-        # hamster-lib currentl provides no proper way to update its config
-        # See: https://github.com/projecthamster/hamster-lib/issues/190
-        # We want something like ``self.controler.update_config(self._config)``
+        self.controler.update_config(self._reload_config())
 
     def _get_default_config(self):
         """
