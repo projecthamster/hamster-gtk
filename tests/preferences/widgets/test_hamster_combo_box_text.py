@@ -30,13 +30,13 @@ class TestHamsterComboBoxText(object):
     def test_get_config_value(self, hamster_combo_box_text, combo_box_items):
         """Make sure the widget value is retrieved correctly."""
         random.shuffle(combo_box_items)
-        for random_id, _text in combo_box_items:
-            hamster_combo_box_text.set_active_id(random_id)
-            assert hamster_combo_box_text.get_config_value() == random_id
+        for id, text in combo_box_items:
+            hamster_combo_box_text.set_active_id(id)
+            assert hamster_combo_box_text.get_config_value() == id
 
     def test_set_config_value(self, hamster_combo_box_text, combo_box_items):
         """Make sure the widget value is set correctly."""
         random.shuffle(combo_box_items)
-        for random_id, _text in combo_box_items:
-            hamster_combo_box_text.set_config_value(random_id)
-            assert hamster_combo_box_text.get_active_id() == random_id
+        for id, text in combo_box_items:
+            hamster_combo_box_text.set_config_value(id)
+            assert hamster_combo_box_text.get_active_id() == id

@@ -95,5 +95,5 @@ def times(request, faker):
 
 @pytest.fixture
 def times_without_seconds(request, times):
-    """Return a list of random times rounded to whole minutes."""
+    """Return a list of random times rounded down to whole minutes."""
     return [time.replace(second=0) for time in times]

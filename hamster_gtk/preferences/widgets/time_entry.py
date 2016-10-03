@@ -61,7 +61,7 @@ class TimeEntry(Gtk.Entry, ConfigWidget):
 
     def set_config_value(self, value):
         """
-        Select given time.
+        Set the widgets time string to passed value.
 
         Args:
             value (datetime.time): Time to be selected

@@ -44,3 +44,9 @@ class TestTimeEntry(object):
         for time in times:
             time_entry.set_config_value(time)
             assert time_entry.get_text() == time.strftime('%H:%M:%S')
+
+    def test_set_config_value_short(self, time_entry, times_without_seconds):
+        """Make sure the widget value is set correctly evem if our value ommits seconds."""
+        for time in times_without_seconds:
+            time_entry.set_config_value(time)
+            assert time_entry.get_text() == time.strftime('%H:%M:%S')
