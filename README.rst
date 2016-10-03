@@ -47,12 +47,16 @@ Some notes:
 * Exported data is tab seperated.
 * This is pre-alpha software!
 
-News: Version 0.10.0
+News: Version 0.11.0
 ----------------------
-This is the first release of ``hamster-gtk``! As such it is just a first glimpse
-of things to come and far from useable for end user needs. Whilst you should be able
-to track, list and export your activities we do not take any responsibility for data
-loss or curruption of any sort. What we *do* take however, are you bug reports and
-feature requests.
+This release introduces refines various aspects of your *Hamster-GTK* experience.
+Whilst we introduce no new major dialogs (just a simple about-dialog). We
+catch up with the lastest version of ``hamster-lib``, ``0.12.0``. The most
+noteworthy change for user is probably the ability to use whitespaces with your
+``Activity.name``. Besides that we fixed some rather anoying bugs as well as
+continued to refine the codebase. All in all, while still not big on features,
+this release should feel much more stable and reliable. This is not the least
+due to multiple contributions by ``jtojnar``, thanks for that!
+As ususal, for more changes and details, please refer to the changelog.
 Happy tracking; Eric.
 `
