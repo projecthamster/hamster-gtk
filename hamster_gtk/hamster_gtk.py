@@ -22,7 +22,6 @@
 
 from __future__ import absolute_import, unicode_literals
 
-import collections
 import datetime
 import os.path
 import traceback
@@ -43,9 +42,10 @@ from six import text_type
 
 # [FIXME]
 # Remove once hamster-lib has been patched
-from hamster_gtk.helpers import _u, get_config_instance
+from hamster_gtk.helpers import get_config_instance
 from hamster_gtk.misc import HamsterAboutDialog as AboutDialog
 from hamster_gtk.overview import OverviewDialog
+from hamster_gtk.preferences import PreferencesDialog
 from hamster_gtk.tracking import TrackingScreen
 
 
@@ -382,214 +382,6 @@ class HamsterGTK(Gtk.Application):
 
         cp_instance = get_config_instance(get_fallback(), 'hamster-gtk', 'hamster-gtk.conf')
         return self._configparser_to_config(cp_instance)
-
-
-class PreferencesDialog(Gtk.Dialog):
-    """A dialog that shows and allows editing of config settings."""
-
-    def __init__(self, parent, app, initial, *args, **kwargs):
-        """
-        Instantiate dialog.
-
-        Args:
-            parent (Gtk.Window): Diaog parent.
-            app (HamsterGTK): Main app instance. Needed in order to retrieve
-                and manipulate config values.
-        """
-        super(PreferencesDialog, self).__init__(*args, **kwargs)
-
-        self._parent = parent
-        self._app = app
-
-        self.set_transient_for(self._parent)
-
-        # We use an ordered dict as the order reflects display order as well.
-        self._fields = collections.OrderedDict([
-            ('store', self._get_store_widget(initial=initial['store'])),
-            ('day_start', self._get_day_start_widget(initial=initial['day_start'])),
-            ('fact_min_delta', self._get_fact_min_delta_widget(initial=initial['fact_min_delta'])),
-            ('tmpfile_path', self._get_tmpfile_path_widget(initial=initial['tmpfile_path'])),
-            ('db_engine', self._get_db_engine_widget(initial=initial['db_engine'])),
-            ('db_path', self._get_db_path_widget(initial=initial['db_path'])),
-        ])
-
-        grid = Gtk.Grid()
-        grid.set_hexpand(True)
-        row = 0
-        for key, widgets in self._fields.items():
-            label, widget = widgets
-            grid.attach(label, 0, row, 1, 1)
-            grid.attach(widget, 1, row, 1, 1)
-            row += 1
-
-        self.get_content_area().add(grid)
-        self.add_action_widget(self._get_cancel_button(), Gtk.ResponseType.CANCEL)
-        self.add_action_widget(self._get_apply_button(), Gtk.ResponseType.APPLY)
-
-        self.show_all()
-
-    def get_config(self):
-        """Parse config widgets and construct a {field: value} dict."""
-        def get_string(widget):
-            if isinstance(widget, Gtk.Entry):
-                result = _u(widget.get_text())
-            elif isinstance(widget, Gtk.ComboBoxText):
-                index = widget.get_active()
-                result = widget.options[index]
-            elif isinstance(widget, Gtk.Grid):
-                result = _u(widget.entry.get_text())
-            else:
-                raise TypeError(_("Unhandled widget class!"))
-            return result
-
-        def get_time(widget):
-            if isinstance(widget, Gtk.Entry):
-                result = _u(widget.get_text())
-                # We are tollerant against malformed time information.
-                try:
-                    result = datetime.datetime.strptime(result, '%H:%M:%S').time()
-                except ValueError:
-                    result = datetime.datetime.strptime(result, '%H:%M').time()
-            else:
-                raise TypeError(_("Unhandled widget class!"))
-            return result
-
-        def get_int(widget):
-            string = get_string(widget)
-            result = None
-            if string:
-                result = int(string)
-            return result
-
-        string_fields = ('store', 'tmpfile_path', 'db_engine', 'db_path')
-        time_fields = ('day_start',)
-        int_fields = ('fact_min_delta',)
-
-        result = {}
-        for key in string_fields:
-            label, widget = self._fields[key]
-            result[key] = get_string(widget)
-
-        for key in time_fields:
-            label, widget = self._fields[key]
-            result[key] = get_time(widget)
-
-        for key in int_fields:
-            label, widget = self._fields[key]
-            result[key] = get_int(widget)
-        return result
-
-    # Widgets
-    def _get_apply_button(self):
-        """Return a *apply* button."""
-        return Gtk.Button.new_from_stock(Gtk.STOCK_APPLY)
-
-    def _get_cancel_button(self):
-        """Return a *cancel* button."""
-        return Gtk.Button.new_from_stock(Gtk.STOCK_CANCEL)
-
-    def _get_store_widget(self, initial=None):
-        """Return widget to set the backend store."""
-        label = Gtk.Label(_("Store"))
-        widget = Gtk.ComboBoxText()
-        # It seems Gtk.ComboBox provides no easy access to its stored options
-        # that would allow getting their index. The index however is needed in
-        # order to programmatically set an option. Until we find a better
-        # solution we need to keep our own 'string-to-index' mapping.
-        # We create a immutable duplicate of the original store list in order
-        # to prevent accidental side effects and changes to the list effecting
-        # the combobox index.
-        widget.options = tuple(hamster_lib.REGISTERED_BACKENDS.keys())
-        for store in hamster_lib.REGISTERED_BACKENDS.values():
-            widget.append_text(store.verbose_name)
-        if initial:
-            widget.set_active(widget.options.index(initial))
-        return (label, widget)
-
-    def _get_day_start_widget(self, initial=None):
-        """Return widget to set the *day start* value."""
-        label_text = "{} (HH:MM:SS)".format(_("Day Start"))
-        label = Gtk.Label(label_text)
-        widget = Gtk.Entry()
-        # We need to be explicit about 'None'. A bool(datetime.time(0, 0, 0))
-        # evaluates to False and as a consequence would not trigger the setting
-        # of the initial value.
-        if initial is not None:
-            widget.set_text(text_type(initial.strftime('%H:%M:%S')))
-        return (label, widget)
-
-    def _get_fact_min_delta_widget(self, initial=None):
-        """Return widget to set the minimum duration for a fact."""
-        label = Gtk.Label(_("Minimal Fact Duration"))
-        widget = Gtk.Entry()
-        # We need to check for None in order to allow 0 as initial value.
-        if initial is not None:
-            widget.set_text(text_type(int(initial)))
-        return (label, widget)
-
-    def _get_tmpfile_path_widget(self, initial=None):
-        """Return widget to set the location to save the tmp fact."""
-        label = Gtk.Label(_("Full 'tmpfile'-path"))
-        grid = self._get_path_entry_with_button(initial,
-            self._on_tmpfile_path_choose_button_clicked)
-        return (label, grid)
-
-    def _get_db_engine_widget(self, initial=None):
-        """Return widget to specify the *db-engine* value."""
-        label = Gtk.Label(_("DB Engine"))
-        widget = Gtk.ComboBoxText()
-        widget.options = ('sqlite', 'postgresql', 'mysql', 'oracle', 'mssql')
-        for engine in widget.options:
-            widget.append_text(engine)
-        if initial:
-            widget.set_active(widget.options.index(initial))
-        return (label, widget)
-
-    def _get_db_path_widget(self, initial=None):
-        """Return a widget to specify the *db-path*."""
-        label = Gtk.Label(_("DB Path"))
-        grid = self._get_path_entry_with_button(initial,
-            self._on_db_path_choose_button_clicked)
-        return (label, grid)
-
-    # Callbacks
-    def _on_tmpfile_path_choose_button_clicked(self, button):
-        """Open a dialog to select path."""
-        self._update_entry_via_filechooser('tmpfile_path')
-
-    def _on_db_path_choose_button_clicked(self, button):
-        """Open a dialog to select path."""
-        self._update_entry_via_filechooser('db_path')
-
-    # Helpers
-    def _update_entry_via_filechooser(self, fieldname):
-        """Open a dialog to select path and update entry widget with it."""
-        def update_entry(new_path):
-            entry = self._fields[fieldname][1].entry
-            entry.set_text(text_type(new_path))
-        dialog = Gtk.FileChooserDialog(_("Please choose a directory"), self,
-            Gtk.FileChooserAction.SAVE, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                                         Gtk.STOCK_SAVE, Gtk.ResponseType.OK))
-        response = dialog.run()
-        if response == Gtk.ResponseType.OK:
-            update_entry(dialog.get_filename())
-        else:
-            pass
-        dialog.destroy()
-
-    def _get_path_entry_with_button(self, initial, callback):
-        """Return a path entry field with accompanying button."""
-        entry = Gtk.Entry()
-        entry.set_hexpand(True)
-        button = Gtk.Button(_("Choose"))
-        button.connect('clicked', callback)
-        grid = Gtk.Grid()
-        grid.entry = entry
-        grid.attach(entry, 0, 0, 1, 1)
-        grid.attach(button, 1, 0, 1, 1)
-        if initial:
-            entry.set_text(text_type(initial))
-        return grid
 
 
 def _main():
