@@ -2,7 +2,7 @@
 hamster-gtk
 ===============================
 
-.. .. image:: https://img.shields.io/pypi/v/hamster-gtk.svg
+.. image:: https://img.shields.io/pypi/v/hamster-gtk.svg
         :target: https://pypi.python.org/pypi/hamster-gtk
 
 .. image:: https://img.shields.io/travis/projecthamster/hamster-gtk.svg
