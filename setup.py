@@ -21,7 +21,7 @@ requirements = [
 
 setup(
     name='hamster-gtk',
-    version='0.10.0',
+    version='0.11.0',
     description="A GTK interface to the hamster time tracker.",
     long_description=readme + '\n\n' + history,
     author="Eric Goller",
