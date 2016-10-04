@@ -28,13 +28,13 @@ def fact_grid(request, app):
     Note:
         This instance does not have a parent associated.
     """
-    return widgets.fact_grid.FactGrid(app.controler, {})
+    return widgets.fact_grid.FactGrid(app.controller, {})
 
 
 @pytest.fixture
 def fact_list_box(request, app, set_of_facts):
     """Return a FactListBox with random facts."""
-    return widgets.fact_grid.FactListBox(app.controler, set_of_facts)
+    return widgets.fact_grid.FactListBox(app.controller, set_of_facts)
 
 
 @pytest.fixture

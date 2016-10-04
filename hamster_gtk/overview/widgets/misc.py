@@ -31,7 +31,7 @@ from hamster_gtk.misc.dialogs import DateRangeSelectDialog
 class HeaderBar(Gtk.HeaderBar):
     """Headerbar used by the overview screen."""
 
-    def __init__(self, controler, *args, **kwargs):
+    def __init__(self, controller, *args, **kwargs):
         """Initialize headerbar."""
         super(HeaderBar, self).__init__(*args, **kwargs)
         self.set_show_close_button(True)
@@ -42,7 +42,7 @@ class HeaderBar(Gtk.HeaderBar):
         self.pack_start(self._daterange_button)
         self.pack_end(self._get_export_button())
 
-        controler.signal_handler.connect('daterange-changed', self._on_daterange_changed)
+        controller.signal_handler.connect('daterange-changed', self._on_daterange_changed)
 
     # Widgets
     def _get_export_button(self):

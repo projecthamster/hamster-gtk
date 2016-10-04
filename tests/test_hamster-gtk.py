@@ -60,12 +60,12 @@ class TestHamsterGTK(object):
         assert result['db_path'] == cp_instance.get('Backend', 'db_path')
 
     def test__config_changed(self, app, config, mocker):
-        """Make sure the controler *and* client config is updated."""
+        """Make sure the controller *and* client config is updated."""
         app._reload_config = mocker.MagicMock(return_value=config)
-        app.controler.update_config = mocker.MagicMock()
+        app.controller.update_config = mocker.MagicMock()
         app._config_changed(None)
         assert app._reload_config.called
-        assert app.controler.update_config.called_with(config)
+        assert app.controller.update_config.called_with(config)
 
 
 class TestMainWindow(object):

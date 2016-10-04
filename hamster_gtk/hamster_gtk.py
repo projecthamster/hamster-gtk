@@ -196,19 +196,19 @@ class HamsterGTK(Gtk.Application):
         """
         cp_instance = self._config_to_configparser(config)
         config_helpers.write_config_file(cp_instance, 'hamster-gtk', 'hamster-gtk.conf')
-        self.controler.signal_handler.emit('config-changed')
+        self.controller.signal_handler.emit('config-changed')
 
     def _startup(self, app):
         """Triggered right at startup."""
         print(_('Hamster-GTK started.'))  # NOQA
         self._reload_config()
-        self.controler = hamster_lib.HamsterControl(self._config)
-        self.controler.signal_handler = SignalHandler()
-        self.controler.signal_handler.connect('config-changed', self._config_changed)
+        self.controller = hamster_lib.HamsterControl(self._config)
+        self.controller.signal_handler = SignalHandler()
+        self.controller.signal_handler.connect('config-changed', self._config_changed)
         # For convenience only
         # [FIXME]
         # Pick one canonical path and stick to it!
-        self.store = self.controler.store
+        self.store = self.controller.store
 
         # Reference to any existing overview dialog.
         self.overview = None
@@ -241,7 +241,7 @@ class HamsterGTK(Gtk.Application):
 
     def _config_changed(self, sender):
         """Callback triggered when config has been changed."""
-        self.controler.update_config(self._reload_config())
+        self.controller.update_config(self._reload_config())
 
     def _get_default_config(self):
         """

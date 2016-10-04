@@ -18,10 +18,10 @@ def tracking_screen(request, app):
 @pytest.fixture
 def start_tracking_box(request, app):
     """Provide a plain StartTrackingBox instance."""
-    return screens.StartTrackingBox(app.controler)
+    return screens.StartTrackingBox(app.controller)
 
 
 @pytest.fixture
 def current_fact_box(request, app):
     """Provide a plain CurrentFactBox instance."""
-    return screens.CurrentFactBox(app.controler)
+    return screens.CurrentFactBox(app.controller)
