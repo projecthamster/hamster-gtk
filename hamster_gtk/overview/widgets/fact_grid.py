@@ -31,7 +31,7 @@ from hamster_gtk.misc.dialogs import EditFactDialog
 class FactGrid(Gtk.Grid):
     """Listing of facts per day."""
 
-    def __init__(self, controler, initial, *args, **kwargs):
+    def __init__(self, controller, initial, *args, **kwargs):
         """
         Initialize widget.
 
@@ -46,7 +46,7 @@ class FactGrid(Gtk.Grid):
         for date, facts in initial.items():
             # [FIXME] Order by fact start
             self.attach(self._get_date_widget(date), 0, row, 1, 1)
-            self.attach(self._get_fact_list(controler, facts), 1, row, 1, 1)
+            self.attach(self._get_fact_list(controller, facts), 1, row, 1, 1)
             row += 1
 
     def _get_date_widget(self, date):
@@ -67,7 +67,7 @@ class FactGrid(Gtk.Grid):
         date_box.add(date_label)
         return date_box
 
-    def _get_fact_list(self, controler, facts):
+    def _get_fact_list(self, controller, facts):
         """
         Return a widget representing all of the dates facts.
 
@@ -76,19 +76,19 @@ class FactGrid(Gtk.Grid):
         ``Gtk.ListBox`` keyboard and mouse navigation / event handling.
         """
         # [FIXME]
-        # It would be preferable to not have to pass the controler instance
+        # It would be preferable to not have to pass the controller instance
         # through all the way, but for now it will do.
-        return FactListBox(controler, facts)
+        return FactListBox(controller, facts)
 
 
 class FactListBox(Gtk.ListBox):
     """A List widget that represents each fact in a seperate actionable row."""
 
-    def __init__(self, controler, facts):
+    def __init__(self, controller, facts):
         """Initialize widget."""
         super(FactListBox, self).__init__()
 
-        self._controler = controler
+        self._controller = controller
 
         self.set_name('OverviewFactList')
         self.set_selection_mode(Gtk.SelectionMode.SINGLE)
@@ -115,20 +115,20 @@ class FactListBox(Gtk.ListBox):
     def _update_fact(self, fact):
         """Update the a fact with values from edit dialog."""
         try:
-            self._controler.store.facts.save(fact)
+            self._controller.store.facts.save(fact)
         except (ValueError, KeyError) as message:
             helpers.show_error(helpers.get_parent_window(self), message)
         else:
-            self._controler.signal_handler.emit('facts-changed')
+            self._controller.signal_handler.emit('facts-changed')
 
     def _delete_fact(self, fact):
         """Delete fact from the backend. No further confirmation is required."""
         try:
-            result = self._controler.store.facts.remove(fact)
+            result = self._controller.store.facts.remove(fact)
         except (ValueError, KeyError) as error:
             helpers.show_error(helpers.get_parent_window(self), error)
         else:
-            self._controler.signal_handler.emit('facts-changed')
+            self._controller.signal_handler.emit('facts-changed')
             return result
 
 
