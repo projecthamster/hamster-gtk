@@ -31,6 +31,7 @@ from gi.repository import GObject, Gtk
 from hamster_gtk.preferences.widgets import (ComboFileChooser,
                                              HamsterComboBoxText,
                                              HamsterSpinButton,
+                                             PreferencesGrid,
                                              SimpleAdjustment, TimeEntry)
 
 
@@ -45,6 +46,7 @@ class PreferencesDialog(Gtk.Dialog):
             parent (Gtk.Window): Dialog parent.
             app (HamsterGTK): Main app instance. Needed in order to retrieve
                 and manipulate config values.
+            initial (dict): Dictionary of initial config key/values.
         """
         super(PreferencesDialog, self).__init__(*args, **kwargs)
 
@@ -53,60 +55,71 @@ class PreferencesDialog(Gtk.Dialog):
 
         self.set_transient_for(self._parent)
 
-        db_engines = [('sqlite', _('SQLite')), ('postgresql', _('PostgreSQL')),
-            ('mysql', _('MySQL')), ('oracle', _('Oracle')), ('mssql', _('MSSQL'))]
+        db_engines = [('sqlite', _("SQLite")), ('postgresql', _("PostgreSQL")),
+            ('mysql', _("MySQL")), ('oracle', _("Oracle")), ('mssql', _("MSSQL"))]
         stores = [(store, hamster_lib.REGISTERED_BACKENDS[store].verbose_name)
             for store in hamster_lib.REGISTERED_BACKENDS]
 
         # We use an ordered dict as the order reflects display order as well.
-        self._fields = collections.OrderedDict([
-            ('day_start', (_('_Day Start (HH:MM:SS)'), TimeEntry())),
-            ('fact_min_delta', (_('_Minimal Fact Duration'),
-                HamsterSpinButton(SimpleAdjustment(0, GObject.G_MAXDOUBLE, 1)))),
-            ('store', (_('_Store'), HamsterComboBoxText(stores))),
-            ('db_engine', (_('DB _Engine'), HamsterComboBoxText(db_engines))),
-            ('db_path', (_('DB _Path'), ComboFileChooser())),
-            ('tmpfile_path', (_('_Temporary file'), ComboFileChooser())),
-        ])
+        self._pages = [
+            (_('Tracking'), PreferencesGrid(collections.OrderedDict([
+                ('day_start', (_('_Day Start (HH:MM:SS)'), TimeEntry())),
+                ('fact_min_delta', (_('_Minimal Fact Duration'),
+                    HamsterSpinButton(SimpleAdjustment(0, GObject.G_MAXDOUBLE, 1)))),
+            ]))),
+            (_('Storage'), PreferencesGrid(collections.OrderedDict([
+                ('store', (_('_Store'), HamsterComboBoxText(stores))),
+                ('db_engine', (_('DB _Engine'), HamsterComboBoxText(db_engines))),
+                ('db_path', (_('DB _Path'), ComboFileChooser())),
+                ('tmpfile_path', (_('_Temporary file'), ComboFileChooser())),
+            ]))),
+        ]
 
-        grid = Gtk.Grid()
-        grid.set_hexpand(True)
-        row = 0
-        for key, (label, widget) in self._fields.items():
-            label_widget = Gtk.Label(label)
-            label_widget.set_use_underline(True)
-            label_widget.set_mnemonic_widget(widget)
-            grid.attach(label_widget, 0, row, 1, 1)
-            grid.attach(widget, 1, row, 1, 1)
-            row += 1
+        notebook = Gtk.Notebook()
+        notebook.set_name('PreferencesNotebook')
 
-        self._set_config(initial)
+        for title, page in self._pages:
+            notebook.append_page(page, Gtk.Label(title))
 
-        self.get_content_area().add(grid)
-        self.add_button(_('_Cancel'), Gtk.ResponseType.CANCEL)
-        self.add_button(_('_Apply'), Gtk.ResponseType.APPLY)
+        if initial:
+            self._set_config(initial)
+
+        self.get_content_area().add(notebook)
+        self.add_button(_("_Cancel"), Gtk.ResponseType.CANCEL)
+        self.add_button(_("_Apply"), Gtk.ResponseType.APPLY)
 
         self.show_all()
 
     def get_config(self):
         """
-        Parse config widgets and construct a {field: value} dict.
+        Parse config pages and construct a {field: value} dict.
 
         Returns:
-            dict: Dictionary of config keys/values.
+            dict: Dictionary of config keys/values. Please be aware that returned
+                value types are dependent on the associated widget.
         """
         result = {}
-        for key, (_label, widget) in self._fields.items():
-            result[key] = widget.get_config_value()
+        for title, page in self._pages:
+            for (key, value) in page.get_values().items():
+                result[key] = value
 
         return result
 
     def _set_config(self, values):
         """
-        Go through widgets and set their values.
+        Go through pages and set their values.
 
         Args:
-            values (dict): Dictionary of config keys/values
+            values (dict): Dictionary of config keys/values. Please be aware that
+                values must be of the appropriate type as expected by the associated
+                widget.
+
+        Raises:
+            ValueError: If ``bool(values)`` is False.
+
         """
-        for key, (_label, widget) in self._fields.items():
-            widget.set_config_value(values[key])
+        if not values:
+            raise ValueError(_("No values provided!"))
+
+        for title, page in self._pages:
+            page.set_values(values)

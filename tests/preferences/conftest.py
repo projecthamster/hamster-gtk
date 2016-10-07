@@ -5,13 +5,16 @@
 from __future__ import absolute_import, unicode_literals
 
 import datetime
+import collections
 
 import fauxfactory
 import pytest
 
+from hamster_gtk.preferences.preferences_dialog import PreferencesDialog
+from hamster_gtk.preferences import widgets
+
 
 # Data
-
 @pytest.fixture(params=('sqlalchemy',))
 def store_parametrized(request):
     """Return a parametrized store value."""
@@ -66,7 +69,7 @@ def db_path_parametrized(request, tmpdir):
 
 
 @pytest.fixture
-def initial_config_parametrized(request, store_parametrized, day_start_parametrized,
+def config_parametrized(request, store_parametrized, day_start_parametrized,
         fact_min_delta_parametrized, tmpfile_path_parametrized, db_engine_parametrized,
         db_path_parametrized):
             """Return a config fixture with heavily parametrized config values."""
@@ -78,3 +81,27 @@ def initial_config_parametrized(request, store_parametrized, day_start_parametri
                 'db_engine': db_engine_parametrized,
                 'db_path': db_path_parametrized,
             }
+
+
+@pytest.fixture
+def preference_page_fields(request):
+    """Return a static dict of valid fields suitable to be consumed by ``PreferenceGrid``."""
+    return collections.OrderedDict((
+        ('store', ('_Store', widgets.HamsterComboBoxText([]))),
+        ('db_engine', ('DB _Engine', widgets.HamsterComboBoxText([]))),
+        ('db_path', ('DB _Path', widgets.ComboFileChooser())),
+        ('tmpfile_path', ('_Temporary file', widgets.ComboFileChooser())),
+    ))
+
+
+# Instances
+@pytest.fixture
+def preferences_dialog(request, dummy_window, app, config):
+    """Return a ``PreferenceDialog`` instance."""
+    return PreferencesDialog(dummy_window, app, config)
+
+
+@pytest.fixture
+def preferences_grid(request, preference_page_fields):
+    """Return a ``PreferenceGrid`` instance."""
+    return widgets.PreferencesGrid(preference_page_fields)

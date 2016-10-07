@@ -38,3 +38,8 @@
 #EditDialogMainBox {
 	padding: 15px;
 }
+
+/*PreferencesDialog*/
+#PreferencesNotebook {
+	margin-bottom: 0.5em;
+}
