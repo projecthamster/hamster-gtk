@@ -12,6 +12,8 @@ recursive-include hamster_gtk *.py
 recursive-include hamster_gtk/resources/css *.css
 recursive-include requirements *.pip
 recursive-include docs *.rst conf.py Makefile make.bat
+recursive-include glade *.py
+recursive-include glade *.xml
 
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]

@@ -1,6 +1,6 @@
 BUILDDIR = _build
 
-.PHONY: clean-pyc clean-build docs clean
+.PHONY: clean-pyc clean-build docs glade clean
 
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
@@ -29,6 +29,7 @@ help:
 	@echo "   coverage-html"
 	@echo "   codecov"
 	@echo "   develop       to install (or update) all packages required for development"
+	@echo "   glade         to run Glade, a graphical editor of user interface files"
 	@echo "   docs          to generate Sphinx HTML documentation, including API docs"
 	@echo "   isort         to run isort on the whole project."
 	@echo "   release       to package and upload a release"
@@ -62,6 +63,9 @@ develop:
 	pip install -U pip setuptools wheel
 	pip install -U -e .
 	pip install -U -r requirements/dev.pip
+
+glade:
+	GLADE_CATALOG_SEARCH_PATH=glade GLADE_MODULE_SEARCH_PATH=glade PYTHONPATH=$(shell python -c"import sys; print(':'.join(sys.path))") glade
 
 lint:
 	flake8 hamster-dbus tests

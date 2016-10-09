@@ -47,6 +47,13 @@ Some notes:
 * Exported data is tab seperated.
 * This is pre-alpha software!
 
+UI development
+---------------
+* Install Glade:
+  ``apt-get install glade``
+* In virtual environment (see above) run ``make glade``.
+* Edit files in ``hamster_gtk/resources/ui``.
+
 News: Version 0.11.0
 ----------------------
 This release introduces refines various aspects of your *Hamster-GTK* experience.

@@ -1,0 +1,15 @@
+<glade-catalog version="0.11" supports="gtkbuilder" name="hamster_widgets" library="gladepython" domain="hamster-gtk" depends="gtk+">
+	<init-function>glade_python_init</init-function>
+	<glade-widget-classes>
+		<glade-widget-class name="ComboFileChooser" title="ComboFileChooser" generic-name="file-chooser-button" icon-name="widget-gtk-filechooserbutton" />
+		<glade-widget-class name="HamsterComboBoxText" title="HamsterComboBoxText" generic-name="combo-box-text" icon-name="widget-gtk-comboboxtext" />
+		<glade-widget-class name="HamsterSpinButton" title="HamsterSpinButton" generic-name="spin-button" icon-name="widget-gtk-spinbutton" />
+		<glade-widget-class name="TimeEntry" title="TimeEntry" generic-name="time-entry" icon-name="widget-gtk-entry" />
+	</glade-widget-classes>
+	<glade-widget-group name="hamster_gtk" title="hamster_gtk">
+		<glade-widget-class-ref name="ComboFileChooser" />
+		<glade-widget-class-ref name="HamsterComboBoxText" />
+		<glade-widget-class-ref name="HamsterSpinButton" />
+		<glade-widget-class-ref name="TimeEntry" />
+	</glade-widget-group>
+</glade-catalog>
