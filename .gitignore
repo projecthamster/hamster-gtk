@@ -54,6 +54,7 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
+docs/hamster_gtk.*
 
 # PyBuilder
 target/
