@@ -28,6 +28,10 @@ import shlex
 cwd = os.getcwd()
 project_root = os.path.dirname(cwd)
 
+# On Travis python3-gi is installed into folllowing directory, which
+# is not added to path because Travis uses virtualenv.
+sys.path.insert(0, '/usr/lib/python3/dist-packages')
+
 # Insert the project root dir as the first element in the PYTHONPATH.
 # This lets us ensure that the source package is imported, and that its
 # version is used.
@@ -43,7 +47,8 @@ import hamster_gtk
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
-    #'sphinx.ext.autodoc',
+    'sphinx.ext.autodoc',
+    'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
