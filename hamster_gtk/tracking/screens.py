@@ -178,14 +178,15 @@ class StartTrackingBox(Gtk.Box):
 
         # Fact entry field
         self.raw_fact_entry = Gtk.Entry()
+        self.raw_fact_entry.connect('activate', self._on_raw_fact_entry_activate)
         self.pack_start(self.raw_fact_entry, False, False, 0)
 
         # Buttons
-        start_button = Gtk.Button(label=_('Start Tracking'))
+        start_button = Gtk.Button(label=_("Start Tracking"))
         start_button.connect('clicked', self._on_start_tracking_button)
         self.pack_start(start_button, False, False, 0)
 
-    def _on_start_tracking_button(self, button):
+    def _start_ongoing_fact(self):
         """
         Start a new *ongoing fact*.
 
@@ -226,3 +227,13 @@ class StartTrackingBox(Gtk.Box):
     def reset(self):
         """Clear all data entry fields."""
         self.raw_fact_entry.props.text = ''
+
+    # Callbacks
+
+    def _on_raw_fact_entry_activate(self, evt):
+        """Callback for when ``enter`` is pressed within the entry."""
+        self._start_ongoing_fact()
+
+    def _on_start_tracking_button(self, button):
+        """Callback for the 'start tracking' button."""
+        self._start_ongoing_fact()
