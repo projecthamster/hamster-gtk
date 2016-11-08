@@ -28,6 +28,7 @@ from gettext import gettext as _
 from gi.repository import GObject, Gtk
 from hamster_lib import Fact
 
+from hamster_gtk.misc.widgets import RawFactEntry
 import hamster_gtk.helpers as helpers
 from hamster_gtk.helpers import _u
 
@@ -35,17 +36,17 @@ from hamster_gtk.helpers import _u
 class TrackingScreen(Gtk.Stack):
     """Main container for the tracking screen."""
 
-    def __init__(self, app, *args, **kwargs):
+    def __init__(self, controller, *args, **kwargs):
         """Setup widget."""
-        super(TrackingScreen, self).__init__()
-        self.app = app
+        super(TrackingScreen, self).__init__(*args, **kwargs)
+        self._controller = controller
 
         self.main_window = helpers.get_parent_window(self)
         self.set_transition_type(Gtk.StackTransitionType.SLIDE_UP)
         self.set_transition_duration(1000)
-        self.current_fact_view = CurrentFactBox(self.app.controller)
+        self.current_fact_view = CurrentFactBox(self._controller)
         self.current_fact_view.connect('tracking-stopped', self.update)
-        self.start_tracking_view = StartTrackingBox(self.app.controller)
+        self.start_tracking_view = StartTrackingBox(self._controller)
         self.start_tracking_view.connect('tracking-started', self.update)
         self.add_titled(self.start_tracking_view, 'start tracking', _("Start Tracking"))
         self.add_titled(self.current_fact_view, 'ongoing fact', _("Show Ongoing Fact"))
@@ -59,7 +60,7 @@ class TrackingScreen(Gtk.Stack):
         This depends on wether there exists an *ongoing fact* or not.
         """
         try:
-            current_fact = self.app.controller.store.facts.get_tmp_fact()
+            current_fact = self._controller.store.facts.get_tmp_fact()
         except KeyError:
             self.start_tracking_view.show()
             self.set_visible_child(self.start_tracking_view)
@@ -177,7 +178,7 @@ class StartTrackingBox(Gtk.Box):
         self.pack_start(self.current_fact_label, False, False, 0)
 
         # Fact entry field
-        self.raw_fact_entry = Gtk.Entry()
+        self.raw_fact_entry = RawFactEntry(self._controller)
         self.raw_fact_entry.connect('activate', self._on_raw_fact_entry_activate)
         self.pack_start(self.raw_fact_entry, False, False, 0)
 
@@ -229,11 +230,10 @@ class StartTrackingBox(Gtk.Box):
         self.raw_fact_entry.props.text = ''
 
     # Callbacks
+    def _on_start_tracking_button(self, button):
+        """Callback for the 'start tracking' button."""
+        self._start_ongoing_fact()
 
     def _on_raw_fact_entry_activate(self, evt):
         """Callback for when ``enter`` is pressed within the entry."""
-        self._start_ongoing_fact()
-
-    def _on_start_tracking_button(self, button):
-        """Callback for the 'start tracking' button."""
         self._start_ongoing_fact()

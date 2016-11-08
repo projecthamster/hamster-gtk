@@ -19,10 +19,13 @@
 
 """General purpose helper methods."""
 
+from __future__ import absolute_import, unicode_literals
+
 import datetime
+import os.path
 
 import six
-import os.path
+from six import text_type
 
 
 def _u(string):
@@ -117,7 +120,7 @@ def calendar_date_to_datetime(date):
 
 # [FIXME]
 # Remove once hamster-lib is patched
-# This should probablyy be named/limited to: 'read_config_file'.
+# This should probably be named/limited to: 'read_config_file'.
 # The 'fallback' behaviour should live with ``_get_config_from_file``.
 def get_config_instance(fallback_config_instance, app_name, file_name):
     """Patched version of ``hamster-lib`` helper function until it get fixed upstream."""
@@ -135,3 +138,39 @@ def get_config_instance(fallback_config_instance, app_name, file_name):
 def get_resource_path(file_name):
     """Return path to a resource file."""
     return os.path.join(os.path.dirname(__file__), 'resources', file_name)
+
+
+def serialise_activity(activity):
+    """Provide a serialised activity string representation."""
+    if activity.category:
+        activity_string = '{a.name}@{a.category.name}'.format(a=activity)
+    else:
+        activity_string = activity.name
+    return text_type(activity_string)
+
+
+def serialise_fact(fact):
+    """Provide a serialised fact string representation."""
+    # [FIXME] This should be obsolete once LIB-216 is implemented.
+    start_string = ''
+    if fact.start:
+        start_string = fact.start.strftime('%Y-%m-%d %H:%M')
+
+    end_string = ''
+    if fact.end:
+        end_string = ' - ' + fact.end.strftime("%Y-%m-%d %H:%M")
+
+    timestring = start_string + end_string
+    if timestring:
+        timestring += ' '
+
+    category_string = ''
+    if fact.activity.category:
+        category_string = '@{}'.format(fact.activity.category.name)
+
+    label = '{time}{activity}{category}'.format(
+        time=timestring,
+        activity=text_type(fact.activity.name),
+        category=text_type(category_string)
+    )
+    return text_type(label)

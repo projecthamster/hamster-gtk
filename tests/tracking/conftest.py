@@ -12,7 +12,7 @@ from hamster_gtk.tracking import screens
 @pytest.fixture
 def tracking_screen(request, app):
     """Return a plain TrackingScreen instance."""
-    return screens.TrackingScreen(app)
+    return screens.TrackingScreen(app.controller)
 
 
 @pytest.fixture
