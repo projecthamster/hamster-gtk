@@ -28,6 +28,7 @@ from gettext import gettext as _
 from gi.repository import GObject, Gtk
 from hamster_lib import Fact
 
+from hamster_gtk.misc.widgets import RawFactEntry
 import hamster_gtk.helpers as helpers
 from hamster_gtk.helpers import _u
 
@@ -177,7 +178,7 @@ class StartTrackingBox(Gtk.Box):
         self.pack_start(self.current_fact_label, False, False, 0)
 
         # Fact entry field
-        self.raw_fact_entry = Gtk.Entry()
+        self.raw_fact_entry = RawFactEntry(self._controller)
         self.raw_fact_entry.connect('activate', self._on_raw_fact_entry_activate)
         self.pack_start(self.raw_fact_entry, False, False, 0)
 
@@ -229,11 +230,10 @@ class StartTrackingBox(Gtk.Box):
         self.raw_fact_entry.props.text = ''
 
     # Callbacks
+    def _on_start_tracking_button(self, button):
+        """Callback for the 'start tracking' button."""
+        self._start_ongoing_fact()
 
     def _on_raw_fact_entry_activate(self, evt):
         """Callback for when ``enter`` is pressed within the entry."""
-        self._start_ongoing_fact()
-
-    def _on_start_tracking_button(self, button):
-        """Callback for the 'start tracking' button."""
         self._start_ongoing_fact()

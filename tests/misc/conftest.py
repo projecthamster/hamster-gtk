@@ -7,9 +7,12 @@ import datetime
 
 import fauxfactory
 import pytest
+from gi.repository import GObject, Gtk
+from six import text_type
 
 from hamster_gtk import overview
-from hamster_gtk.misc import dialogs
+from hamster_gtk.misc import dialogs, widgets
+from hamster_gtk import helpers
 
 
 @pytest.fixture
@@ -63,3 +66,41 @@ def monthrange_parametrized(request):
 def edit_fact_dialog(request, fact, dummy_window):
     """Return a edit fact dialog for a generic fact."""
     return dialogs.EditFactDialog(dummy_window, fact)
+
+
+@pytest.fixture
+def raw_fact_entry(request, app):
+    """Return a ``RawFactEntry`` instance."""
+    return widgets.RawFactEntry(app.controller)
+
+
+@pytest.fixture
+def raw_fact_completion(request, app):
+    """Return a RawFactCompletion`` instance."""
+    return widgets.raw_fact_entry.RawFactCompletion(app.controller)
+
+
+@pytest.fixture
+def activity_model_static(request):
+    """
+    Return a ``ListStore`` instance with the 'foo@bar' activity as it's only row.
+
+    While this fixture is not too generic and has its activity hard coded it allows
+    for more specific testing as we can know for sure which (sub) string apear and
+    which do not.
+    """
+    model = Gtk.ListStore(GObject.TYPE_STRING, GObject.TYPE_STRING, GObject.TYPE_STRING)
+    model.append(['foo@bar', 'foo', 'bar'])
+    return model
+
+
+@pytest.fixture
+def activity_model(request, activity):
+    """Return a ``ListStore`` instance with a generic ``Activity`` as its only row."""
+    model = Gtk.ListStore(GObject.TYPE_STRING, GObject.TYPE_STRING, GObject.TYPE_STRING)
+    model.append([
+        helpers.serialise_activity(activity),
+        text_type(activity.name),
+        text_type(activity.category.name)
+    ])
+    return model

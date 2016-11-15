@@ -25,6 +25,7 @@ import datetime
 import os.path
 
 import six
+import re
 
 
 def _u(string):
@@ -137,3 +138,62 @@ def get_config_instance(fallback_config_instance, app_name, file_name):
 def get_resource_path(file_name):
     """Return path to a resource file."""
     return os.path.join(os.path.dirname(__file__), 'resources', file_name)
+
+
+def decompose_raw_fact_string(text, raw=False):
+    """
+    Try to match a given string with modular regex groups.
+
+    Args:
+        text (text_type): String to be analysed.
+        raw (bool): If True, return the raw match instance, if ``False`` return
+            its corresponding ``groupdict``.
+
+    Returns:
+        re.MatchObject or dict: ``re.MatchObject`` if ``raw=True``, else ``dict``.
+            Returning the ``re.MatchObject`` is particularly useful if one is
+            interested in the groups ``span``s.
+
+    Note:
+        This is not at all about providing valid facts or even raw facts. This function
+        is only trying to extract whatever information can be matched to its various
+        groups (aka 'segments').
+        This not withstanding can however be the bases for future implementations
+        that replace ``Fact.create_from_raw_string`` with a regex based approach.
+    """
+    time_regex = r'([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]'
+    # Whilst we do not really want to do sanity checks here being as specific as
+    # possible will enhance matching accuracy.
+    relative_time_regex = r'-\d{1,3}'
+    date_regex = r'20[0-9][0-9]-[0-1][0-9]-[0-3][0-9]'
+    datetime_regex = r'({date}|{time}|{date} {time})'.format(date=date_regex, time=time_regex)
+    # Please note the trailing whitespace!
+    timeinfo_regex = r'({relative} |{datetime} |{datetime} - {datetime} )'.format(
+        datetime=datetime_regex,
+        relative=relative_time_regex
+    )
+    # This is the central place where we define which characters are viable for
+    # our various segments.
+    # Please note that this is also where we define each segments 'separator'.
+    activity_regex = r'[^@:]+'
+    category_regex = r'@[^@,#]+'
+    tag_regex = r' (#[^,]+)'
+    description_regex = r',.+'
+
+    regex = (
+        r'^(?P<timeinfo>{timeinfo})?(?P<activity>{activity})?(?P<category>{category})?'
+        '(?P<tags>({tag})*)(?P<description>{description})?$'.format(
+            timeinfo=timeinfo_regex,
+            activity=activity_regex,
+            category=category_regex,
+            tag=tag_regex,
+            description=description_regex,
+        )
+    )
+
+    pattern = re.compile(regex, re.UNICODE)
+    match = pattern.match(text)
+    result = match
+    if match and not raw:
+        result = match.groupdict()
+    return result
