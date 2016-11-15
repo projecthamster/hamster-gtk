@@ -35,17 +35,17 @@ from hamster_gtk.helpers import _u
 class TrackingScreen(Gtk.Stack):
     """Main container for the tracking screen."""
 
-    def __init__(self, app, *args, **kwargs):
+    def __init__(self, controller, *args, **kwargs):
         """Setup widget."""
-        super(TrackingScreen, self).__init__()
-        self.app = app
+        super(TrackingScreen, self).__init__(*args, **kwargs)
+        self._controller = controller
 
         self.main_window = helpers.get_parent_window(self)
         self.set_transition_type(Gtk.StackTransitionType.SLIDE_UP)
         self.set_transition_duration(1000)
-        self.current_fact_view = CurrentFactBox(self.app.controller)
+        self.current_fact_view = CurrentFactBox(self._controller)
         self.current_fact_view.connect('tracking-stopped', self.update)
-        self.start_tracking_view = StartTrackingBox(self.app.controller)
+        self.start_tracking_view = StartTrackingBox(self._controller)
         self.start_tracking_view.connect('tracking-started', self.update)
         self.add_titled(self.start_tracking_view, 'start tracking', _("Start Tracking"))
         self.add_titled(self.current_fact_view, 'ongoing fact', _("Show Ongoing Fact"))
@@ -59,7 +59,7 @@ class TrackingScreen(Gtk.Stack):
         This depends on whether there exists an *ongoing fact* or not.
         """
         try:
-            current_fact = self.app.controller.store.facts.get_tmp_fact()
+            current_fact = self._controller.store.facts.get_tmp_fact()
         except KeyError:
             self.start_tracking_view.show()
             self.set_visible_child(self.start_tracking_view)
