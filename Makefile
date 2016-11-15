@@ -31,6 +31,7 @@ help:
 	@echo "   develop       to install (or update) all packages required for development"
 	@echo "   docs          to generate Sphinx HTML documentation, including API docs"
 	@echo "   isort         to run isort on the whole project."
+	@echo "   resources     to generate GTK resources"
 	@echo "   release       to package and upload a release"
 	@echo "   dist          to package"
 	@echo "   install       to install the package to the active Python's site-packages"
@@ -97,6 +98,9 @@ isort:
 
 servedocs: docs
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
+
+resources:
+	glib-compile-resources --sourcedir=hamster_gtk/resources --target hamster_gtk/hamster-gtk.gresource hamster_gtk/resources/hamster-gtk.gresource.xml
 
 release: clean
 	python setup.py sdist bdist_wheel

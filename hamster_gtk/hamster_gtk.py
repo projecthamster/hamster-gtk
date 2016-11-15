@@ -35,9 +35,9 @@ import hamster_lib
 # under python 2 is practically non existing and manual encoding is not easily
 # possible.
 from backports.configparser import SafeConfigParser
-from gi.repository import Gdk, GObject, Gtk
+from gi.repository import Gio, Gdk, GObject, Gtk
 from hamster_lib.helpers import config_helpers
-from hamster_gtk.helpers import get_parent_window, get_resource_path
+from hamster_gtk.helpers import get_parent_window
 from six import text_type
 
 # [FIXME]
@@ -51,6 +51,9 @@ from hamster_gtk.tracking import TrackingScreen
 
 APP_NAME = 'Hamster-GTK'
 DEFAULT_WINDOW_SIZE = (400, 200)
+
+resources = Gio.resource_load(os.path.join(os.path.dirname(__file__), 'hamster-gtk.gresource'))
+Gio.resources_register(resources)
 
 
 class HeaderBar(Gtk.HeaderBar):
@@ -135,7 +138,7 @@ class MainWindow(Gtk.ApplicationWindow):
 
         # Setup css
         style_provider = Gtk.CssProvider()
-        style_provider.load_from_path(get_resource_path('css/hamster-gtk.css'))
+        style_provider.load_from_resource('/org/projecthamster/hamster-gtk/css/hamster-gtk.css')
         Gtk.StyleContext.add_provider_for_screen(
             Gdk.Screen.get_default(),
             style_provider,
@@ -173,6 +176,7 @@ class HamsterGTK(Gtk.Application):
     def __init__(self):
         """Setup instance and make sure default signals are connected to methods."""
         super(HamsterGTK, self).__init__()
+        self.set_resource_base_path('/org/projecthamster/hamster-gtk')
         self.window = None
         # Which config backend to use.
         self.config_store = 'file'

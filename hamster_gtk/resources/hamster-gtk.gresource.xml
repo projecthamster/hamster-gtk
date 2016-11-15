@@ -1,0 +1,5 @@
+<gresources>
+	<gresource prefix="/org/projecthamster/hamster-gtk">
+		<file>css/hamster-gtk.css</file>
+	</gresource>
+</gresources>
