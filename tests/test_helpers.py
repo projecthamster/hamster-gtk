@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import os.path
-
 from gi.repository import Gtk
 
 import hamster_gtk.helpers as helpers

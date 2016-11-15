@@ -37,7 +37,6 @@ import hamster_lib
 from backports.configparser import SafeConfigParser
 from gi.repository import Gio, Gdk, GObject, Gtk
 from hamster_lib.helpers import config_helpers
-from hamster_gtk.helpers import get_parent_window
 from six import text_type
 
 # [FIXME]
@@ -69,9 +68,7 @@ class HeaderBar(Gtk.HeaderBar):
         self.set_subtitle(_("Your friendly time tracker."))
         self.set_show_close_button(True)
 
-        self.pack_end(self._get_preferences_button())
         self.pack_end(self._get_overview_button())
-        self.pack_end(self._get_about_button())
 
     def _get_overview_button(self):
         """Return a button to open the ``Overview`` dialog."""
@@ -79,46 +76,9 @@ class HeaderBar(Gtk.HeaderBar):
         button.connect('clicked', self._on_overview_button)
         return button
 
-    def _get_preferences_button(self):
-        """Return a button to bring up the preferences dialog."""
-        button = Gtk.Button(_("Preferences"))
-        button.connect('clicked', self._on_preferences_button)
-        return button
-
-    def _get_about_button(self):
-        """Return a button to bring up the about dialog."""
-        button = Gtk.Button(_("About"))
-        button.connect('clicked', self._on_about_button)
-        return button
-
     def _on_overview_button(self, button):
         """Callback for overview button."""
-        parent = get_parent_window(self)
-        OverviewDialog(parent, parent.app)
-
-    def _on_preferences_button(self, button):
-        """Bring up, process and shut down preferences dialog."""
-        def get_initial():
-            """Return current values as a dict."""
-            return self._app._config
-        parent = get_parent_window(self)
-        dialog = PreferencesDialog(parent, parent.app, get_initial())
-        response = dialog.run()
-        if response == Gtk.ResponseType.APPLY:
-            config = dialog.get_config()
-            self._app.save_config(config)
-        else:
-            pass
-        dialog.destroy()
-
-    def _on_about_button(self, button):
-        """Bring up, process and shut down about dialog."""
-        parent = get_parent_window(self)
-        dialog = AboutDialog(parent)
-        response = dialog.run()
-        if response == Gtk.ResponseType.OK:
-            pass
-        dialog.destroy()
+        self._app.lookup_action('overview').activate()
 
 
 class MainWindow(Gtk.ApplicationWindow):
@@ -184,6 +144,8 @@ class HamsterGTK(Gtk.Application):
         # this unwarrented assignment once it actually matters.
         self._config = self._reload_config()
 
+        self._create_actions()
+
         self.connect('startup', self._startup)
         self.connect('activate', self._activate)
         self.connect('shutdown', self._shutdown)
@@ -201,6 +163,24 @@ class HamsterGTK(Gtk.Application):
         cp_instance = self._config_to_configparser(config)
         config_helpers.write_config_file(cp_instance, 'hamster-gtk', 'hamster-gtk.conf')
         self.controller.signal_handler.emit('config-changed')
+
+    def _create_actions(self):
+        """Create actions and register them in the application."""
+        overview_action = Gio.SimpleAction.new('overview')
+        overview_action.connect('activate', self._on_overview_action)
+        self.add_action(overview_action)
+
+        preferences_action = Gio.SimpleAction.new('preferences')
+        preferences_action.connect('activate', self._on_preferences_action)
+        self.add_action(preferences_action)
+
+        about_action = Gio.SimpleAction.new('about')
+        about_action.connect('activate', self._on_about_action)
+        self.add_action(about_action)
+
+        quit_action = Gio.SimpleAction.new('quit')
+        quit_action.connect('activate', self._on_quit_action)
+        self.add_action(quit_action)
 
     def _startup(self, app):
         """Triggered right at startup."""
@@ -235,6 +215,36 @@ class HamsterGTK(Gtk.Application):
     def _shutdown(self, app):
         """Triggered upon termination."""
         print('Hamster-GTK shut down.')  # NOQA
+
+    def _on_overview_action(self, action, parameter):
+        """Callback for overview action."""
+        OverviewDialog(self.window, self)
+
+    def _on_preferences_action(self, action, parameter):
+        """Bring up, process and shut down preferences dialog."""
+        def get_initial():
+            """Return current values as a dict."""
+            return self._config
+        dialog = PreferencesDialog(self.window, self, get_initial())
+        response = dialog.run()
+        if response == Gtk.ResponseType.APPLY:
+            config = dialog.get_config()
+            self.save_config(config)
+        else:
+            pass
+        dialog.destroy()
+
+    def _on_about_action(self, action, parameter):
+        """Bring up, process and shut down about dialog."""
+        dialog = AboutDialog(self.window)
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            pass
+        dialog.destroy()
+
+    def _on_quit_action(self, action, parameter):
+        """Callback for quit action."""
+        self.quit()
 
     # We use sender=None for it to be called as a method as well.
     def _reload_config(self):
