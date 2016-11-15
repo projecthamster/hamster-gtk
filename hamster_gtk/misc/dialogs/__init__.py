@@ -19,7 +19,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
-from .hamster_about_dialog import HamsterAboutDialog  # NOQA
 from .date_range_select_dialog import DateRangeSelectDialog  # NOQA
 from .edit_fact_dialog import EditFactDialog  # NOQA
 from .error_dialog import ErrorDialog  # NOQA
+from .hamster_about_dialog import HamsterAboutDialog  # NOQA

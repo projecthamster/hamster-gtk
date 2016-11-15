@@ -19,10 +19,12 @@
 
 """General purpose helper methods."""
 
+from __future__ import absolute_import, unicode_literals
+
 import datetime
+import os.path
 
 import six
-import os.path
 
 
 def _u(string):
@@ -117,7 +119,7 @@ def calendar_date_to_datetime(date):
 
 # [FIXME]
 # Remove once hamster-lib is patched
-# This should probablyy be named/limited to: 'read_config_file'.
+# This should probably be named/limited to: 'read_config_file'.
 # The 'fallback' behaviour should live with ``_get_config_from_file``.
 def get_config_instance(fallback_config_instance, app_name, file_name):
     """Patched version of ``hamster-lib`` helper function until it get fixed upstream."""

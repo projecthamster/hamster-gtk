@@ -56,7 +56,7 @@ class TrackingScreen(Gtk.Stack):
         """
         Determine which widget should be displayed.
 
-        This depends on wether there exists an *ongoing fact* or not.
+        This depends on whether there exists an *ongoing fact* or not.
         """
         try:
             current_fact = self.app.controller.store.facts.get_tmp_fact()
