@@ -4,14 +4,14 @@
 
 from __future__ import absolute_import, unicode_literals
 
-import datetime
 import collections
+import datetime
 
 import fauxfactory
 import pytest
 
-from hamster_gtk.preferences.preferences_dialog import PreferencesDialog
 from hamster_gtk.preferences import widgets
+from hamster_gtk.preferences.preferences_dialog import PreferencesDialog
 
 
 # Data

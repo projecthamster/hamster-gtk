@@ -3,6 +3,7 @@
 """Fixtures for unittesting the misc submodule."""
 
 from __future__ import absolute_import, unicode_literals
+
 import datetime
 
 import fauxfactory
@@ -10,9 +11,8 @@ import pytest
 from gi.repository import GObject, Gtk
 from six import text_type
 
-from hamster_gtk import overview
+from hamster_gtk import helpers, overview
 from hamster_gtk.misc import dialogs, widgets
-from hamster_gtk import helpers
 
 
 @pytest.fixture

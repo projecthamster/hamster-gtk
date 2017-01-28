@@ -23,9 +23,9 @@ from __future__ import absolute_import, unicode_literals
 
 import datetime
 import os.path
+import re
 
 import six
-import re
 
 
 def _u(string):

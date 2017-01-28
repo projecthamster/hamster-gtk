@@ -33,7 +33,7 @@ To Run the Testsuite
 First Steps
 ------------
 * Install dependencies (on debian if using virtualenvwrapper):
-  ``apt-get install virtualenvwrapper python-gi gir1.2-gtk-3.0 libglib2.0-dev
+  install virtualenvwrapper python-gi gir1.2-gtk-3.0 libglib2.0-dev
   libgtk-3-dev``.
   If you use python 3, you will need ``python3-gi`` instead.
 * Create new virtual env: ``mkvirtualenv hamster-gtk``

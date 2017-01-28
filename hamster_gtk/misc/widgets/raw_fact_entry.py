@@ -18,13 +18,15 @@
 
 """Widget meant to handle 'raw-fact' strings and provides autocompletion."""
 from __future__ import absolute_import, unicode_literals
+
 import datetime
 
 from gi.repository import GObject, Gtk
-from orderedset import OrderedSet
 from six import text_type
-from hamster_gtk.helpers import _u
+
 from hamster_gtk import helpers
+from hamster_gtk.helpers import _u
+from orderedset import OrderedSet
 
 
 class RawFactEntry(Gtk.Entry):
@@ -85,7 +87,6 @@ class RawFactEntry(Gtk.Entry):
         if remove_prefix:
             result = remove_prefix(self.current_segment, result)
         return result
-
 
     # Callbacks
     def _on_facts_changed(self, evtl):
@@ -207,7 +208,6 @@ class RawFactCompletion(Gtk.EntryCompletion):
         solution [please see|https://lazka.github.io/pgi-docs/#Gtk-3.0/
         callbacks.html#Gtk.EntryCompletionMatchFunc].
         """
-
         result = False
         entry = self.get_entry()
         modelstring = ''
@@ -222,7 +222,6 @@ class RawFactCompletion(Gtk.EntryCompletion):
 
     def _on_match_selected(self, completion, model, iter):
         """Callback to be executed once a match is selected by the user."""
-
         entry = self.get_entry()
         name = _u(model[iter][0])
         entry.replace_segment_string(name)

@@ -28,9 +28,9 @@ from gettext import gettext as _
 from gi.repository import GObject, Gtk
 from hamster_lib import Fact
 
-from hamster_gtk.misc.widgets import RawFactEntry
 import hamster_gtk.helpers as helpers
 from hamster_gtk.helpers import _u
+from hamster_gtk.misc.widgets import RawFactEntry
 
 
 class TrackingScreen(Gtk.Stack):

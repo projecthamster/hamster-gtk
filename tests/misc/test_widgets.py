@@ -19,10 +19,10 @@
 from __future__ import absolute_import, unicode_literals
 
 from gi.repository import Gtk
-from orderedset import OrderedSet
 
 from hamster_gtk.misc import widgets
 from hamster_gtk.misc.widgets.raw_fact_entry import RawFactCompletion
+from orderedset import OrderedSet
 
 
 class TestRawFactEntry(object):
@@ -54,7 +54,7 @@ class TestRawFactCompletion(object):
         assert raw_fact_completion._get_activities.called
         for store in result:
             assert isinstance(store, Gtk.ListStore)
-            #assert len(store) == 10
+            assert len(store) == 10
 
     def test__get_activities(self, app, raw_fact_completion, fact_factory, mocker):
         """Make sure that we fetch the right activities and remove duplicates."""
