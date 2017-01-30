@@ -49,6 +49,30 @@ Some notes:
 * Exported data is tab seperated.
 * This is pre-alpha software!
 
+How to run the testsuite
+-------------------------
+- Create a virtual environment ``mkvirtualenv hamster-gtk`` (python 2) or
+  ``mkvirtualenv -p python3 hamster-gtk`` (python 3). Whilst those instructions
+  do not reflect best practices (which would make use of python 3's built in
+  venv) it does provide a better handling of ``system-site-packages``.
+  `This issue <http://bugs.python.org/issue24875>`_ provides some context for
+  the problems one may run into using ``system-site-packages`` with python3
+  venvs. It is our hope that python 3.7 will fix this.
+- enable access to system-site-packages for our virtual environment:
+  ``$ toggleglobalsitepackages``. This is needed to access our global GTK
+  related packages.
+- Install development environment: ``make develop``.
+- To run the actual testsuite: ``make test``.
+- To run tests and some auxiliary style checks (flake8, pep257, etc):
+  ``make test-all``.
+
+Right now, our actual code testing does not utilize ``tox`` as we keep running
+into segfaults (which does not happen without ``tox``).
+For  this same reason we are currently unable to run our code tests on Travis
+as well (we still run the 'style checks' at least).
+We hope to get to the bottom of this at some point and would be most grateful
+if you have any hint or pointer that may help tracking down this issue.
+
 News: Version 0.11.0
 ----------------------
 This release introduces refines various aspects of your *Hamster-GTK*
