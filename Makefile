@@ -67,16 +67,12 @@ lint:
 	flake8 hamster-dbus tests
 
 test:
-	xvfb-run py.test $(TEST_ARGS) tests/
+	py.test $(TEST_ARGS) tests/
 
-test-all:
+test-all: test
 	tox
 
 coverage:
-	xvfb-run coverage run -m pytest $(TEST_ARGS) tests
-	coverage report
-
-coverage-no-xvfb:
 	coverage run -m pytest $(TEST_ARGS) tests
 	coverage report
 
