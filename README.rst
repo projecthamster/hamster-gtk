@@ -73,6 +73,32 @@ as well (we still run the 'style checks' at least).
 We hope to get to the bottom of this at some point and would be most grateful
 if you have any hint or pointer that may help tracking down this issue.
 
+Migrating from 'legacy hamster'
+---------------------------------
+In case you are wondering “Will I be able to continue using my ‘legacy
+hamster’ database with this rewrite?” the answer is “yes and no.” This new
+version of hamster significantly raises the standard in terms of data
+consistency. Unlike before, it will not be possible to have “Facts” without
+an end time specified, nor to have multiple facts overlapping.
+
+There will be a way to import data that still constitute valid “facts” (having
+both a start and an end time). We have, however, not decided on how this will
+be implemented, nor what to do with the legacy “facts” that do not have
+an end time.
+
+The general timeline for addressing the actual implementation is: once we are
+feature freezing in preparation of release 1.0.0 as part of a more general
+pre-release cleanup effort.
+
+Whilst possible, it is unlikely we will have the resources to provide a fancy
+looking GUI to resolve migration conflicts (unless someone new pitches in of
+course) so the result will most likely be a migration script of some sort.
+
+If you are interested in this general issue, please feel free to watch the
+`epic issue for
+"hamster-lib" <https://projecthamster.atlassian.net/browse/LIB-12>`_ that
+covers all things relevant.
+
 News: Version 0.11.0
 ----------------------
 This release introduces refines various aspects of your *Hamster-GTK*
