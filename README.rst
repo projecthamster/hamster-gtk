@@ -46,7 +46,7 @@ First Steps
 Some notes:
 
 * Preference changes will only be applied at the next start right now.
-* Exported data is tab seperated.
+* Exported data is tab separated.
 * This is pre-alpha software!
 
 How to run the testsuite
