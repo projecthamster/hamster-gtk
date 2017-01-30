@@ -27,9 +27,9 @@ addons:
     - python-cairo
     - python-gi-cairo
     # - python3-gobject Provided by python3-gi
-    #- python3-gi
-    #- python3-cairo
-    #- python3-gi-cairo
+    - python3-gi
+    - python3-cairo
+    - python3-gi-cairo
 
 virtualenv:
   system_site_packages: true
@@ -38,6 +38,8 @@ install:
   - pip install --upgrade pip
   - pip install -r requirements/test.pip
   - sudo apt-get install --only-upgrade libgtk-3-dev
+  # Trusty only provides modules for Python 3.4, they will, however, work even with newer versions.
+  - sudo ln -s /usr/lib/python3/dist-packages/gi/_gi.cpython-34m-x86_64-linux-gnu.so /usr/lib/python3/dist-packages/gi/_gi.so
 
 before_script:
   - "export DISPLAY=:99.0"
