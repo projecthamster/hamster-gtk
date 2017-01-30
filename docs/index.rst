@@ -15,7 +15,9 @@ Contents:
    installation
    usage
    contributing
+   packaging
    authors
+   modules
    history
 
 Indices and tables
