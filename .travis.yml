@@ -8,6 +8,21 @@ language: python
 python:
     - "2.7"
 
+# Even if we do not run our real code testsuite sphinx autodocs need access to GTK
+addons:
+  apt:
+    packages:
+    - gir1.2-pango-1.0
+    - gir1.2-gtk-3.0
+    - libglib2.0-dev
+    - libgtk-3-dev
+    - python-gi
+    - python-cairo
+    - python-gi-cairo
+
+virtualenv:
+  system_site_packages: true
+
 cache: pip
 
 install:
