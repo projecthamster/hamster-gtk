@@ -38,8 +38,9 @@ def fact_min_delta_parametrized(request):
 
 
 @pytest.fixture(params=(
-    fauxfactory.gen_utf8(),
-    fauxfactory.gen_latin1(),
+    # fauxfactory.gen_utf8(),
+    # fauxfactory.gen_latin1(),
+    fauxfactory.gen_alphanumeric(),
 ))
 def tmpfile_path_parametrized(request, tmpdir):
     """Return a parametrized tmpfile_path value."""
@@ -55,8 +56,9 @@ def db_engine_parametrized(request):
 
 
 @pytest.fixture(params=(
-    fauxfactory.gen_utf8(),
-    fauxfactory.gen_latin1(),
+    # fauxfactory.gen_utf8(),
+    # fauxfactory.gen_latin1(),
+    fauxfactory.gen_alphanumeric(),
     ':memory:',
 ))
 def db_path_parametrized(request, tmpdir):
