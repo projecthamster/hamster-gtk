@@ -219,7 +219,9 @@ class HamsterGTK(Gtk.Application):
 
     def _on_overview_action(self, action, parameter):
         """Callback for overview action."""
-        OverviewDialog(self.window, self)
+        dialog = OverviewDialog(self.window, self)
+        dialog.run()
+        dialog.destroy()
 
     def _on_preferences_action(self, action, parameter):
         """Bring up, process and shut down preferences dialog."""
