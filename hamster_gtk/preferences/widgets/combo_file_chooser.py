@@ -27,11 +27,9 @@ from gettext import gettext as _
 from gi.repository import Gtk
 from six import text_type
 
-from hamster_gtk.helpers import get_parent_window
-
 # [FIXME]
 # Remove once hamster-lib has been patched
-from hamster_gtk.helpers import _u
+from hamster_gtk.helpers import _u, get_parent_window
 
 from .config_widget import ConfigWidget
 

@@ -37,12 +37,12 @@ import hamster_lib
 from backports.configparser import SafeConfigParser
 from gi.repository import Gdk, GObject, Gtk
 from hamster_lib.helpers import config_helpers
-from hamster_gtk.helpers import get_parent_window, get_resource_path
 from six import text_type
 
 # [FIXME]
 # Remove once hamster-lib has been patched
-from hamster_gtk.helpers import get_config_instance
+from hamster_gtk.helpers import (get_config_instance, get_parent_window,
+                                 get_resource_path)
 from hamster_gtk.misc import HamsterAboutDialog as AboutDialog
 from hamster_gtk.overview import OverviewDialog
 from hamster_gtk.preferences import PreferencesDialog
@@ -143,7 +143,7 @@ class MainWindow(Gtk.ApplicationWindow):
         )
 
         # Set tracking as default screen at startup.
-        self.add(TrackingScreen(self.app))
+        self.add(TrackingScreen(self.app.controller))
 
 
 # [FIXME]

@@ -15,14 +15,14 @@ class TestTrackingScreen(object):
 
     def test_init(self, app):
         """Make sure instance matches expectation."""
-        result = screens.TrackingScreen(app)
+        result = screens.TrackingScreen(app.controller)
         assert isinstance(result, screens.TrackingScreen)
         assert len(result.get_children()) == 2
 
     def test_update_with_ongoing_fact(self, tracking_screen, fact, mocker):
         """Make sure current fact view is shown."""
         fact.end is None
-        tracking_screen.app.controller.store.facts.get_tmp_fact = mocker.MagicMock(
+        tracking_screen._controller.store.facts.get_tmp_fact = mocker.MagicMock(
             return_value=fact)
         tracking_screen.update()
         result = tracking_screen.get_visible_child()
@@ -31,7 +31,7 @@ class TestTrackingScreen(object):
 
     def test_update_with_no_ongoing_fact(self, tracking_screen, mocker):
         """Make sure start tracking view is shown."""
-        tracking_screen.app.controller.store.facts.get_tmp_fact = mocker.MagicMock(
+        tracking_screen._controller.store.facts.get_tmp_fact = mocker.MagicMock(
             side_effect=KeyError)
         tracking_screen.update()
         result = tracking_screen.get_visible_child()
