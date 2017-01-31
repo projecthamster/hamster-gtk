@@ -75,6 +75,8 @@ def simple_adjustment(request, faker):
     """Return three random numbers in an ascending order."""
     a = faker.random_number()
     b = faker.random_number()
+    if a == b:
+        b += 1
     step = faker.random_number(digits=2)
     return widgets.SimpleAdjustment(min=min(a, b), max=max(a, b), step=step)
 
