@@ -16,6 +16,7 @@ Contents:
    usage
    contributing
    packaging
+   build_process
    authors
    modules
    history
@@ -26,4 +27,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
