@@ -51,7 +51,7 @@ from hamster_gtk.tracking import TrackingScreen
 APP_NAME = 'Hamster-GTK'
 DEFAULT_WINDOW_SIZE = (400, 200)
 
-resources = Gio.resource_load(os.path.join(os.path.dirname(__file__), 'hamster-gtk.gresource'))
+resources = Gio.resource_load(os.path.join(os.path.dirname(__file__), 'resources/hamster-gtk.gresource'))
 Gio.resources_register(resources)
 
 

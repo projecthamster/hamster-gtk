@@ -1,6 +1,8 @@
 BUILDDIR = _build
+RESOURCESDIR = hamster_gtk/resources
+GRESOURCEFILENAME = hamster-gtk.gresource
 
-.PHONY: clean-pyc clean-build docs clean
+.PHONY: clean-pyc clean-build docs clean resources
 
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
@@ -40,6 +42,7 @@ clean: clean-build clean-pyc clean-test
 
 clean-build:
 	rm -fr build/
+	rm -f $(RESOURCESDIR)/$(GRESOURCEFILENAME)
 	rm -fr dist/
 	rm -fr .eggs/
 	find . -name '*.egg-info' -exec rm -fr {} +
@@ -100,13 +103,13 @@ servedocs: docs
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
 resources:
-	glib-compile-resources --sourcedir=hamster_gtk/resources --target hamster_gtk/hamster-gtk.gresource hamster_gtk/resources/hamster-gtk.gresource.xml
+	glib-compile-resources --sourcedir=$(RESOURCESDIR) --target $(RESOURCESDIR)/$(GRESOURCEFILENAME) $(RESOURCESDIR)/hamster-gtk.gresource.xml
 
-release: clean
+release:
 	python setup.py sdist bdist_wheel
 	twine upload -r pypi -s dist/*
 
-dist: clean
+dist: resources
 	python setup.py sdist
 	python setup.py bdist_wheel
 	ls -l dist
