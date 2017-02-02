@@ -146,7 +146,7 @@ def decompose_raw_fact_string(text, raw=False):
 
     Args:
         text (text_type): String to be analysed.
-        raw (bool): If True, return the raw match instance, if ``False`` return
+        raw (bool): If ``True``, return the raw match instance, if ``False`` return
             its corresponding ``groupdict``.
 
     Returns:
@@ -158,7 +158,7 @@ def decompose_raw_fact_string(text, raw=False):
         This is not at all about providing valid facts or even raw facts. This function
         is only trying to extract whatever information can be matched to its various
         groups (aka 'segments').
-        This not withstanding can however be the bases for future implementations
+        Nevertheless, this can be the basis for future implementations
         that replace ``Fact.create_from_raw_string`` with a regex based approach.
     """
     time_regex = r'([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]'

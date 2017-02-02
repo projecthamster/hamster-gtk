@@ -30,7 +30,7 @@ from orderedset import OrderedSet
 
 
 class RawFactEntry(Gtk.Entry):
-    """A custom entry widgets that provides ``faw fact`` specific autocompletion behaviour."""
+    """A custom entry widgets that provides ``raw fact`` specific autocompletion behaviour."""
 
     def __init__(self, controller, *args, **kwargs):
         """Instantiate class."""
@@ -98,8 +98,8 @@ class RawFactEntry(Gtk.Entry):
         Callback triggered whenever entry text is changed.
 
         Its main task is to keep track of which segment of the raw fact string the
-        user is currently editing. For this the whole string is inspecred and matched
-        against our regex. By coparing the current cursor position with individual
+        user is currently editing. For this the whole string is inspected and matched
+        against our regex. By comparing the current cursor position with individual
         matched segment spans a guess about which one is currently edited is made.
         """
         def get_segment(match):
@@ -140,7 +140,7 @@ class RawFactCompletion(Gtk.EntryCompletion):
     """
 
     def __init__(self, controller, *args, **kwargs):
-        """instantiate class."""
+        """Instantiate class."""
         super(RawFactCompletion, self).__init__(*args, **kwargs)
         self._controller = controller
         self._activities_model, self._categories_model = self._get_stores()
@@ -177,7 +177,7 @@ class RawFactCompletion(Gtk.EntryCompletion):
         """
         Return all activities that should be considered for autocompletion.
 
-        This is the place were we define which reference frame should be used
+        This is the place where we define which reference frame should be used
         for autocomplete suggestions.
         """
         today = datetime.date.today()
