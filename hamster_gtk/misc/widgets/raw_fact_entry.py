@@ -45,13 +45,23 @@ class RawFactEntry(Gtk.Entry):
         self.current_segment = None
         self.connect('changed', self._on_changed)
 
-    def replace_segment_string(self, segment_string, add_prefix=True):
-        """Replace the substring of the entry text that matches ``self.current_segment``."""
+    def replace_segment_text(self, segment_string,):
+        """
+        Replace the substring of the entry text that matches ``self.current_segment``.
+
+        Args:
+            segment_string (text_type): New text that is to replace the old.
+
+        Returns:
+            None
+        """
         def add_prefix(segment, string):
+            # [TODO]
+            # Once autocompletion supports more segments with prefixes, this will
+            # need to be extended.
+            result = string
             if segment == 'category':
                 result = '@{}'.format(string)
-            else:
-                result = string
             return result
 
         if not self.match:
@@ -59,8 +69,7 @@ class RawFactEntry(Gtk.Entry):
 
         match = self.match
         segment = self.current_segment
-        if add_prefix:
-            segment_string = add_prefix(segment, segment_string)
+        segment_string = add_prefix(segment, segment_string)
         old_string = _u(self.get_text())
         new_string = '{}{}{}'.format(
             old_string[:match.start(segment)],
@@ -70,22 +79,19 @@ class RawFactEntry(Gtk.Entry):
         self.set_text(new_string)
         self.set_position(match.start(segment) + len(segment_string))
 
-    def get_segment_text(self, remove_prefix=True):
-        """
-        Return the string for the segment given by ``self.current_segment``.
-
-        Please be advised that his text may include a segments 'prefix', eg.g. ``@`` for
-        category of `` #`` for tags.
-        """
+    def get_segment_text(self):
+        """Return the string for the segment given by ``self.current_segment``."""
         def remove_prefix(segment, string):
+            # [TODO]
+            # Once autocompletion supports more segments with prefixes, this will
+            # need to be extended.
             result = string
             if segment == 'category':
                 result = string[1:]
             return result
 
         result = self.match.group(self.current_segment)
-        if remove_prefix:
-            result = remove_prefix(self.current_segment, result)
+        result = remove_prefix(self.current_segment, result)
         return result
 
     # Callbacks
@@ -154,22 +160,19 @@ class RawFactCompletion(Gtk.EntryCompletion):
         }
 
     def _get_stores(self):
-        # [FIXME]
-        # This needs to be improved. Right now activity and categories can be
-        # duplicates.
-        activities, categories = [], []
+        activities, categories = OrderedSet(), OrderedSet()
 
         for activity in self._get_activities():
-            activities.append(text_type(activity.name))
+            activities.add(text_type(activity.name))
             if activity.category:
-                categories.append(text_type(activity.category.name))
+                categories.add(text_type(activity.category.name))
 
         activities_store = Gtk.ListStore(GObject.TYPE_STRING)
-        for activity in OrderedSet(activities):
+        for activity in activities:
             activities_store.append([activity])
 
         categories_store = Gtk.ListStore(GObject.TYPE_STRING)
-        for category in OrderedSet(categories):
+        for category in categories:
             categories_store.append([category])
         return (activities_store, categories_store)
 
