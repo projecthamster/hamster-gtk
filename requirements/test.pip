@@ -12,7 +12,7 @@ check-manifest==0.35
 coverage==4.3.4
 doc8==0.7.0
 fauxfactory==2.0.9
-flake8==3.2.1
+flake8==3.3.0
 flake8-debugger==1.4.0
 flake8-print==2.0.2
 freezegun==0.3.8
