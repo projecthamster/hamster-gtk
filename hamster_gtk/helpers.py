@@ -175,7 +175,7 @@ def decompose_raw_fact_string(text, raw=False):
     # This is the central place where we define which characters are viable for
     # our various segments.
     # Please note that this is also where we define each segments 'separator'.
-    activity_regex = r'[^@:]+'
+    activity_regex = r'[^@:#]+'
     category_regex = r'@[^@,#]+'
     tag_regex = r' (#[^,]+)'
     description_regex = r',.+'
