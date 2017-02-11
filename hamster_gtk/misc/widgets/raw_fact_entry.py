@@ -29,14 +29,50 @@ from hamster_gtk.helpers import _u
 from orderedset import OrderedSet
 
 
+def _get_segment_boundaries(segment, match):
+    """
+    Return start and end positions for a given segment.
+
+    Args:
+        segmemt (text_type): The segment we want to know the boundries for. Valid choices are:
+            ``activity``, ``category``, ``activity+category``, ``tags`` and ``description``.
+        match: A match object instance.
+
+    Returns:
+        tuple: Tuple (int, int) representing the given segments start and end position.
+    """
+    # We can not simply use ``match.span`` as ``activity+category`` is not
+    # represented as such in the match instance.
+    if segment == 'activity+category':
+        start = match.start('activity')
+        if match.groupdict().get('category'):
+            end = match.end('category')
+        else:
+            end = match.end('activity')
+        result = (start, end)
+    else:
+        result = (match.start(segment), match.end(segment))
+    return result
+
+
 class RawFactEntry(Gtk.Entry):
     """A custom entry widgets that provides ``raw fact`` specific autocompletion behaviour."""
 
-    def __init__(self, controller, *args, **kwargs):
-        """Instantiate class."""
+    def __init__(self, controller, split_activity_autocomplete=False, *args, **kwargs):
+        """
+        Instantiate class.
+
+        Args:
+            controller: Controller instance.
+            split_activity_autocomplete (bool, optional): If ``True`` autocompletion
+                will handle ``Activity.name`` and ``Activity.category`` independently.
+                If ``False`` it will try to match against the concatenated ``name@category``
+                string. Defaults to ``False``.
+        """
         super(RawFactEntry, self).__init__(*args, **kwargs)
         self._controller = controller
         self._controller.signal_handler.connect('facts-changed', self._on_facts_changed)
+        self._split_activity_autocomplete = split_activity_autocomplete
         self.set_completion(RawFactCompletion(self._controller))
         # The re.match instance of the current string or None
         self.match = None
@@ -70,14 +106,15 @@ class RawFactEntry(Gtk.Entry):
         match = self.match
         segment = self.current_segment
         segment_string = add_prefix(segment, segment_string)
+        segment_start, segment_end = _get_segment_boundaries(segment, match)
         old_string = _u(self.get_text())
         new_string = '{}{}{}'.format(
-            old_string[:match.start(segment)],
+            old_string[:segment_start],
             segment_string,
-            old_string[match.end(segment):],
+            old_string[segment_end:],
         )
         self.set_text(new_string)
-        self.set_position(match.start(segment) + len(segment_string))
+        self.set_position(segment_start + len(segment_string))
 
     def get_segment_text(self):
         """
@@ -95,8 +132,17 @@ class RawFactEntry(Gtk.Entry):
                 result = string[1:]
             return result
 
-        result = self.match.group(self.current_segment)
-        result = remove_prefix(self.current_segment, result)
+        if self.current_segment is None:
+            return
+
+        if self.current_segment == 'activity+category':
+            result = self.match.group('activity')
+            category = self.match.groupdict().get('category')
+            if category:
+                result += category
+        else:
+            text = self.match.group(self.current_segment)
+            result = remove_prefix(self.current_segment, text)
         return result
 
     # Callbacks
@@ -122,10 +168,18 @@ class RawFactEntry(Gtk.Entry):
             """
             result = None
             cursor_position = self.get_position()
-            for segment in ('timeinfo', 'activity', 'category', 'tags', 'description'):
-                start, end = match.span(segment)
+
+            segments = ['timeinfo', 'tags', 'description']
+            if self._split_activity_autocomplete:
+                segments.extend(('activity', 'category'))
+            else:
+                segments.append('activity+category')
+
+            for segment in segments:
+                start, end = _get_segment_boundaries(segment, match)
                 if start <= cursor_position <= end:
                     result = segment
+
             return result
 
         def run_autocomplete(segment):
@@ -138,7 +192,7 @@ class RawFactEntry(Gtk.Entry):
         # regardless of what we do here.
         if self.match:
             self.current_segment = get_segment(self.match)
-            if self.current_segment in ('activity', 'category'):
+            if self.current_segment in ('activity', 'category', 'activity+category'):
                 run_autocomplete(self.current_segment)
 
 
@@ -154,7 +208,7 @@ class RawFactCompletion(Gtk.EntryCompletion):
         """Instantiate class."""
         super(RawFactCompletion, self).__init__(*args, **kwargs)
         self._controller = controller
-        self._activities_model, self._categories_model = self._get_stores()
+        self._activities_model, self._categories_model, self._activities_with_categories_model = self._get_stores()
         self.set_model(self._activities_model)
         self.set_text_column(0)
         self.set_match_func(self._match_anywhere, None)
@@ -162,15 +216,23 @@ class RawFactCompletion(Gtk.EntryCompletion):
         self.segment_models = {
             'activity': self._activities_model,
             'category': self._categories_model,
+            'activity+category': self._activities_with_categories_model,
         }
 
     def _get_stores(self):
         activities, categories = OrderedSet(), OrderedSet()
 
+        activities_with_categories_store = Gtk.ListStore(GObject.TYPE_STRING)
         for activity in self._get_activities():
             activities.add(text_type(activity.name))
             if activity.category:
                 categories.add(text_type(activity.category.name))
+
+            text = '{activity}@{category}'.format(
+                activity=activity.name, category=activity.category.name
+            )
+            activities_with_categories_store.append([text])
+
 
         activities_store = Gtk.ListStore(GObject.TYPE_STRING)
         for activity in activities:
@@ -179,7 +241,7 @@ class RawFactCompletion(Gtk.EntryCompletion):
         categories_store = Gtk.ListStore(GObject.TYPE_STRING)
         for category in categories:
             categories_store.append([category])
-        return (activities_store, categories_store)
+        return (activities_store, categories_store, activities_with_categories_store)
 
     def _get_activities(self):
         """
@@ -232,5 +294,5 @@ class RawFactCompletion(Gtk.EntryCompletion):
         """Callback to be executed once a match is selected by the user."""
         entry = self.get_entry()
         name = _u(model[iter][0])
-        entry.replace_segment_string(name)
+        entry.replace_segment_text(name)
         return True
