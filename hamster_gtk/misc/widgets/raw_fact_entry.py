@@ -208,7 +208,9 @@ class RawFactCompletion(Gtk.EntryCompletion):
         """Instantiate class."""
         super(RawFactCompletion, self).__init__(*args, **kwargs)
         self._controller = controller
-        self._activities_model, self._categories_model, self._activities_with_categories_model = self._get_stores()
+        self._activities_model, self._categories_model, self._activities_with_categories_model = (
+            self._get_stores()
+        )
         self.set_model(self._activities_model)
         self.set_text_column(0)
         self.set_match_func(self._match_anywhere, None)
@@ -232,7 +234,6 @@ class RawFactCompletion(Gtk.EntryCompletion):
                 activity=activity.name, category=activity.category.name
             )
             activities_with_categories_store.append([text])
-
 
         activities_store = Gtk.ListStore(GObject.TYPE_STRING)
         for activity in activities:
