@@ -52,7 +52,7 @@ def test_get_resource_path(request, file_path):
       }),
     ('2016-01-01 12:00 ,lorum_ipsum',
      {'timeinfo': '2016-01-01 12:00 ',
-      'activity': ',lorum_ipsum',
+      'description': ',lorum_ipsum',
       }),
     ('2016-01-01 12:00 foo@bar #t1 #t2,lorum_ipsum',
      {'timeinfo': '2016-01-01 12:00 ',
@@ -75,12 +75,10 @@ def test_get_resource_path(request, file_path):
       'tags': ' #t1 #t2',
       'description': ',lorum_ipsum',
       }),
-    ('2016-02-20 12:00 - 2016-02-20 15:00 foo,bar@bar #t1 #t2,lorum_ipsum',
+    ('2016-02-20 12:00 - 2016-02-20 15:00 foo,bar, lorum_ipsum',
      {'timeinfo': '2016-02-20 12:00 - 2016-02-20 15:00 ',
-      'activity': 'foo,bar',
-      'category': '@bar',
-      'tags': ' #t1 #t2',
-      'description': ',lorum_ipsum',
+      'activity': 'foo',
+      'description': ',bar, lorum_ipsum',
       }),
     # Others
     # Using a ``#`` in the activity name will cause the entire regex to fail.
@@ -117,7 +115,7 @@ def test_get_resource_path(request, file_path):
      {'tags': ' ##t1 #t#2',
       }),
     (',lorum_ipsum',
-     {'activity': ',lorum_ipsum',
+     {'description': ',lorum_ipsum',
       }),
     # 'Malformed' raw fact strings
     ('2016-02-20 12:00 -  foo@bar #t1 #t2,lorum_ipsum',
