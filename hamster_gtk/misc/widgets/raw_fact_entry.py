@@ -80,7 +80,12 @@ class RawFactEntry(Gtk.Entry):
         self.set_position(match.start(segment) + len(segment_string))
 
     def get_segment_text(self):
-        """Return the string for the segment given by ``self.current_segment``."""
+        """
+        Return the string for the segment given by ``self.current_segment``.
+
+        Returns:
+            text_type or None: Returns ``None`` if ``self.current_segment=None``.
+        """
         def remove_prefix(segment, string):
             # [TODO]
             # Once autocompletion supports more segments with prefixes, this will
@@ -95,7 +100,7 @@ class RawFactEntry(Gtk.Entry):
         return result
 
     # Callbacks
-    def _on_facts_changed(self, evtl):
+    def _on_facts_changed(self, evt):
         """Callback triggered when facts have changed."""
         self.set_completion(RawFactCompletion(self._controller))
 
@@ -113,7 +118,7 @@ class RawFactEntry(Gtk.Entry):
             Return the segment the cursor is currently in.
 
             Returns:
-                str or None: Segment identifier or None if cursor not within any segment.
+                text_type or None: Segment identifier or None if cursor not within any segment.
             """
             result = None
             cursor_position = self.get_position()
