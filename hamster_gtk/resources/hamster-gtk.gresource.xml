@@ -1,0 +1,6 @@
+<gresources>
+	<gresource prefix="/org/projecthamster/hamster-gtk">
+		<file>gtk/menus.ui</file>
+		<file>css/hamster-gtk.css</file>
+	</gresource>
+</gresources>
