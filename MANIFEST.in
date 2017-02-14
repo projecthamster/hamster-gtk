@@ -7,7 +7,6 @@ include Makefile
 include tox.ini
 include .editorconfig
 
-exclude hamster_gtk/resources/hamster-gtk.gresource.xml
 exclude docs/hamster_gtk.*
 
 recursive-include tests *
