@@ -39,7 +39,7 @@ def _get_segment_boundaries(segment, match):
         match: A match object instance.
 
     Returns:
-        tuple: Tuple (int, int) representing the given segments start and end position.
+        tuple: Tuple (int, int) representing the given segment's start and end position.
     """
     # We can not simply use ``match.span`` as ``activity+category`` is not
     # represented as such in the match instance.
