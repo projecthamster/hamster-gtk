@@ -15,18 +15,18 @@
 # You should have received a copy of the GNU General Public License
 # along with 'hamster-gtk'.  If not, see <http://www.gnu.org/licenses/>.
 
-"""This module provides a Grid for easy construction of preference screens."""
+"""Provides a grid for easy construction of preferences or other displays with similar needs."""
 
 from __future__ import absolute_import
 
 from gi.repository import Gtk
 
 
-class PreferencesGrid(Gtk.Grid):
+class LabelledWidgetsGrid(Gtk.Grid):
     """A widget which arranges labelled fields automatically."""
 
     # Required else you would need to specify the full module name in ui file
-    __gtype_name__ = 'PreferencesGrid'
+    __gtype_name__ = 'LabelledWidgetsGrid'
 
     def __init__(self, fields=None):
         """

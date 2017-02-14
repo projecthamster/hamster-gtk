@@ -28,10 +28,10 @@ from gettext import gettext as _
 import hamster_lib
 from gi.repository import GObject, Gtk
 
+from hamster_gtk.misc.widgets import LabelledWidgetsGrid
 from hamster_gtk.preferences.widgets import (ComboFileChooser,
                                              HamsterComboBoxText,
                                              HamsterSpinButton,
-                                             PreferencesGrid,
                                              SimpleAdjustment, TimeEntry)
 
 
@@ -62,12 +62,12 @@ class PreferencesDialog(Gtk.Dialog):
 
         # We use an ordered dict as the order reflects display order as well.
         self._pages = [
-            (_('Tracking'), PreferencesGrid(collections.OrderedDict([
+            (_('Tracking'), LabelledWidgetsGrid(collections.OrderedDict([
                 ('day_start', (_('_Day Start (HH:MM:SS)'), TimeEntry())),
                 ('fact_min_delta', (_('_Minimal Fact Duration'),
                     HamsterSpinButton(SimpleAdjustment(0, GObject.G_MAXDOUBLE, 1)))),
             ]))),
-            (_('Storage'), PreferencesGrid(collections.OrderedDict([
+            (_('Storage'), LabelledWidgetsGrid(collections.OrderedDict([
                 ('store', (_('_Store'), HamsterComboBoxText(stores))),
                 ('db_engine', (_('DB _Engine'), HamsterComboBoxText(db_engines))),
                 ('db_path', (_('DB _Path'), ComboFileChooser())),

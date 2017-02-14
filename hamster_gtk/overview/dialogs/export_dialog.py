@@ -25,7 +25,7 @@ from gettext import gettext as _
 
 from gi.repository import Gtk
 
-from hamster_gtk.preferences.widgets import PreferencesGrid
+from hamster_gtk.misc.widgets import LabelledWidgetsGrid
 
 
 class ExportDialog(Gtk.FileChooserDialog):
@@ -45,7 +45,7 @@ class ExportDialog(Gtk.FileChooserDialog):
         self._export_format_chooser = self._get_export_format_chooser()
         self._export_format_chooser.connect('changed', self._on_export_format_changed)
 
-        export_options = PreferencesGrid(
+        export_options = LabelledWidgetsGrid(
             {'format': (_("Export _format:"), self._export_format_chooser)})
         export_options.show_all()
         self.set_extra_widget(export_options)
