@@ -12,13 +12,10 @@ exclude docs/hamster_gtk.*
 
 recursive-include tests *
 recursive-include hamster_gtk *.py
-recursive-include hamster_gtk/resources/hamster-gtk.gresource
+recursive-include hamster_gtk/resources *
 recursive-include requirements *.pip
 recursive-include docs *.rst conf.py Makefile make.bat
 
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
 recursive-exclude * *.sw?
-
-prune hamster_gtk/resources/css
-prune hamster_gtk/resources/gtk
