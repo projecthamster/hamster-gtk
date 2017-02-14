@@ -46,7 +46,8 @@ setup(
     [gui_scripts]
     hamster-gtk=hamster_gtk.hamster_gtk:_main
     ''',
-    package_data={'hamster_gtk': [
-        'resources/css/*.css'
-    ]}
+
+    package_data={
+        'hamster_gtk': ['resources/hamster-gtk.gresource'],
+    },
 )
