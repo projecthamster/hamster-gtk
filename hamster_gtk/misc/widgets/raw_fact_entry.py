@@ -44,10 +44,12 @@ def _get_segment_boundaries(segment, match):
     # We can not simply use ``match.span`` as ``activity+category`` is not
     # represented as such in the match instance.
     if segment == 'activity+category':
+        activity, category = match.group('activity', 'category')
         start = match.start('activity')
-        if match.groupdict().get('category'):
-            end = match.end('category')
-        else:
+        end = match.end('category')
+        if not activity:
+            start = match.start('category')
+        if not category:
             end = match.end('activity')
         result = (start, end)
     else:
@@ -136,13 +138,19 @@ class RawFactEntry(Gtk.Entry):
             return
 
         if self.current_segment == 'activity+category':
-            result = self.match.group('activity')
-            category = self.match.groupdict().get('category')
-            if category:
-                result += category
+            activity, category = self.match.group('activity', 'category')
+            if activity or category:
+                result = ''
+                if activity:
+                    result += activity
+                if category:
+                    result += category
+            else:
+                result = None
         else:
-            text = self.match.group(self.current_segment)
-            result = remove_prefix(self.current_segment, text)
+            result = self.match.group(self.current_segment)
+            if result:
+                result = remove_prefix(self.current_segment, result)
         return result
 
     # Callbacks
@@ -230,9 +238,14 @@ class RawFactCompletion(Gtk.EntryCompletion):
             if activity.category:
                 categories.add(text_type(activity.category.name))
 
-            text = '{activity}@{category}'.format(
-                activity=activity.name, category=activity.category.name
-            )
+            # While we iterate over all activities anyway, we use this to
+            # populate the 'activity+category' store right away.
+            if activity.category:
+                text = '{activity}@{category}'.format(
+                    activity=activity.name, category=activity.category.name
+                )
+            else:
+                text = activity.name
             activities_with_categories_store.append([text])
 
         activities_store = Gtk.ListStore(GObject.TYPE_STRING)
