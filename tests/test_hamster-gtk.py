@@ -67,6 +67,49 @@ class TestHamsterGTK(object):
         assert app._reload_config.called
         assert app.controller.update_config.called_with(config)
 
+    def test__create_actions(self, app, mocker):
+        """Test that that actions are created."""
+        app.add_action = mocker.MagicMock()
+        app._create_actions()
+        assert app.add_action.call_count == 4
+
+    def test__on_about_action(self, app, mocker):
+        """Make sure an about dialog is created."""
+        about_class = mocker.patch('hamster_gtk.hamster_gtk.AboutDialog')
+        app._on_about_action(None, None)
+        assert about_class.called
+        assert about_class.return_value.run.called
+
+    def test__on_overview_action(self, app, mocker):
+        """Make sure an overview dialog is created."""
+        overview_class = mocker.patch('hamster_gtk.hamster_gtk.OverviewDialog')
+        app._on_overview_action(None, None)
+        assert overview_class.called
+        assert overview_class.return_value.run.called
+
+    def test__on_preferences_action(self, app, mocker):
+        """Make sure a preference dialog is created."""
+        preferences_class = mocker.patch('hamster_gtk.hamster_gtk.PreferencesDialog')
+        app._on_preferences_action(None, None)
+        assert preferences_class.called
+        assert preferences_class.return_value.run.called
+
+    def test__on_preferences_action_apply(self, app, mocker):
+        """Make sure config is saved when apply is pressed in preference dialog."""
+        mocker.patch('hamster_gtk.hamster_gtk.PreferencesDialog.run',
+            return_value=Gtk.ResponseType.APPLY)
+        app.save_config = mocker.MagicMock()
+        app._on_preferences_action(None, None)
+        assert app.save_config.called
+
+    def test__on_preferences_action_cancel(self, app, mocker):
+        """Make sure config is not saved when cancel is pressed in preference dialog."""
+        mocker.patch('hamster_gtk.hamster_gtk.PreferencesDialog.run',
+            return_value=Gtk.ResponseType.CANCEL)
+        app.save_config = mocker.MagicMock()
+        app._on_preferences_action(None, None)
+        assert not app.save_config.called
+
 
 class TestMainWindow(object):
     """Unittests for the main application window."""
@@ -87,7 +130,7 @@ class TestHeaderBar(object):
         assert header_bar.props.title == 'Hamster-GTK'
         assert header_bar.props.subtitle == 'Your friendly time tracker.'
         assert header_bar.props.show_close_button
-        assert len(header_bar.get_children()) == 3
+        assert len(header_bar.get_children()) == 1
 
     def test__get_overview_button(self, header_bar, mocker):
         """Test that that button returned matches expectation."""
@@ -103,22 +146,3 @@ class TestHeaderBar(object):
         overview_class = mocker.patch('hamster_gtk.hamster_gtk.OverviewDialog')
         bar._on_overview_button(None)
         assert overview_class.called
-
-    def test__get_preferences_button(self, header_bar, mocker):
-        """Test that that button returned matches expectation."""
-        header_bar._on_preferences_button = mocker.MagicMock()
-        result = header_bar._get_preferences_button()
-        assert isinstance(result, Gtk.Button)
-        result.emit('clicked')
-        assert header_bar._on_preferences_button.called
-
-    def test__on_preferences_button_apply(self, main_window, mocker):
-        """Make sure a preference dialog is created."""
-        bar = main_window.get_titlebar()
-        preferences_class = mocker.patch('hamster_gtk.hamster_gtk.PreferencesDialog')
-        mocker.patch('hamster_gtk.hamster_gtk.PreferencesDialog.run',
-            return_value=Gtk.ResponseType.APPLY)
-        bar._app.save_config = mocker.MagicMock()
-        bar._on_preferences_button(None)
-        assert preferences_class.called
-        bar._app.save_config.called

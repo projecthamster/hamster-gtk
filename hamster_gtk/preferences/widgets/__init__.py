@@ -21,5 +21,4 @@ from .combo_file_chooser import ComboFileChooser  # NOQA
 from .config_widget import ConfigWidget  # NOQA
 from .hamster_combo_box_text import HamsterComboBoxText  # NOQA
 from .hamster_spin_button import HamsterSpinButton, SimpleAdjustment  # NOQA
-from .preferences_grid import PreferencesGrid  # NOQA
 from .time_entry import TimeEntry  # NOQA

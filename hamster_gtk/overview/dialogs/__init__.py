@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 # This file is part of 'hamster-gtk'.
 #
@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with 'hamster-gtk'.  If not, see <http://www.gnu.org/licenses/>.
 
-"""This module provides several multi purpose widgets."""
+"""This module provides an overview dialog allowing access to all facts, and an export dialog."""
 
-from .raw_fact_entry import RawFactEntry  # NOQA
-from .labelled_widgets_grid import LabelledWidgetsGrid  # NOQA
+from .export_dialog import ExportDialog  # NOQA
+from .overview_dialog import OverviewDialog, Totals  # NOQA

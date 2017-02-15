@@ -213,13 +213,7 @@ class FactBox(Gtk.Box):
         return activity_label
 
     def _get_tags_widget(self, fact):
-        """
-        Return widget to represent ``Fact.tags``.
-
-        Note:
-            Right now, this just returns a pseudo-tag to showcase the functionality and
-            styling options because ``hamster_lib`` (0.11.0) does not support tags yet.
-        """
+        """Return widget to represent ``Fact.tags``."""
         def get_tag_widget(name):
             tag_label = Gtk.Label()
             tag_label.set_markup("<small>{}</small>".format(GObject.markup_escape_text(name)))
@@ -230,10 +224,10 @@ class FactBox(Gtk.Box):
             return tag_box
 
         tags_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        # Just a pseudo tag for now to illustrate styling.
         # [FIXME]
         # Switch to Grid based layout.
-        tags_box.pack_start(get_tag_widget('pseudo tag'), False, False, 0)
+        for tag in fact.tags:
+            tags_box.pack_start(get_tag_widget(tag.name), False, False, 0)
         return tags_box
 
     def _get_description_widget(self, fact):
