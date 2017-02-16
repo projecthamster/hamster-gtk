@@ -107,5 +107,6 @@ def config(request, tmpdir):
         'tmpfile_path': tmpdir.join('tmpfile.hamster'),
         'db_engine': 'sqlite',
         'db_path': ':memory:',
+        'autocomplete_activities_offset': 30,
     }
     return config

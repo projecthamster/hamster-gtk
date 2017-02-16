@@ -29,7 +29,7 @@ class TestHamsterGTK(object):
     def test__get_default_config(self, app, appdirs):
         """Make sure the defaults use appdirs for relevant paths."""
         result = app._get_default_config()
-        assert len(result) == 6
+        assert len(result) == 7
         assert os.path.dirname(result['tmpfile_path']) == appdirs.user_data_dir
         assert os.path.dirname(result['db_path']) == appdirs.user_data_dir
 
