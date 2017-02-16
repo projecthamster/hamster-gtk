@@ -268,8 +268,9 @@ class RawFactCompletion(Gtk.EntryCompletion):
         for autocomplete suggestions.
         """
         today = datetime.date.today()
+        start = today - datetime.timedelta(self._config['autocomplete_activities_offset'])
         recent_activities = [fact.activity for fact in self._controller.facts.get_all(
-            start=today, end=today)]
+            start=start, end=today)]
         return OrderedSet(recent_activities)
 
     def _match_anywhere(self, completion, entrystr, iter, data):
