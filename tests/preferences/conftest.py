@@ -68,10 +68,16 @@ def db_path_parametrized(request, tmpdir):
     return path
 
 
+@pytest.fixture(params=(0, 1, 30, 60))
+def autocomplete_activities_offset_parametrized(request):
+    """Return a parametrized autocomplete_activities_offset value."""
+    return request.param
+
+
 @pytest.fixture
 def config_parametrized(request, store_parametrized, day_start_parametrized,
         fact_min_delta_parametrized, tmpfile_path_parametrized, db_engine_parametrized,
-        db_path_parametrized):
+        db_path_parametrized, autocomplete_activities_offset_parametrized):
             """Return a config fixture with heavily parametrized config values."""
             return {
                 'store': store_parametrized,
@@ -80,6 +86,7 @@ def config_parametrized(request, store_parametrized, day_start_parametrized,
                 'tmpfile_path': tmpfile_path_parametrized,
                 'db_engine': db_engine_parametrized,
                 'db_path': db_path_parametrized,
+                'autocomplete_activities_offset': autocomplete_activities_offset_parametrized,
             }
 
 
