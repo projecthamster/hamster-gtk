@@ -15,7 +15,7 @@ class TestTrackingScreen(object):
 
     def test_init(self, app):
         """Make sure instance matches expectation."""
-        result = screens.TrackingScreen(app.controller)
+        result = screens.TrackingScreen(app.controller, app.config)
         assert isinstance(result, screens.TrackingScreen)
         assert len(result.get_children()) == 2
 
@@ -44,7 +44,7 @@ class TestStartTrackingBox(object):
 
     def test_init(self, app):
         """Make sure instances matches expectation."""
-        result = screens.StartTrackingBox(app.controller)
+        result = screens.StartTrackingBox(app.controller, app.config)
         assert isinstance(result, screens.StartTrackingBox)
         assert len(result.get_children()) == 3
 

@@ -36,17 +36,18 @@ from hamster_gtk.misc.widgets import RawFactEntry
 class TrackingScreen(Gtk.Stack):
     """Main container for the tracking screen."""
 
-    def __init__(self, controller, *args, **kwargs):
+    def __init__(self, controller, config, *args, **kwargs):
         """Setup widget."""
         super(TrackingScreen, self).__init__(*args, **kwargs)
         self._controller = controller
+        self._config = config
 
         self.main_window = helpers.get_parent_window(self)
         self.set_transition_type(Gtk.StackTransitionType.SLIDE_UP)
         self.set_transition_duration(1000)
         self.current_fact_view = CurrentFactBox(self._controller)
         self.current_fact_view.connect('tracking-stopped', self.update)
-        self.start_tracking_view = StartTrackingBox(self._controller)
+        self.start_tracking_view = StartTrackingBox(self._controller, self._config)
         self.start_tracking_view.connect('tracking-started', self.update)
         self.add_titled(self.start_tracking_view, 'start tracking', _("Start Tracking"))
         self.add_titled(self.current_fact_view, 'ongoing fact', _("Show Ongoing Fact"))
@@ -163,11 +164,12 @@ class StartTrackingBox(Gtk.Box):
     # [FIXME]
     # Switch to Grid based layout.
 
-    def __init__(self, controller, *args, **kwargs):
+    def __init__(self, controller, config, *args, **kwargs):
         """Setup widget."""
         super(StartTrackingBox, self).__init__(orientation=Gtk.Orientation.VERTICAL,
                                                spacing=10, *args, **kwargs)
         self._controller = controller
+        self._config = config
         self.set_homogeneous(False)
 
         # [FIXME]
@@ -178,7 +180,7 @@ class StartTrackingBox(Gtk.Box):
         self.pack_start(self.current_fact_label, False, False, 0)
 
         # Fact entry field
-        self.raw_fact_entry = RawFactEntry(self._controller)
+        self.raw_fact_entry = RawFactEntry(self._controller, self._config)
         self.raw_fact_entry.connect('activate', self._on_raw_fact_entry_activate)
         self.pack_start(self.raw_fact_entry, False, False, 0)
 

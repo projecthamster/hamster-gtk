@@ -60,12 +60,13 @@ def _get_segment_boundaries(segment, match):
 class RawFactEntry(Gtk.Entry):
     """A custom entry widgets that provides ``raw fact`` specific autocompletion behaviour."""
 
-    def __init__(self, controller, split_activity_autocomplete=False, *args, **kwargs):
+    def __init__(self, controller, config, split_activity_autocomplete=False, *args, **kwargs):
         """
         Instantiate class.
 
         Args:
             controller: Controller instance.
+            config: Config instance.
             split_activity_autocomplete (bool, optional): If ``True`` autocompletion
                 will handle ``Activity.name`` and ``Activity.category`` independently.
                 If ``False`` it will try to match against the concatenated ``name@category``
@@ -73,9 +74,10 @@ class RawFactEntry(Gtk.Entry):
         """
         super(RawFactEntry, self).__init__(*args, **kwargs)
         self._controller = controller
+        self._config = config
         self._controller.signal_handler.connect('facts-changed', self._on_facts_changed)
         self._split_activity_autocomplete = split_activity_autocomplete
-        self.set_completion(RawFactCompletion(self._controller))
+        self.set_completion(RawFactCompletion(self._controller, self._config))
         # The re.match instance of the current string or None
         self.match = None
         # Identifier for the segment the cursor is currently in. None if no
@@ -156,7 +158,7 @@ class RawFactEntry(Gtk.Entry):
     # Callbacks
     def _on_facts_changed(self, evt):
         """Callback triggered when facts have changed."""
-        self.set_completion(RawFactCompletion(self._controller))
+        self.set_completion(RawFactCompletion(self._controller, self._config))
 
     def _on_changed(self, widget):
         """
@@ -212,10 +214,11 @@ class RawFactCompletion(Gtk.EntryCompletion):
         Gtk.EntryCompletion: Completion instance.
     """
 
-    def __init__(self, controller, *args, **kwargs):
+    def __init__(self, controller, config, *args, **kwargs):
         """Instantiate class."""
         super(RawFactCompletion, self).__init__(*args, **kwargs)
         self._controller = controller
+        self._config = config
         self._activities_model, self._categories_model, self._activities_with_categories_model = (
             self._get_stores()
         )
