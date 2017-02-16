@@ -30,9 +30,9 @@ SimpleAdjustment = namedtuple('SimpleAdjustment', ('min', 'max', 'step'))
 Simpilified version of :class:`Gtk.Adjustment`.
 
 Args:
-    min (int): The minimum value.
-    max (int): The maximum value.
-    step (int): The amount the value will be increased/decreased
+    min : The minimum value.
+    max : The maximum value.
+    step : The amount the value will be increased/decreased
         when the corresponding button is clicked.
 """
 
@@ -48,9 +48,10 @@ class HamsterSpinButton(Gtk.SpinButton, ConfigWidget):
         Initialize widget.
 
         Args:
-            adj (Gtk.Adjustment, SimpleAdjustment): Adjustment for the widget, either
+            adj (Gtk.Adjustment, SimpleAdjustment, optional): Adjustment for the widget, either
                 :class:`Gtk.Adjustment` or a :class:`SimpleAdjustment`.
-                See their respective documentation for more information.
+                See their respective documentation for more information. Defaults to ``None`` in
+                which case it can be set later.
         """
         super(Gtk.Entry, self).__init__()
 
@@ -61,7 +62,18 @@ class HamsterSpinButton(Gtk.SpinButton, ConfigWidget):
                 if adj.step == 0:
                     raise ValueError('Step value has to be non-zero.')
 
+                # Because we can not easily enforce our named tumple
+                # ``SimpleAdjustment`` to only take ``int``s we instead make
+                # sure that its values are cast to ``int`` here before usage.
                 adjustment = Gtk.Adjustment(adj.min, adj.min, adj.max, adj.step, 10 * adj.step, 0)
+                # [TODO]
+                # It is not entirely clear why we do not use
+                # ``self.set_adjustment`` like we do for the
+                # ``elif Gtk.Adjustment`` branch.
+                # According to the original author of this code 'jtojnar' there
+                # were some problems with ``climb_rate`` but at this point
+                # details are no longer present.
+                # As a consequence this should be investigated and cleaned up.
                 self.configure(adjustment, adj.step, 0)
                 self.set_numeric(True)
             elif isinstance(adj, Gtk.Adjustment):
