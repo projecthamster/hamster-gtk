@@ -144,6 +144,7 @@ class HamsterGTK(Gtk.Application):
         # Yes this is redundent, but more transparent. And we can worry about
         # this unwarrented assignment once it actually matters.
         self._config = self._reload_config()
+        self.config = self._config
 
         self._create_actions()
 
