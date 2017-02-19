@@ -73,7 +73,7 @@ class PreferencesDialog(Gtk.Dialog):
                 ('db_path', (_('DB _Path'), ComboFileChooser())),
                 ('tmpfile_path', (_('_Temporary file'), ComboFileChooser())),
             ]))),
-            (_('Misc'), LabelledWidgetsGrid(collections.OrderedDict([
+            (_('Miscellaneous'), LabelledWidgetsGrid(collections.OrderedDict([
                 ('autocomplete_activities_offset', (_("Autocomplete Activities Offset"),
                     HamsterSpinButton(SimpleAdjustment(0, GObject.G_MAXDOUBLE, 1)))),
             ]))),
