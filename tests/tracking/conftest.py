@@ -12,16 +12,16 @@ from hamster_gtk.tracking import screens
 @pytest.fixture
 def tracking_screen(request, app):
     """Return a plain TrackingScreen instance."""
-    return screens.TrackingScreen(app.controller, app.config)
+    return screens.TrackingScreen(app)
 
 
 @pytest.fixture
 def start_tracking_box(request, app):
     """Provide a plain StartTrackingBox instance."""
-    return screens.StartTrackingBox(app.controller, app.config)
+    return screens.StartTrackingBox(app)
 
 
 @pytest.fixture
 def current_fact_box(request, app):
     """Provide a plain CurrentFactBox instance."""
-    return screens.CurrentFactBox(app.controller)
+    return screens.CurrentFactBox(app)

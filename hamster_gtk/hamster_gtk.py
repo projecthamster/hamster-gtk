@@ -104,7 +104,7 @@ class MainWindow(Gtk.ApplicationWindow):
         )
 
         # Set tracking as default screen at startup.
-        self.add(TrackingScreen(self.app.controller, app.config))
+        self.add(TrackingScreen(self.app))
 
 
 # [FIXME]

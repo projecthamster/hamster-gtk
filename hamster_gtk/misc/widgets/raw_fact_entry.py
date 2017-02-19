@@ -60,7 +60,7 @@ def _get_segment_boundaries(segment, match):
 class RawFactEntry(Gtk.Entry):
     """A custom entry widgets that provides ``raw fact`` specific autocompletion behaviour."""
 
-    def __init__(self, controller, config, split_activity_autocomplete=False, *args, **kwargs):
+    def __init__(self, app, split_activity_autocomplete=False, *args, **kwargs):
         """
         Instantiate class.
 
@@ -73,11 +73,10 @@ class RawFactEntry(Gtk.Entry):
                 string. Defaults to ``False``.
         """
         super(RawFactEntry, self).__init__(*args, **kwargs)
-        self._controller = controller
-        self._config = config
-        self._controller.signal_handler.connect('facts-changed', self._on_facts_changed)
+        self._app = app
+        self._app.controller.signal_handler.connect('facts-changed', self._on_facts_changed)
         self._split_activity_autocomplete = split_activity_autocomplete
-        self.set_completion(RawFactCompletion(self._controller, self._config))
+        self.set_completion(RawFactCompletion(app))
         # The re.match instance of the current string or None
         self.match = None
         # Identifier for the segment the cursor is currently in. None if no
@@ -158,7 +157,7 @@ class RawFactEntry(Gtk.Entry):
     # Callbacks
     def _on_facts_changed(self, evt):
         """Callback triggered when facts have changed."""
-        self.set_completion(RawFactCompletion(self._controller, self._config))
+        self.set_completion(RawFactCompletion(self._app))
 
     def _on_changed(self, widget):
         """
@@ -214,11 +213,10 @@ class RawFactCompletion(Gtk.EntryCompletion):
         Gtk.EntryCompletion: Completion instance.
     """
 
-    def __init__(self, controller, config, *args, **kwargs):
+    def __init__(self, app, *args, **kwargs):
         """Instantiate class."""
         super(RawFactCompletion, self).__init__(*args, **kwargs)
-        self._controller = controller
-        self._config = config
+        self._app = app
         self._activities_model, self._categories_model, self._activities_with_categories_model = (
             self._get_stores()
         )
@@ -268,8 +266,8 @@ class RawFactCompletion(Gtk.EntryCompletion):
         for autocomplete suggestions.
         """
         today = datetime.date.today()
-        start = today - datetime.timedelta(days=self._config['autocomplete_activities_offset'])
-        recent_activities = [fact.activity for fact in self._controller.facts.get_all(
+        start = today - datetime.timedelta(days=self._app.config['autocomplete_activities_offset'])
+        recent_activities = [fact.activity for fact in self._app.controller.facts.get_all(
             start=start, end=today)]
         return OrderedSet(recent_activities)
 

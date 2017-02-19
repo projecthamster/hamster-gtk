@@ -36,18 +36,17 @@ from hamster_gtk.misc.widgets import RawFactEntry
 class TrackingScreen(Gtk.Stack):
     """Main container for the tracking screen."""
 
-    def __init__(self, controller, config, *args, **kwargs):
+    def __init__(self, app, *args, **kwargs):
         """Setup widget."""
         super(TrackingScreen, self).__init__(*args, **kwargs)
-        self._controller = controller
-        self._config = config
+        self._app = app
 
         self.main_window = helpers.get_parent_window(self)
         self.set_transition_type(Gtk.StackTransitionType.SLIDE_UP)
         self.set_transition_duration(1000)
-        self.current_fact_view = CurrentFactBox(self._controller)
+        self.current_fact_view = CurrentFactBox(self._app.controller)
         self.current_fact_view.connect('tracking-stopped', self.update)
-        self.start_tracking_view = StartTrackingBox(self._controller, self._config)
+        self.start_tracking_view = StartTrackingBox(self._app)
         self.start_tracking_view.connect('tracking-started', self.update)
         self.add_titled(self.start_tracking_view, 'start tracking', _("Start Tracking"))
         self.add_titled(self.current_fact_view, 'ongoing fact', _("Show Ongoing Fact"))
@@ -61,7 +60,7 @@ class TrackingScreen(Gtk.Stack):
         This depends on whether there exists an *ongoing fact* or not.
         """
         try:
-            current_fact = self._controller.store.facts.get_tmp_fact()
+            current_fact = self._app.controller.store.facts.get_tmp_fact()
         except KeyError:
             self.start_tracking_view.show()
             self.set_visible_child(self.start_tracking_view)
@@ -79,13 +78,13 @@ class CurrentFactBox(Gtk.Box):
         str('tracking-stopped'): (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, ()),
     }
 
-    def __init__(self, controller):
+    def __init__(self, app):
         """Setup widget."""
         # We need to wrap this in a vbox to limit its vertical expansion.
         # [FIXME]
         # Switch to Grid based layout.
         super(CurrentFactBox, self).__init__(orientation=Gtk.Orientation.VERTICAL, spacing=10)
-        self._controller = controller
+        self._app = app
         self.content = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.pack_start(self.content, False, False, 0)
 
@@ -96,7 +95,7 @@ class CurrentFactBox(Gtk.Box):
 
         if not fact:
             try:
-                fact = self._controller.store.facts.get_tmp_fact()
+                fact = self._app.controller.store.facts.get_tmp_fact()
             except KeyError:
                 # This should never be seen by the user. It would mean that a
                 # switch to this screen has been triggered without an ongoing
@@ -132,7 +131,7 @@ class CurrentFactBox(Gtk.Box):
         Discard current *ongoing fact* without saving.
         """
         try:
-            self._controller.store.facts.cancel_tmp_fact()
+            self._app.controller.store.facts.cancel_tmp_fact()
         except KeyError as err:
             helpers.show_error(helpers.get_parent_window(self), err)
         else:
@@ -145,13 +144,13 @@ class CurrentFactBox(Gtk.Box):
         Save *ongoing fact* to storage.
         """
         try:
-            self._controller.store.facts.stop_tmp_fact()
+            self._app.controller.store.facts.stop_tmp_fact()
         except Exception as error:
             helpers.show_error(helpers.get_parent_window(self), error)
         else:
             self.emit('tracking-stopped')
             # Inform the controller about the chance.
-            self._controller.signal_handler.emit('facts-changed')
+            self._app.controller.signal_handler.emit('facts-changed')
 
 
 class StartTrackingBox(Gtk.Box):
@@ -164,12 +163,11 @@ class StartTrackingBox(Gtk.Box):
     # [FIXME]
     # Switch to Grid based layout.
 
-    def __init__(self, controller, config, *args, **kwargs):
+    def __init__(self, app, *args, **kwargs):
         """Setup widget."""
         super(StartTrackingBox, self).__init__(orientation=Gtk.Orientation.VERTICAL,
                                                spacing=10, *args, **kwargs)
-        self._controller = controller
-        self._config = config
+        self._app = app
         self.set_homogeneous(False)
 
         # [FIXME]
@@ -180,7 +178,7 @@ class StartTrackingBox(Gtk.Box):
         self.pack_start(self.current_fact_label, False, False, 0)
 
         # Fact entry field
-        self.raw_fact_entry = RawFactEntry(self._controller, self._config)
+        self.raw_fact_entry = RawFactEntry(self._app)
         self.raw_fact_entry.connect('activate', self._on_raw_fact_entry_activate)
         self.pack_start(self.raw_fact_entry, False, False, 0)
 
@@ -219,12 +217,12 @@ class StartTrackingBox(Gtk.Box):
             fact = complete_tmp_fact(fact)
 
             try:
-                fact = self._controller.store.facts.save(fact)
+                fact = self._app.controller.store.facts.save(fact)
             except Exception as error:
                 helpers.show_error(self.get_top_level(), error)
             else:
                 self.emit('tracking-started')
-                self._controller.signal_handler.emit('facts-changed')
+                self._app.controller.signal_handler.emit('facts-changed')
                 self.reset()
 
     def reset(self):
