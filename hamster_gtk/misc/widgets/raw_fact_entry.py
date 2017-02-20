@@ -217,9 +217,10 @@ class RawFactCompletion(Gtk.EntryCompletion):
         """Instantiate class."""
         super(RawFactCompletion, self).__init__(*args, **kwargs)
         self._app = app
-        self._activities_model, self._categories_model, self._activities_with_categories_model = (
-            self._get_stores()
-        )
+        self._activities_model = Gtk.ListStore(GObject.TYPE_STRING)
+        self._categories_model = Gtk.ListStore(GObject.TYPE_STRING)
+        self._activities_with_categories_model = Gtk.ListStore(GObject.TYPE_STRING)
+        self._populare_stores(None)
         self.set_model(self._activities_model)
         self.set_text_column(0)
         self.set_match_func(self._match_anywhere, None)
@@ -230,10 +231,9 @@ class RawFactCompletion(Gtk.EntryCompletion):
             'activity+category': self._activities_with_categories_model,
         }
 
-    def _get_stores(self):
+    def _populate_stores(self, evt):
         activities, categories = OrderedSet(), OrderedSet()
 
-        activities_with_categories_store = Gtk.ListStore(GObject.TYPE_STRING)
         for activity in self._get_activities():
             activities.add(text_type(activity.name))
             if activity.category:
@@ -247,16 +247,16 @@ class RawFactCompletion(Gtk.EntryCompletion):
                 )
             else:
                 text = activity.name
-            activities_with_categories_store.append([text])
+            self._activities_with_categories_model.clear()
+            self._activities_with_categories_model.append([text])
 
-        activities_store = Gtk.ListStore(GObject.TYPE_STRING)
+        self._activities_model.clear()
         for activity in activities:
-            activities_store.append([activity])
+            self._activities_model.append([activity])
 
-        categories_store = Gtk.ListStore(GObject.TYPE_STRING)
+        self._categories_model.clear()
         for category in categories:
-            categories_store.append([category])
-        return (activities_store, categories_store, activities_with_categories_store)
+            self._categories_model.append([category])
 
     def _get_activities(self):
         """
