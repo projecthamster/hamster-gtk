@@ -29,20 +29,20 @@ from hamster_gtk.misc.widgets.raw_fact_entry import RawFactCompletion
 
 def test_init(app, mocker):
     """Test instantiation."""
-    result = RawFactCompletion(app.controller)
+    result = RawFactCompletion(app)
     assert result.get_model()
     assert result.get_text_column() == 0
 
 
 def test__get_stores(raw_fact_completion, activity_factory, mocker):
-    """Make sure the ``ListStore`` is constructed to our expectations."""
+    """Make sure the ``ListStore`` is populated to our expectations."""
     raw_fact_completion._get_activities = mocker.MagicMock(
-        return_value=activity_factory.build_batch(10))
-    result = raw_fact_completion._get_stores()
+        return_value=activity_factory.build_batch(5))
+    raw_fact_completion._populate_stores(None)
     assert raw_fact_completion._get_activities.called
-    for store in result:
+    for key, store in raw_fact_completion.segment_models.items():
         assert isinstance(store, Gtk.ListStore)
-        assert len(store) == 10
+        assert len(store) == 5
 
 
 def test__get_activities(app, raw_fact_completion, fact_factory, mocker):

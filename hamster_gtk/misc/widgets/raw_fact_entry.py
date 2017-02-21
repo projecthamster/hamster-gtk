@@ -220,7 +220,7 @@ class RawFactCompletion(Gtk.EntryCompletion):
         self._activities_model = Gtk.ListStore(GObject.TYPE_STRING)
         self._categories_model = Gtk.ListStore(GObject.TYPE_STRING)
         self._activities_with_categories_model = Gtk.ListStore(GObject.TYPE_STRING)
-        self._populare_stores(None)
+        self._populate_stores(None)
         self.set_model(self._activities_model)
         self.set_text_column(0)
         self.set_match_func(self._match_anywhere, None)
@@ -230,9 +230,14 @@ class RawFactCompletion(Gtk.EntryCompletion):
             'category': self._categories_model,
             'activity+category': self._activities_with_categories_model,
         }
+        self._app.controller.signal_handler.connect('config-changed', self._populate_stores)
 
     def _populate_stores(self, evt):
         activities, categories = OrderedSet(), OrderedSet()
+
+        self._activities_with_categories_model.clear()
+        self._activities_model.clear()
+        self._categories_model.clear()
 
         for activity in self._get_activities():
             activities.add(text_type(activity.name))
@@ -247,14 +252,11 @@ class RawFactCompletion(Gtk.EntryCompletion):
                 )
             else:
                 text = activity.name
-            self._activities_with_categories_model.clear()
             self._activities_with_categories_model.append([text])
 
-        self._activities_model.clear()
         for activity in activities:
             self._activities_model.append([activity])
 
-        self._categories_model.clear()
         for category in categories:
             self._categories_model.append([category])
 
@@ -266,7 +268,8 @@ class RawFactCompletion(Gtk.EntryCompletion):
         for autocomplete suggestions.
         """
         today = datetime.date.today()
-        start = today - datetime.timedelta(days=self._app.config['autocomplete_activities_offset'])
+        offset = self._app._config['autocomplete_activities_offset']
+        start = today - datetime.timedelta(days=offset)
         recent_activities = [fact.activity for fact in self._app.controller.facts.get_all(
             start=start, end=today)]
         return OrderedSet(recent_activities)
