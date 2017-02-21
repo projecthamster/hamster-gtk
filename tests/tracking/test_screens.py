@@ -69,7 +69,7 @@ class TestCurrentFactBox(object):
     """Unittests for CurrentFactBox."""
 
     def test_init(self, app):
-        result = screens.CurrentFactBox(app)
+        result = screens.CurrentFactBox(app.controller)
         assert isinstance(result, screens.CurrentFactBox)
 
     def test_update_initial_fact(self, current_fact_box, fact):
@@ -104,16 +104,16 @@ class TestCurrentFactBox(object):
 
     def test_on_cancel_buton(self, request, current_fact_box, mocker):
         """Make sure that 'tracking-stopped' signal is emitted."""
-        current_fact_box._app.controller.store.facts.cancel_tmp_fact = mocker.MagicMock()
+        current_fact_box._controller.store.facts.cancel_tmp_fact = mocker.MagicMock()
         current_fact_box.emit = mocker.MagicMock()
         result = current_fact_box._on_cancel_button(None)
-        assert current_fact_box._app.controller.store.facts.cancel_tmp_fact.called
+        assert current_fact_box._controller.store.facts.cancel_tmp_fact.called
         assert result is None
         assert current_fact_box.emit.called_with('tracking-stopped')
 
     def test_on_cancel_buton_expected_exception(self, request, current_fact_box, mocker):
         """Make sure that we show error dialog if we encounter an expected exception."""
-        current_fact_box._app.controller.store.facts.cancel_tmp_fact = mocker.MagicMock(
+        current_fact_box._controller.store.facts.cancel_tmp_fact = mocker.MagicMock(
             side_effect=KeyError)
         show_error = mocker.patch('hamster_gtk.tracking.screens.helpers.show_error')
         current_fact_box.emit = mocker.MagicMock()
@@ -124,7 +124,7 @@ class TestCurrentFactBox(object):
 
     def test_on_cancel_buton_unexpected_exception(self, request, current_fact_box, mocker):
         """Make sure that we do not intercept unexpected exceptions."""
-        current_fact_box._app.controller.store.facts.cancel_tmp_fact = mocker.MagicMock(
+        current_fact_box._controller.store.facts.cancel_tmp_fact = mocker.MagicMock(
             side_effect=Exception)
         with pytest.raises(Exception):
             current_fact_box._on_cancel_button(None)

@@ -24,4 +24,4 @@ def start_tracking_box(request, app):
 @pytest.fixture
 def current_fact_box(request, app):
     """Provide a plain CurrentFactBox instance."""
-    return screens.CurrentFactBox(app)
+    return screens.CurrentFactBox(app.controller)
