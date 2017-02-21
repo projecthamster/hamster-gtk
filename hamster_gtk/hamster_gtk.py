@@ -278,6 +278,7 @@ class HamsterGTK(Gtk.Application):
             'db_path': os.path.join(appdirs.user_data_dir, 'hamster-gtk.sqlite'),
             # Frontend
             'autocomplete_activities_offset': 30,
+            'autocomplete_split_activity': False,
         }
 
     def _config_to_configparser(self, config):
@@ -311,6 +312,9 @@ class HamsterGTK(Gtk.Application):
         def get_autocomplete_activities_offset():
             return text_type(config['autocomplete_activities_offset'])
 
+        def get_autocomplete_split_activity():
+            return text_type(config['autocomplete_split_activity'])
+
         cp_instance = SafeConfigParser()
         cp_instance.add_section('Backend')
         cp_instance.set('Backend', 'store', get_store())
@@ -323,6 +327,8 @@ class HamsterGTK(Gtk.Application):
         cp_instance.add_section('Frontend')
         cp_instance.set('Frontend', 'autocomplete_activities_offset',
                         get_autocomplete_activities_offset())
+        cp_instance.set('Frontend', 'autocomplete_split_activity',
+                        get_autocomplete_split_activity())
 
         return cp_instance
 
@@ -376,12 +382,16 @@ class HamsterGTK(Gtk.Application):
         def get_autocomplete_activities_offset():
             return cp_instance.getint('Frontend', 'autocomplete_activities_offset')
 
+        def get_autocomplete_split_activity():
+            return cp_instance.getboolean('Frontend', 'autocomplete_split_activity')
+
         result = {
             'store': get_store(),
             'day_start': get_day_start(),
             'fact_min_delta': get_fact_min_delta(),
             'tmpfile_path': get_tmpfile_path(),
             'autocomplete_activities_offset': get_autocomplete_activities_offset(),
+            'autocomplete_split_activity': get_autocomplete_split_activity(),
         }
         result.update(get_db_config())
         return result

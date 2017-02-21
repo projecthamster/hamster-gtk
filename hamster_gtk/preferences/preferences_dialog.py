@@ -32,7 +32,9 @@ from hamster_gtk.misc.widgets import LabelledWidgetsGrid
 from hamster_gtk.preferences.widgets import (ComboFileChooser,
                                              HamsterComboBoxText,
                                              HamsterSpinButton,
-                                             SimpleAdjustment, TimeEntry)
+                                             HamsterCheckButton,
+                                             SimpleAdjustment,
+                                             TimeEntry)
 
 
 class PreferencesDialog(Gtk.Dialog):
@@ -76,6 +78,8 @@ class PreferencesDialog(Gtk.Dialog):
             (_('Miscellaneous'), LabelledWidgetsGrid(collections.OrderedDict([
                 ('autocomplete_activities_offset', (_("Autocomplete Activities Offset"),
                     HamsterSpinButton(SimpleAdjustment(0, GObject.G_MAXDOUBLE, 1)))),
+                ('autocomplete_split_activity', (_("Autocomplete Split Activity"),
+                    HamsterCheckButton())),
             ]))),
         ]
 

@@ -108,5 +108,6 @@ def config(request, tmpdir):
         'db_engine': 'sqlite',
         'db_path': ':memory:',
         'autocomplete_activities_offset': 30,
+        'autocomplete_split_activity': False,
     }
     return config

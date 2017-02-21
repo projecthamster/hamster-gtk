@@ -19,7 +19,7 @@ class TestPreferencesDialog(object):
         grids = result.get_content_area().get_children()[0].get_children()
         # This assumes 2 children per config entry (label and widget).
         grid_entry_counts = [len(g.get_children()) / 2 for g in grids]
-        assert sum(grid_entry_counts) == 7
+        assert sum(grid_entry_counts) == 8
 
     def test_get_config(self, preferences_dialog, config_parametrized):
         """
