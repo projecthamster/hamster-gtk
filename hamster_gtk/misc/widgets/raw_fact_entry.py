@@ -74,7 +74,6 @@ class RawFactEntry(Gtk.Entry):
         """
         super(RawFactEntry, self).__init__(*args, **kwargs)
         self._app = app
-        self._app.controller.signal_handler.connect('facts-changed', self._on_facts_changed)
         self._split_activity_autocomplete = split_activity_autocomplete
         self.set_completion(RawFactCompletion(app))
         # The re.match instance of the current string or None
@@ -83,6 +82,8 @@ class RawFactEntry(Gtk.Entry):
         # match is available.
         self.current_segment = None
         self.connect('changed', self._on_changed)
+        self._app.controller.signal_handler.connect('config-changed', self._on_config_changed)
+        self._app.controller.signal_handler.connect('facts-changed', self._on_facts_changed)
 
     def replace_segment_text(self, segment_string,):
         """
@@ -204,6 +205,8 @@ class RawFactEntry(Gtk.Entry):
             if self.current_segment in ('activity', 'category', 'activity+category'):
                 run_autocomplete(self.current_segment)
 
+    def _on_config_changed(self, evt):
+        self._split_activity_autocomplete = self._app._config['autocomplete_split_activity']
 
 class RawFactCompletion(Gtk.EntryCompletion):
     """

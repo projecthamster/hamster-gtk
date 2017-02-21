@@ -178,7 +178,8 @@ class StartTrackingBox(Gtk.Box):
         self.pack_start(self.current_fact_label, False, False, 0)
 
         # Fact entry field
-        self.raw_fact_entry = RawFactEntry(self._app)
+        autocomplete_split_activity = self._app._config['autocomplete_split_activity']
+        self.raw_fact_entry = RawFactEntry(self._app, autocomplete_split_activity)
         self.raw_fact_entry.connect('activate', self._on_raw_fact_entry_activate)
         self.pack_start(self.raw_fact_entry, False, False, 0)
 
