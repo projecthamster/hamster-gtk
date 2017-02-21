@@ -78,13 +78,13 @@ class CurrentFactBox(Gtk.Box):
         str('tracking-stopped'): (GObject.SIGNAL_RUN_LAST, GObject.TYPE_NONE, ()),
     }
 
-    def __init__(self, app):
+    def __init__(self, controller):
         """Setup widget."""
         # We need to wrap this in a vbox to limit its vertical expansion.
         # [FIXME]
         # Switch to Grid based layout.
         super(CurrentFactBox, self).__init__(orientation=Gtk.Orientation.VERTICAL, spacing=10)
-        self._app = app
+        self._controller = controller
         self.content = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.pack_start(self.content, False, False, 0)
 
@@ -95,7 +95,7 @@ class CurrentFactBox(Gtk.Box):
 
         if not fact:
             try:
-                fact = self._app.controller.store.facts.get_tmp_fact()
+                fact = self._controller.store.facts.get_tmp_fact()
             except KeyError:
                 # This should never be seen by the user. It would mean that a
                 # switch to this screen has been triggered without an ongoing
@@ -131,7 +131,7 @@ class CurrentFactBox(Gtk.Box):
         Discard current *ongoing fact* without saving.
         """
         try:
-            self._app.controller.store.facts.cancel_tmp_fact()
+            self._controller.store.facts.cancel_tmp_fact()
         except KeyError as err:
             helpers.show_error(helpers.get_parent_window(self), err)
         else:
@@ -144,13 +144,13 @@ class CurrentFactBox(Gtk.Box):
         Save *ongoing fact* to storage.
         """
         try:
-            self._app.controller.store.facts.stop_tmp_fact()
+            self._controller.store.facts.stop_tmp_fact()
         except Exception as error:
             helpers.show_error(helpers.get_parent_window(self), error)
         else:
             self.emit('tracking-stopped')
             # Inform the controller about the chance.
-            self._app.controller.signal_handler.emit('facts-changed')
+            self._controller.signal_handler.emit('facts-changed')
 
 
 class StartTrackingBox(Gtk.Box):
