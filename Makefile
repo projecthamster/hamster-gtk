@@ -1,6 +1,8 @@
 BUILDDIR = _build
+RESOURCESDIR = hamster_gtk/resources
+GRESOURCEFILENAME = hamster-gtk.gresource
 
-.PHONY: clean-pyc clean-build docs clean
+.PHONY: clean-pyc clean-build docs clean resources
 
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
@@ -31,6 +33,7 @@ help:
 	@echo "   develop       to install (or update) all packages required for development"
 	@echo "   docs          to generate Sphinx HTML documentation, including API docs"
 	@echo "   isort         to run isort on the whole project."
+	@echo "   resources     to generate GTK resources"
 	@echo "   release       to package and upload a release"
 	@echo "   dist          to package"
 	@echo "   install       to install the package to the active Python's site-packages"
@@ -39,6 +42,7 @@ clean: clean-build clean-pyc clean-test
 
 clean-build:
 	rm -fr build/
+	rm -f $(RESOURCESDIR)/$(GRESOURCEFILENAME)
 	rm -fr dist/
 	rm -fr .eggs/
 	find . -name '*.egg-info' -exec rm -fr {} +
@@ -67,16 +71,12 @@ lint:
 	flake8 hamster-dbus tests
 
 test:
-	xvfb-run py.test $(TEST_ARGS) tests/
+	py.test $(TEST_ARGS) tests/
 
-test-all:
+test-all: test
 	tox
 
 coverage:
-	xvfb-run coverage run -m pytest $(TEST_ARGS) tests
-	coverage report
-
-coverage-no-xvfb:
 	coverage run -m pytest $(TEST_ARGS) tests
 	coverage report
 
@@ -102,11 +102,14 @@ isort:
 servedocs: docs
 	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
 
-release: clean
+resources:
+	glib-compile-resources --sourcedir=$(RESOURCESDIR) --target $(RESOURCESDIR)/$(GRESOURCEFILENAME) $(RESOURCESDIR)/hamster-gtk.gresource.xml
+
+release:
 	python setup.py sdist bdist_wheel
 	twine upload -r pypi -s dist/*
 
-dist: clean
+dist: resources
 	python setup.py sdist
 	python setup.py bdist_wheel
 	ls -l dist

@@ -74,12 +74,6 @@ def dummy_window(request):
     return Gtk.Window()
 
 
-@pytest.fixture
-def preferences_dialog(request, dummy_window, app, config):
-    """Return plain PreferencesDialog instance."""
-    return hamster_gtk.PreferencesDialog(dummy_window, app, config)
-
-
 @pytest.fixture(params=(
     fauxfactory.gen_string('utf8'),
     fauxfactory.gen_string('cjk'),

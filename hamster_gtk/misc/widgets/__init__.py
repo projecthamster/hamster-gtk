@@ -15,11 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with 'hamster-gtk'.  If not, see <http://www.gnu.org/licenses/>.
 
-"""This module provides several multi purpose dialogs."""
+"""This module provides several multi purpose widgets."""
 
-from __future__ import absolute_import, unicode_literals
-
-from .date_range_select_dialog import DateRangeSelectDialog  # NOQA
-from .edit_fact_dialog import EditFactDialog  # NOQA
-from .error_dialog import ErrorDialog  # NOQA
-from .hamster_about_dialog import HamsterAboutDialog  # NOQA
+from .raw_fact_entry import RawFactEntry  # NOQA
+from .labelled_widgets_grid import LabelledWidgetsGrid  # NOQA

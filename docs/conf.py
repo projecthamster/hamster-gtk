@@ -38,15 +38,17 @@ import hamster_gtk
 # -- General configuration ---------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-#needs_sphinx = '1.0'
+needs_sphinx = '1.5'
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
-    #'sphinx.ext.autodoc',
+    'sphinx.ext.autodoc',
+    'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
+    'sphinx.ext.intersphinx',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -281,3 +283,13 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
+
+napoleon_include_init_with_doc = True
+
+intersphinx_mapping = {
+    'gobject': ('https://lazka.github.io/pgi-docs/GObject-2.0/', None),
+    'gtk': ('https://lazka.github.io/pgi-docs/Gtk-3.0/', None),
+    'python': ('https://docs.python.org/3', None),
+    'hamster-lib': ('http://hamster-lib.docs.projecthamster.org/en/latest/', None),
+    'sqlalchemy': ('https://docs.sqlalchemy.org/en/latest/', None),
+}

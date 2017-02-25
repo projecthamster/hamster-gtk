@@ -37,8 +37,8 @@ from collections import defaultdict, namedtuple
 from gi.repository import GObject, Gtk
 from hamster_lib import reports
 
-from . import widgets
-from .. import helpers
+from .. import widgets
+from ... import helpers
 
 Totals = namedtuple('Totals', ('activity', 'category', 'date'))
 
@@ -50,7 +50,7 @@ class OverviewDialog(Gtk.Dialog):
         """Initialize dialog."""
         super(OverviewDialog, self).__init__(*args, **kwargs)
         self.set_transient_for(parent)
-        self.titlebar = widgets.HeaderBar(app.controler)
+        self.titlebar = widgets.HeaderBar(app.controller)
         self._parent = parent
         self._app = app
         self._connect_signals()
@@ -79,13 +79,14 @@ class OverviewDialog(Gtk.Dialog):
     def _daterange(self, daterange):
         """Set daterange and make sure we emit the corresponding signal."""
         self.__daterange = daterange
-        self._app.controler.signal_handler.emit('daterange-changed', self.__daterange)
+        self._app.controller.signal_handler.emit('daterange-changed', self.__daterange)
 
     def _connect_signals(self):
         """Connect signals this instance listens for."""
-        self._app.controler.signal_handler.connect('config-changed', self._on_config_changed)
-        self._app.controler.signal_handler.connect('facts-changed', self._on_facts_changed)
-        self._app.controler.signal_handler.connect('daterange-changed', self._on_daterange_changed)
+        self._app.controller.signal_handler.connect('config-changed', self._on_config_changed)
+        self._app.controller.signal_handler.connect('facts-changed', self._on_facts_changed)
+        self._app.controller.signal_handler.connect('daterange-changed',
+            self._on_daterange_changed)
 
     def _get_default_daterange(self):
         """Return the default daterange used when none has been selected by user."""
@@ -114,7 +115,7 @@ class OverviewDialog(Gtk.Dialog):
             self._charts = False
 
         facts_window = Gtk.ScrolledWindow()
-        self.factlist = widgets.FactGrid(self._app.controler, self._grouped_facts.by_date)
+        self.factlist = widgets.FactGrid(self._app.controller, self._grouped_facts.by_date)
         facts_window.add(self.factlist)
         self.main_box.pack_start(facts_window, True, True, 0)
 
@@ -244,14 +245,21 @@ class OverviewDialog(Gtk.Dialog):
         offset = (orig_end - orig_start) + datetime.timedelta(days=1)
         self._daterange = (orig_start + offset, orig_end + offset)
 
-    def _export_facts(self, target_path):
+    def _export_facts(self, target_format, target_path):
         """
         Export current set of facts to file.
 
         Args:
+            target_format (text_type): Type of the export.
             target_path (text_type): Location to export to.
         """
-        writer = reports.TSVWriter(target_path)
+        export_writers = {
+            'tsv': reports.TSVWriter,
+            'ical': reports.ICALWriter,
+            'xml': reports.XMLWriter
+        }
+
+        writer = export_writers[target_format](target_path)
         writer.write_report(self._get_facts())
 
     # Widgets

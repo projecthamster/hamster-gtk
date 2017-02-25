@@ -9,9 +9,10 @@ import datetime
 import fauxfactory
 import pytest
 
+from hamster_gtk.preferences.preferences_dialog import PreferencesDialog
+
 
 # Data
-
 @pytest.fixture(params=('sqlalchemy',))
 def store_parametrized(request):
     """Return a parametrized store value."""
@@ -35,8 +36,9 @@ def fact_min_delta_parametrized(request):
 
 
 @pytest.fixture(params=(
-    fauxfactory.gen_utf8(),
-    fauxfactory.gen_latin1(),
+    # fauxfactory.gen_utf8(),
+    # fauxfactory.gen_latin1(),
+    fauxfactory.gen_alphanumeric(),
 ))
 def tmpfile_path_parametrized(request, tmpdir):
     """Return a parametrized tmpfile_path value."""
@@ -52,8 +54,9 @@ def db_engine_parametrized(request):
 
 
 @pytest.fixture(params=(
-    fauxfactory.gen_utf8(),
-    fauxfactory.gen_latin1(),
+    # fauxfactory.gen_utf8(),
+    # fauxfactory.gen_latin1(),
+    fauxfactory.gen_alphanumeric(),
     ':memory:',
 ))
 def db_path_parametrized(request, tmpdir):
@@ -66,7 +69,7 @@ def db_path_parametrized(request, tmpdir):
 
 
 @pytest.fixture
-def initial_config_parametrized(request, store_parametrized, day_start_parametrized,
+def config_parametrized(request, store_parametrized, day_start_parametrized,
         fact_min_delta_parametrized, tmpfile_path_parametrized, db_engine_parametrized,
         db_path_parametrized):
             """Return a config fixture with heavily parametrized config values."""
@@ -78,3 +81,10 @@ def initial_config_parametrized(request, store_parametrized, day_start_parametri
                 'db_engine': db_engine_parametrized,
                 'db_path': db_path_parametrized,
             }
+
+
+# Instances
+@pytest.fixture
+def preferences_dialog(request, dummy_window, app, config):
+    """Return a ``PreferenceDialog`` instance."""
+    return PreferencesDialog(dummy_window, app, config)

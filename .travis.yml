@@ -8,8 +8,7 @@ language: python
 python:
     - "2.7"
 
-cache: pip
-
+# Even if we do not run our real code testsuite sphinx autodocs need access to GTK
 addons:
   apt:
     packages:
@@ -20,25 +19,15 @@ addons:
     - python-gi
     - python-cairo
     - python-gi-cairo
-    # - python3-gobject Provided by python3-gi
-    #- python3-gi
-    #- python3-cairo
-    #- python3-gi-cairo
 
 virtualenv:
   system_site_packages: true
 
-before_install:
-    #- pip install codecov
+cache: pip
+
+install:
   - pip install --upgrade pip
   - pip install -r requirements/test.pip
-  - sudo apt-get install --only-upgrade libgtk-3-dev
 
-before_script:
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - sleep 3 # give xvfb some time to start
-# command to run tests, e.g. python setup.py test
 script:
     - tox
-#- py.test --verbose tests

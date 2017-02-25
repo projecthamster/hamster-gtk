@@ -16,6 +16,7 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read().replace('.. :changelog:', '')
 
 requirements = [
+    'orderedset',
     'hamster-lib',
 ]
 
@@ -46,7 +47,8 @@ setup(
     [gui_scripts]
     hamster-gtk=hamster_gtk.hamster_gtk:_main
     ''',
-    package_data={'hamster_gtk': [
-        'resources/css/*.css'
-    ]}
+
+    package_data={
+        'hamster_gtk': ['resources/hamster-gtk.gresource'],
+    },
 )

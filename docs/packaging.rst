@@ -14,11 +14,11 @@ would love to hear from you!
 About requirements/\*.pip
 -------------------------
 We do fully follow Donald Stuffts `argument
-<http://caremad.io/2013/07/setup-vs-requirement/>`_ that information given
+<https://caremad.io/posts/2013/07/setup-vs-requirement/>`_ that information given
 ``setup.py`` is of fundamentally different nature than what may be located
 under ``requirements.txt`` (Additional comments can be found in the `packaging
 guide
-<http://python-packaging-user-guide.readthedocs.io/en/latest/requirements/>`_
+<https://python-packaging-user-guide.readthedocs.io/requirements/>`_
 and with `Hynek Schlawack
 <https://hynek.me/articles/sharing-your-labor-of-love-pypi-quick-and-dirty/>`_).
 As far as packaging goes ``setup.py`` is authoritative. We provide a set of

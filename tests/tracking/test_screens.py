@@ -15,14 +15,14 @@ class TestTrackingScreen(object):
 
     def test_init(self, app):
         """Make sure instance matches expectation."""
-        result = screens.TrackingScreen(app)
+        result = screens.TrackingScreen(app.controller)
         assert isinstance(result, screens.TrackingScreen)
         assert len(result.get_children()) == 2
 
     def test_update_with_ongoing_fact(self, tracking_screen, fact, mocker):
         """Make sure current fact view is shown."""
         fact.end is None
-        tracking_screen.app.controler.store.facts.get_tmp_fact = mocker.MagicMock(
+        tracking_screen._controller.store.facts.get_tmp_fact = mocker.MagicMock(
             return_value=fact)
         tracking_screen.update()
         result = tracking_screen.get_visible_child()
@@ -31,7 +31,7 @@ class TestTrackingScreen(object):
 
     def test_update_with_no_ongoing_fact(self, tracking_screen, mocker):
         """Make sure start tracking view is shown."""
-        tracking_screen.app.controler.store.facts.get_tmp_fact = mocker.MagicMock(
+        tracking_screen._controller.store.facts.get_tmp_fact = mocker.MagicMock(
             side_effect=KeyError)
         tracking_screen.update()
         result = tracking_screen.get_visible_child()
@@ -44,7 +44,7 @@ class TestStartTrackingBox(object):
 
     def test_init(self, app):
         """Make sure instances matches expectation."""
-        result = screens.StartTrackingBox(app.controler)
+        result = screens.StartTrackingBox(app.controller)
         assert isinstance(result, screens.StartTrackingBox)
         assert len(result.get_children()) == 3
 
@@ -52,11 +52,11 @@ class TestStartTrackingBox(object):
         """Make sure a new 'ongoing fact' is created."""
         # [FIXME]
         # We need to find a viable way to check if signals are emitted!
-        start_tracking_box._controler.store.facts.save = mocker.MagicMock()
+        start_tracking_box._controller.store.facts.save = mocker.MagicMock()
         raw_fact = '{fact.activity.name}@{fact.category.name}'.format(fact=fact)
         start_tracking_box.raw_fact_entry.props.text = raw_fact
         start_tracking_box._on_start_tracking_button(None)
-        assert start_tracking_box._controler.store.facts.save.called
+        assert start_tracking_box._controller.store.facts.save.called
 
     def test__reset(self, start_tracking_box):
         """Make sure all relevant widgets are reset."""
@@ -69,7 +69,7 @@ class TestCurrentFactBox(object):
     """Unittests for CurrentFactBox."""
 
     def test_init(self, app):
-        result = screens.CurrentFactBox(app.controler)
+        result = screens.CurrentFactBox(app.controller)
         assert isinstance(result, screens.CurrentFactBox)
 
     def test_update_initial_fact(self, current_fact_box, fact):
@@ -104,16 +104,16 @@ class TestCurrentFactBox(object):
 
     def test_on_cancel_buton(self, request, current_fact_box, mocker):
         """Make sure that 'tracking-stopped' signal is emitted."""
-        current_fact_box._controler.store.facts.cancel_tmp_fact = mocker.MagicMock()
+        current_fact_box._controller.store.facts.cancel_tmp_fact = mocker.MagicMock()
         current_fact_box.emit = mocker.MagicMock()
         result = current_fact_box._on_cancel_button(None)
-        assert current_fact_box._controler.store.facts.cancel_tmp_fact.called
+        assert current_fact_box._controller.store.facts.cancel_tmp_fact.called
         assert result is None
         assert current_fact_box.emit.called_with('tracking-stopped')
 
     def test_on_cancel_buton_expected_exception(self, request, current_fact_box, mocker):
         """Make sure that we show error dialog if we encounter an expected exception."""
-        current_fact_box._controler.store.facts.cancel_tmp_fact = mocker.MagicMock(
+        current_fact_box._controller.store.facts.cancel_tmp_fact = mocker.MagicMock(
             side_effect=KeyError)
         show_error = mocker.patch('hamster_gtk.tracking.screens.helpers.show_error')
         current_fact_box.emit = mocker.MagicMock()
@@ -124,7 +124,7 @@ class TestCurrentFactBox(object):
 
     def test_on_cancel_buton_unexpected_exception(self, request, current_fact_box, mocker):
         """Make sure that we do not intercept unexpected exceptions."""
-        current_fact_box._controler.store.facts.cancel_tmp_fact = mocker.MagicMock(
+        current_fact_box._controller.store.facts.cancel_tmp_fact = mocker.MagicMock(
             side_effect=Exception)
         with pytest.raises(Exception):
             current_fact_box._on_cancel_button(None)

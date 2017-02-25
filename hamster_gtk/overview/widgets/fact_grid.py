@@ -31,7 +31,7 @@ from hamster_gtk.misc.dialogs import EditFactDialog
 class FactGrid(Gtk.Grid):
     """Listing of facts per day."""
 
-    def __init__(self, controler, initial, *args, **kwargs):
+    def __init__(self, controller, initial, *args, **kwargs):
         """
         Initialize widget.
 
@@ -46,7 +46,7 @@ class FactGrid(Gtk.Grid):
         for date, facts in initial.items():
             # [FIXME] Order by fact start
             self.attach(self._get_date_widget(date), 0, row, 1, 1)
-            self.attach(self._get_fact_list(controler, facts), 1, row, 1, 1)
+            self.attach(self._get_fact_list(controller, facts), 1, row, 1, 1)
             row += 1
 
     def _get_date_widget(self, date):
@@ -67,7 +67,7 @@ class FactGrid(Gtk.Grid):
         date_box.add(date_label)
         return date_box
 
-    def _get_fact_list(self, controler, facts):
+    def _get_fact_list(self, controller, facts):
         """
         Return a widget representing all of the dates facts.
 
@@ -76,19 +76,19 @@ class FactGrid(Gtk.Grid):
         ``Gtk.ListBox`` keyboard and mouse navigation / event handling.
         """
         # [FIXME]
-        # It would be preferable to not have to pass the controler instance
+        # It would be preferable to not have to pass the controller instance
         # through all the way, but for now it will do.
-        return FactListBox(controler, facts)
+        return FactListBox(controller, facts)
 
 
 class FactListBox(Gtk.ListBox):
     """A List widget that represents each fact in a seperate actionable row."""
 
-    def __init__(self, controler, facts):
+    def __init__(self, controller, facts):
         """Initialize widget."""
         super(FactListBox, self).__init__()
 
-        self._controler = controler
+        self._controller = controller
 
         self.set_name('OverviewFactList')
         self.set_selection_mode(Gtk.SelectionMode.SINGLE)
@@ -115,20 +115,20 @@ class FactListBox(Gtk.ListBox):
     def _update_fact(self, fact):
         """Update the a fact with values from edit dialog."""
         try:
-            self._controler.store.facts.save(fact)
+            self._controller.store.facts.save(fact)
         except (ValueError, KeyError) as message:
             helpers.show_error(helpers.get_parent_window(self), message)
         else:
-            self._controler.signal_handler.emit('facts-changed')
+            self._controller.signal_handler.emit('facts-changed')
 
     def _delete_fact(self, fact):
         """Delete fact from the backend. No further confirmation is required."""
         try:
-            result = self._controler.store.facts.remove(fact)
+            result = self._controller.store.facts.remove(fact)
         except (ValueError, KeyError) as error:
             helpers.show_error(helpers.get_parent_window(self), error)
         else:
-            self._controler.signal_handler.emit('facts-changed')
+            self._controller.signal_handler.emit('facts-changed')
             return result
 
 
@@ -213,13 +213,7 @@ class FactBox(Gtk.Box):
         return activity_label
 
     def _get_tags_widget(self, fact):
-        """
-        Return widget to represent ``Fact.tags``.
-
-        Note:
-            Right now, this just returns a pseudo-tag to showcase the functionality and
-            styling options because ``hamster_lib`` (0.11.0) does not support tags yet.
-        """
+        """Return widget to represent ``Fact.tags``."""
         def get_tag_widget(name):
             tag_label = Gtk.Label()
             tag_label.set_markup("<small>{}</small>".format(GObject.markup_escape_text(name)))
@@ -230,10 +224,10 @@ class FactBox(Gtk.Box):
             return tag_box
 
         tags_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        # Just a pseudo tag for now to illustrate styling.
         # [FIXME]
         # Switch to Grid based layout.
-        tags_box.pack_start(get_tag_widget('pseudo tag'), False, False, 0)
+        for tag in fact.tags:
+            tags_box.pack_start(get_tag_widget(tag.name), False, False, 0)
         return tags_box
 
     def _get_description_widget(self, fact):

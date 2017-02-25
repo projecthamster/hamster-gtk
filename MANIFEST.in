@@ -7,9 +7,11 @@ include Makefile
 include tox.ini
 include .editorconfig
 
+exclude docs/hamster_gtk.*
+
 recursive-include tests *
 recursive-include hamster_gtk *.py
-recursive-include hamster_gtk/resources/css *.css
+recursive-include hamster_gtk/resources *
 recursive-include requirements *.pip
 recursive-include docs *.rst conf.py Makefile make.bat
 

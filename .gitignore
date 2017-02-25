@@ -54,6 +54,10 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
+docs/hamster_gtk.*
 
 # PyBuilder
 target/
+
+# GTK resource file
+hamster_gtk/hamster-gtk.gresource

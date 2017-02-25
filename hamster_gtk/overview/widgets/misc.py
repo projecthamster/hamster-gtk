@@ -26,12 +26,13 @@ from six import text_type
 
 from hamster_gtk.helpers import get_parent_window
 from hamster_gtk.misc.dialogs import DateRangeSelectDialog
+from hamster_gtk.overview.dialogs import ExportDialog
 
 
 class HeaderBar(Gtk.HeaderBar):
     """Headerbar used by the overview screen."""
 
-    def __init__(self, controler, *args, **kwargs):
+    def __init__(self, controller, *args, **kwargs):
         """Initialize headerbar."""
         super(HeaderBar, self).__init__(*args, **kwargs)
         self.set_show_close_button(True)
@@ -42,7 +43,7 @@ class HeaderBar(Gtk.HeaderBar):
         self.pack_start(self._daterange_button)
         self.pack_end(self._get_export_button())
 
-        controler.signal_handler.connect('daterange-changed', self._on_daterange_changed)
+        controller.signal_handler.connect('daterange-changed', self._on_daterange_changed)
 
     # Widgets
     def _get_export_button(self):
@@ -108,14 +109,10 @@ class HeaderBar(Gtk.HeaderBar):
         ``parent._export_facts`` only deals with the actual export.
         """
         parent = get_parent_window(self)
-        dialog = Gtk.FileChooserDialog(_("Please Choose where to export to"), parent,
-            Gtk.FileChooserAction.SAVE, (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                                         Gtk.STOCK_SAVE, Gtk.ResponseType.OK))
-        dialog.set_current_name('{}.csv'.format(_("hamster_export")))
+        dialog = ExportDialog(parent)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            target_path = dialog.get_filename()
-            parent._export_facts(target_path)
+            parent._export_facts(dialog.get_export_format(), dialog.get_filename())
         else:
             pass
         dialog.destroy()
