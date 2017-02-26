@@ -30,11 +30,10 @@ from gi.repository import GObject, Gtk
 
 from hamster_gtk.misc.widgets import LabelledWidgetsGrid
 from hamster_gtk.preferences.widgets import (ComboFileChooser,
+                                             HamsterCheckButton,
                                              HamsterComboBoxText,
                                              HamsterSpinButton,
-                                             HamsterCheckButton,
-                                             SimpleAdjustment,
-                                             TimeEntry)
+                                             SimpleAdjustment, TimeEntry)
 
 
 class PreferencesDialog(Gtk.Dialog):

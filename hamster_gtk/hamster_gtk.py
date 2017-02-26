@@ -35,7 +35,7 @@ import hamster_lib
 # under python 2 is practically non existing and manual encoding is not easily
 # possible.
 from backports.configparser import SafeConfigParser
-from gi.repository import Gio, Gdk, GObject, Gtk
+from gi.repository import Gdk, Gio, GObject, Gtk
 from hamster_lib.helpers import config_helpers
 from six import text_type
 

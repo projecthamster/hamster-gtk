@@ -22,11 +22,11 @@ from __future__ import absolute_import, unicode_literals
 import datetime
 
 from gi.repository import GObject, Gtk
+from orderedset import OrderedSet
 from six import text_type
 
 from hamster_gtk import helpers
 from hamster_gtk.helpers import _u
-from orderedset import OrderedSet
 
 
 def _get_segment_boundaries(segment, match):
