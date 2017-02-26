@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with 'hamster-gtk'.  If not, see <http://www.gnu.org/licenses/>.
 
-"""This module provides ComboBoxText widget extended to store preferences."""
+"""This module provides a HamsterCheckButton widget that implements the ConfigWidget mixin."""
 
 from __future__ import absolute_import
 
