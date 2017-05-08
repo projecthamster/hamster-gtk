@@ -9,7 +9,7 @@
 
 
 check-manifest==0.35
-coverage==4.3.4
+coverage==4.4
 doc8==0.8.0
 fauxfactory==2.1.0
 flake8==3.3.0
