@@ -208,6 +208,7 @@ class RawFactEntry(Gtk.Entry):
     def _on_config_changed(self, evt):
         self._split_activity_autocomplete = self._app._config['autocomplete_split_activity']
 
+
 class RawFactCompletion(Gtk.EntryCompletion):
     """
     Return a completion instance to match 'activity@category' strings.

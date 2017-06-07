@@ -77,8 +77,9 @@ class PreferencesDialog(Gtk.Dialog):
             (_('Miscellaneous'), LabelledWidgetsGrid(collections.OrderedDict([
                 ('autocomplete_activities_offset', (_("Autocomplete Activities Offset"),
                     HamsterSpinButton(SimpleAdjustment(0, GObject.G_MAXDOUBLE, 1)))),
-                ('autocomplete_split_activity', (_("Autocomplete activities and categories separately"),
-                    HamsterCheckButton())),
+                ('autocomplete_split_activity',
+                 (_("Autocomplete activities and categories separately"),
+                  HamsterCheckButton())),
             ]))),
         ]
 
