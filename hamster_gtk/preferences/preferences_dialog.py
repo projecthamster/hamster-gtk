@@ -30,7 +30,7 @@ from gi.repository import GObject, Gtk
 
 from hamster_gtk.misc.widgets import LabelledWidgetsGrid
 from hamster_gtk.preferences.widgets import (ComboFileChooser,
-                                             HamsterCheckButton,
+                                             HamsterSwitch,
                                              HamsterComboBoxText,
                                              HamsterSpinButton,
                                              SimpleAdjustment, TimeEntry)
@@ -79,7 +79,7 @@ class PreferencesDialog(Gtk.Dialog):
                     HamsterSpinButton(SimpleAdjustment(0, GObject.G_MAXDOUBLE, 1)))),
                 ('autocomplete_split_activity',
                  (_("Autocomplete activities and categories separately"),
-                  HamsterCheckButton())),
+                  HamsterSwitch())),
             ]))),
         ]
 

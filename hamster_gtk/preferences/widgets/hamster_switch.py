@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with 'hamster-gtk'.  If not, see <http://www.gnu.org/licenses/>.
 
-"""This module provides a HamsterCheckButton widget that implements the ConfigWidget mixin."""
+"""This module provides a HamsterSwitch widget that implements the ConfigWidget mixin."""
 
 from __future__ import absolute_import
 
@@ -24,11 +24,11 @@ from gi.repository import Gtk
 from .config_widget import ConfigWidget
 
 
-class HamsterCheckButton(Gtk.CheckButton, ConfigWidget):
+class HamsterSwitch(Gtk.Switch, ConfigWidget):
     """A ToggleButton that implements our unified custom ConfigWidget interface."""
 
     # Required else you would need to specify the full module name in ui file
-    __gtype_name__ = 'HamsterCheckButton'
+    __gtype_name__ = 'HamsterSwitch'
 
     def __init__(self, active=False):
         """
@@ -37,7 +37,8 @@ class HamsterCheckButton(Gtk.CheckButton, ConfigWidget):
         Args:
             active (bool, optional): State of the button. Defaults to ``False``.
         """
-        super(Gtk.CheckButton, self).__init__()
+        super(Gtk.Switch, self).__init__()
+        self.set_active(active)
 
     def get_config_value(self):
         """
