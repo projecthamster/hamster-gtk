@@ -69,21 +69,21 @@ def db_path_parametrized(request, tmpdir):
 
 
 @pytest.fixture(params=(0, 1, 30, 60))
-def autocomplete_activities_offset_parametrized(request):
-    """Return a parametrized autocomplete_activities_offset value."""
+def autocomplete_activities_range_parametrized(request):
+    """Return a parametrized autocomplete_activities_range value."""
     return request.param
 
 
 @pytest.fixture(params=(True, False))
 def autocomplete_split_activity_parametrized(request):
-    """Return a parametrized autocomplete_activities_offset value."""
+    """Return a parametrized autocomplete_split_activity value."""
     return request.param
 
 
 @pytest.fixture
 def config_parametrized(request, store_parametrized, day_start_parametrized,
         fact_min_delta_parametrized, tmpfile_path_parametrized, db_engine_parametrized,
-        db_path_parametrized, autocomplete_activities_offset_parametrized,
+        db_path_parametrized, autocomplete_activities_range_parametrized,
         autocomplete_split_activity_parametrized):
             """Return a config fixture with heavily parametrized config values."""
             return {
@@ -93,7 +93,7 @@ def config_parametrized(request, store_parametrized, day_start_parametrized,
                 'tmpfile_path': tmpfile_path_parametrized,
                 'db_engine': db_engine_parametrized,
                 'db_path': db_path_parametrized,
-                'autocomplete_activities_offset': autocomplete_activities_offset_parametrized,
+                'autocomplete_activities_range': autocomplete_activities_range_parametrized,
                 'autocomplete_split_activity': autocomplete_split_activity_parametrized,
             }
 

@@ -272,7 +272,7 @@ class RawFactCompletion(Gtk.EntryCompletion):
         for autocomplete suggestions.
         """
         today = datetime.date.today()
-        offset = self._app._config['autocomplete_activities_offset']
+        offset = self._app._config['autocomplete_activities_range']
         start = today - datetime.timedelta(days=offset)
         recent_activities = [fact.activity for fact in self._app.controller.facts.get_all(
             start=start, end=today)]

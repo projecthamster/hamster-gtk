@@ -277,7 +277,7 @@ class HamsterGTK(Gtk.Application):
             'db_engine': 'sqlite',
             'db_path': os.path.join(appdirs.user_data_dir, 'hamster-gtk.sqlite'),
             # Frontend
-            'autocomplete_activities_offset': 30,
+            'autocomplete_activities_range': 30,
             'autocomplete_split_activity': False,
         }
 
@@ -309,8 +309,8 @@ class HamsterGTK(Gtk.Application):
         def get_db_path():
             return text_type(config['db_path'])
 
-        def get_autocomplete_activities_offset():
-            return text_type(config['autocomplete_activities_offset'])
+        def get_autocomplete_activities_range():
+            return text_type(config['autocomplete_activities_range'])
 
         def get_autocomplete_split_activity():
             return text_type(config['autocomplete_split_activity'])
@@ -325,8 +325,8 @@ class HamsterGTK(Gtk.Application):
         cp_instance.set('Backend', 'db_path', get_db_path())
 
         cp_instance.add_section('Frontend')
-        cp_instance.set('Frontend', 'autocomplete_activities_offset',
-                        get_autocomplete_activities_offset())
+        cp_instance.set('Frontend', 'autocomplete_activities_range',
+                        get_autocomplete_activities_range())
         cp_instance.set('Frontend', 'autocomplete_split_activity',
                         get_autocomplete_split_activity())
 
@@ -379,8 +379,8 @@ class HamsterGTK(Gtk.Application):
                 })
             return result
 
-        def get_autocomplete_activities_offset():
-            return cp_instance.getint('Frontend', 'autocomplete_activities_offset')
+        def get_autocomplete_activities_range():
+            return cp_instance.getint('Frontend', 'autocomplete_activities_range')
 
         def get_autocomplete_split_activity():
             return cp_instance.getboolean('Frontend', 'autocomplete_split_activity')
@@ -390,7 +390,7 @@ class HamsterGTK(Gtk.Application):
             'day_start': get_day_start(),
             'fact_min_delta': get_fact_min_delta(),
             'tmpfile_path': get_tmpfile_path(),
-            'autocomplete_activities_offset': get_autocomplete_activities_offset(),
+            'autocomplete_activities_range': get_autocomplete_activities_range(),
             'autocomplete_split_activity': get_autocomplete_split_activity(),
         }
         result.update(get_db_config())
