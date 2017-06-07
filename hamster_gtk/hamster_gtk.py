@@ -40,9 +40,6 @@ from hamster_lib.helpers import config_helpers
 from hamster_gtk.helpers import get_parent_window, get_resource_path
 from six import text_type
 
-# [FIXME]
-# Remove once hamster-lib has been patched
-from hamster_gtk.helpers import get_config_instance
 from hamster_gtk.misc import HamsterAboutDialog as AboutDialog
 from hamster_gtk.overview import OverviewDialog
 from hamster_gtk.preferences import PreferencesDialog
@@ -174,6 +171,9 @@ class HamsterGTK(Gtk.Application):
         """Setup instance and make sure default signals are connected to methods."""
         super(HamsterGTK, self).__init__()
         self.window = None
+
+        self._appdirs = config_helpers.HamsterAppDirs('hamster-gtk')
+
         # Which config backend to use.
         self.config_store = 'file'
         # Yes this is redundent, but more transparent. And we can worry about
@@ -195,7 +195,7 @@ class HamsterGTK(Gtk.Application):
             dict: Dictionary of config keys and values.
         """
         cp_instance = self._config_to_configparser(config)
-        config_helpers.write_config_file(cp_instance, 'hamster-gtk', 'hamster-gtk.conf')
+        config_helpers.write_config_file(cp_instance, self._appdirs, 'hamster-gtk.conf')
         self.controler.signal_handler.emit('config-changed')
 
     def _startup(self, app):
@@ -249,7 +249,7 @@ class HamsterGTK(Gtk.Application):
 
         Note: Those defaults are independend of the particular config store.
         """
-        appdirs = config_helpers.HamsterAppDirs('hamster-gtk')
+        appdirs = self._appdirs
         return {
             # Backend
             'store': 'sqlalchemy',
@@ -362,7 +362,7 @@ class HamsterGTK(Gtk.Application):
         Args:
             cp_instance (SafeConfigParser): Instance to be written to file.
         """
-        config_helpers.write_config_file(configparser_instance, 'hamster-gtk', 'hamster-gtk.conf')
+        config_helpers.write_config_file(configparser_instance, self._appdirs, 'hamster-gtk.conf')
 
     def _get_config_from_file(self):
         """
@@ -380,7 +380,8 @@ class HamsterGTK(Gtk.Application):
             config = self._get_default_config()
             return self._config_to_configparser(config)
 
-        cp_instance = get_config_instance(get_fallback(), 'hamster-gtk', 'hamster-gtk.conf')
+        cp_instance = config_helpers.load_config_file(self._appdirs, 'hamster-gtk.conf',
+            get_fallback())
         return self._configparser_to_config(cp_instance)
 
 

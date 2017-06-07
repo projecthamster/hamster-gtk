@@ -16,7 +16,8 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read().replace('.. :changelog:', '')
 
 requirements = [
-    'hamster-lib',
+    'orderedset',
+    'hamster-lib >=0.13.0,<0.14.0',
 ]
 
 setup(
