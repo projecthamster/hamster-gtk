@@ -117,23 +117,6 @@ def calendar_date_to_datetime(date):
     return datetime.date(int(year), int(month) + 1, int(day))
 
 
-# [FIXME]
-# Remove once hamster-lib is patched
-# This should probably be named/limited to: 'read_config_file'.
-# The 'fallback' behaviour should live with ``_get_config_from_file``.
-def get_config_instance(fallback_config_instance, app_name, file_name):
-    """Patched version of ``hamster-lib`` helper function until it get fixed upstream."""
-    from hamster_lib.helpers import config_helpers
-    from backports.configparser import SafeConfigParser
-    config = SafeConfigParser()
-    path = config_helpers.get_config_path(app_name, file_name)
-    existing_config = config.read(path)
-    if not existing_config:
-        config = config_helpers.write_config_file(fallback_config_instance, app_name,
-                                                  file_name=file_name)
-    return config
-
-
 def decompose_raw_fact_string(text, raw=False):
     """
     Try to match a given string with modular regex groups.
