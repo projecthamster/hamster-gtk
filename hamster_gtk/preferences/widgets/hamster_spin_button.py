@@ -30,9 +30,9 @@ SimpleAdjustment = namedtuple('SimpleAdjustment', ('min', 'max', 'step'))
 Simpilified version of :class:`Gtk.Adjustment`.
 
 Args:
-    min : The minimum value.
-    max : The maximum value.
-    step : The amount the value will be increased/decreased
+    min: The minimum value.
+    max: The maximum value.
+    step: The amount the value will be increased/decreased
         when the corresponding button is clicked.
 """
 
@@ -62,7 +62,7 @@ class HamsterSpinButton(Gtk.SpinButton, ConfigWidget):
                 if adj.step == 0:
                     raise ValueError('Step value has to be non-zero.')
 
-                # Because we can not easily enforce our named tumple
+                # Because we can not easily enforce our named tuple
                 # ``SimpleAdjustment`` to only take ``int``s we instead make
                 # sure that its values are cast to ``int`` here before usage.
                 adjustment = Gtk.Adjustment(adj.min, adj.min, adj.max, adj.step, 10 * adj.step, 0)
