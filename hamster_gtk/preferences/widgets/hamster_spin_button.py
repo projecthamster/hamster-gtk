@@ -53,7 +53,7 @@ class HamsterSpinButton(Gtk.SpinButton, ConfigWidget):
                 See their respective documentation for more information. Defaults to ``None`` in
                 which case it can be set later.
         """
-        super(Gtk.Entry, self).__init__()
+        super(Gtk.HamsterSpinButton, self).__init__()
 
         if adj is not None:
             if isinstance(adj, SimpleAdjustment):
