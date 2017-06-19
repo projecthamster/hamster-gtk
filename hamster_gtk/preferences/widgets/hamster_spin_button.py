@@ -53,7 +53,7 @@ class HamsterSpinButton(Gtk.SpinButton, ConfigWidget):
                 See their respective documentation for more information. Defaults to ``None`` in
                 which case it can be set later.
         """
-        super(Gtk.HamsterSpinButton, self).__init__(climb_rate=climb_rate, digits=digits)
+        super(Gtk.SpinButton, self).__init__(climb_rate=climb_rate, digits=digits)
 
         self.set_numeric(True)
 
