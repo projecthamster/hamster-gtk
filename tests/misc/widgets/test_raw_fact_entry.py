@@ -20,11 +20,11 @@
 
 from __future__ import absolute_import, unicode_literals
 
-from hamster_gtk.misc import widgets
+from hamster_gtk.misc.widgets import RawFactEntry
 
 
 def test_init(app):
-        assert widgets.RawFactEntry(app.controller)
+        assert RawFactEntry(app.controller)
 
 
 def test__on_facts_changed(raw_fact_entry):
