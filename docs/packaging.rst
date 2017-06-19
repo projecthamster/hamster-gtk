@@ -18,7 +18,8 @@ We do fully follow Donald Stuffts `argument
 ``setup.py`` is of fundamentally different nature than what may be located
 under ``requirements.txt`` (Additional comments can be found in the `packaging
 guide
-<https://python-packaging-user-guide.readthedocs.io/requirements/>`_
+<http://python-packaging-user-guide.readthedocs.io/discussions/install-requires-vs-requirements/>`_
+
 and with `Hynek Schlawack
 <https://hynek.me/articles/sharing-your-labor-of-love-pypi-quick-and-dirty/>`_).
 As far as packaging goes ``setup.py`` is authoritative. We provide a set of
