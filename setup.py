@@ -17,7 +17,7 @@ with open('HISTORY.rst') as history_file:
 
 requirements = [
     'orderedset',
-    'hamster-lib',
+    'hamster-lib >= 0.13.0',
 ]
 
 setup(
