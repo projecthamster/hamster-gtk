@@ -55,7 +55,7 @@ class HamsterSpinButton(Gtk.SpinButton, ConfigWidget):
             climb_rate (float): See Gtk.SpinButton documentation.
             digits (int): See Gtk.SpinButton documentation.
         """
-        super(Gtk.SpinButton, self).__init__(climb_rate=climb_rate, digits=digits)
+        super(Gtk.SpinButton, self).__init__()
 
         self.set_numeric(True)
 
@@ -69,7 +69,7 @@ class HamsterSpinButton(Gtk.SpinButton, ConfigWidget):
                 adjustment = Gtk.Adjustment(adjustment.min, adjustment.min, adjustment.max,
                     adjustment.step, 10 * adjustment.step, 0)
 
-            self.configure(adjustment, climb_rate, digits)
+        self.configure(adjustment, climb_rate, digits)
 
     def _validate_simple_adjustment(self, adj):
         if adj.min > adj.max:
