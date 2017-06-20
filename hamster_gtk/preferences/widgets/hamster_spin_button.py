@@ -43,7 +43,7 @@ class HamsterSpinButton(Gtk.SpinButton, ConfigWidget):
     # Required else you would need to specify the full module name in ui file
     __gtype_name__ = 'HamsterSpinButton'
 
-    def __init__(self, adj=None, climb_rate=0, digits=0):
+    def __init__(self, adjustment=None, climb_rate=0, digits=0):
         """
         Initialize widget.
 
@@ -52,21 +52,26 @@ class HamsterSpinButton(Gtk.SpinButton, ConfigWidget):
                 :class:`Gtk.Adjustment` or a :class:`SimpleAdjustment`.
                 See their respective documentation for more information. Defaults to ``None`` in
                 which case it can be set later.
+            climb_rate: See Gtk.SpinButton documentation.
+            digits: See Gtk.SpinButton documentation.
         """
         super(Gtk.SpinButton, self).__init__(climb_rate=climb_rate, digits=digits)
 
         self.set_numeric(True)
 
-        if adj is not None:
-            if (not isinstance(adj, SimpleAdjustment) or not isinstance(adj, Gtk.Adjustment)):
-                raise ValueError('Instance of SimpleAdjustment or Gtk.Adjustment is expected.'):
+        if adjustment is not None:
+            if not isinstance(adjustment, SimpleAdjustment) and not isinstance(adjustment,
+                                                                               Gtk.Adjustment):
+                raise ValueError('Instance of SimpleAdjustment or Gtk.Adjustment is expected.')
 
-            if isinstance(adj, SimpleAdjustment):
-                _validate_simple_adjustment(adj)
+            if isinstance(adjustment, SimpleAdjustment):
+                self._validate_simple_adjustment(adjustment)
+                adjustment = Gtk.Adjustment(adjustment.min, adjustment.min, adjustment.max,
+                    adjustment.step, 10 * adjustment.step, 0)
 
-            self.configure(adj, climb_rate, digits)
+            self.configure(adjustment, climb_rate, digits)
 
-    def _validate_simple_adjustment(adj):
+    def _validate_simple_adjustment(self, adj):
         if adj.min > adj.max:
             raise ValueError('Minimal value has to be lower than maximal value.')
         if adj.step == 0:
