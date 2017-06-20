@@ -52,8 +52,8 @@ class HamsterSpinButton(Gtk.SpinButton, ConfigWidget):
                 :class:`Gtk.Adjustment` or a :class:`SimpleAdjustment`.
                 See their respective documentation for more information. Defaults to ``None`` in
                 which case it can be set later.
-            climb_rate: See Gtk.SpinButton documentation.
-            digits: See Gtk.SpinButton documentation.
+            climb_rate (float): See Gtk.SpinButton documentation.
+            digits (int): See Gtk.SpinButton documentation.
         """
         super(Gtk.SpinButton, self).__init__(climb_rate=climb_rate, digits=digits)
 
