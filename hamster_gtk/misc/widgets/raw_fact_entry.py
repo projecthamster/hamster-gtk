@@ -258,9 +258,11 @@ class RawFactCompletion(Gtk.EntryCompletion):
                 text = activity.name
             self._activities_with_categories_model.append([text])
 
+        activities_store = Gtk.ListStore(GObject.TYPE_STRING)
         for activity in activities:
             self._activities_model.append([activity])
 
+        categories_store = Gtk.ListStore(GObject.TYPE_STRING)
         for category in categories:
             self._categories_model.append([category])
 
