@@ -27,6 +27,8 @@ import re
 from orderedset import OrderedSet
 import six
 
+from six import text_type
+
 
 def _u(string):
     """
@@ -185,3 +187,11 @@ def get_recent_activities(controller, start, end):
     """Return a list of all activities logged in facts within the given timeframe."""
     recent_activities = [fact.activity for fact in controller.facts.get_all(start=start, end=end)]
     return OrderedSet(recent_activities)
+
+
+def serialize_activity(activity):
+    if activity.category:
+        result = '{a.name}@{a.category.name}'.format(a=activity)
+    else:
+        result = activity.name
+    return text_type(result)
