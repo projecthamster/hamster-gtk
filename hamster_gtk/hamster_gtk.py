@@ -116,6 +116,10 @@ class SignalHandler(GObject.GObject):
     Once signals have been 'registered' here you can ``emit`` or ``connect`` to
     them via its class instances.
     """
+    # [TODO]
+    # Explain semantics of each signal
+    # [TODO]
+    # Add signals for all changed hamster-lib objects?
 
     __gsignals__ = {
         str('facts-changed'): (GObject.SIGNAL_RUN_LAST, None, ()),
