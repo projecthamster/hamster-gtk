@@ -188,6 +188,14 @@ def get_recent_activities(controller, start, end):
     return OrderedSet(recent_activities)
 
 
+def serialize_activity(activity):
+    if activity.category:
+        result = '{a.name}@{a.category.name}'.format(a=activity)
+    else:
+        result = activity.name
+    return text_type(result)
+
+
 def get_delta_string(delta):
     """
     Return a human readable representation of ``datetime.timedelta`` instance.
