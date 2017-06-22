@@ -88,6 +88,8 @@ def clear_children(widget):
     It seems GTK really does not have this build in. Iterating over all
     seems a bit blunt, but seems to be the way to do this.
     """
+    # [TODO]
+    # Replace with Gtk.Container.foreach()?
     for child in widget.get_children():
         child.destroy()
     return widget
