@@ -24,6 +24,7 @@ from __future__ import absolute_import, unicode_literals
 import datetime
 import re
 
+from orderedset import OrderedSet
 import six
 from six import text_type
 
@@ -177,6 +178,14 @@ def decompose_raw_fact_string(text, raw=False):
     if match and not raw:
         result = match.groupdict()
     return result
+
+
+# [TODO]
+# Oncec LIB-251 has been fixed this should no longer be needed.
+def get_recent_activities(controller, start, end):
+    """Return a list of all activities logged in facts within the given timeframe."""
+    recent_activities = [fact.activity for fact in controller.facts.get_all(start=start, end=end)]
+    return OrderedSet(recent_activities)
 
 
 def get_delta_string(delta):
