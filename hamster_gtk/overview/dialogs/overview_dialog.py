@@ -138,12 +138,15 @@ class OverviewDialog(Gtk.Dialog):
             self._charts.destroy()
             self._charts = False
         else:
-            self._charts = widgets.Charts(self._totals)
+            self._charts = Gtk.ScrolledWindow()
+            self._charts.set_min_content_height(200)
+            self._charts.set_min_content_height(400)
+            self._charts.add(widgets.Charts(self._totals))
             self.main_box.pack_start(self._charts, False, False, 0)
             self.show_all()
 
     # [FIXME]
-    # To avoid multiple falls to the backend, maybe some rudimentaty chaching
+    # To avoid multiple calls to the backend, maybe some rudimentaty caching
     # would be sensible.
     def _get_facts(self):
         """
