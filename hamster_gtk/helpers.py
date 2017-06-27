@@ -25,6 +25,7 @@ import datetime
 import re
 
 import six
+from six import text_type
 
 
 def _u(string):
@@ -174,3 +175,35 @@ def decompose_raw_fact_string(text, raw=False):
     if match and not raw:
         result = match.groupdict()
     return result
+
+
+def get_delta_string(delta):
+    """
+    Return a human readable representation of ``datetime.timedelta`` instance.
+
+    In most contexts its not that useful to present the delta in seconds.
+    Instead we return the delta either in minutes or ``hours:minutes`` depending on the
+    value.
+
+    Args:
+        delta (datetime.timedelta): The timedelta instance to render.
+
+    Returns:
+        text_type: The datetime instance rendered as text.
+
+    Note:
+        So far, this does not account for large deltas that span days and more.
+    """
+    seconds = delta.total_seconds()
+    minutes = int(seconds / 60)
+    if minutes < 60:
+        result = '{} min'.format(minutes)
+    else:
+        result = '{hours:02d}:{minutes:02d}'.format(
+            hours=int(seconds / 3600), minutes=int((seconds % 3600) / 60))
+    return text_type(result)
+
+
+def rgb_to_gtk_rgb(r, g, b):
+    """Map '255' based RGB values to 0-1 based floats expected by cairo."""
+    return float(r) / 255, float(g) / 255, float(b) / 255

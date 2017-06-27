@@ -47,7 +47,7 @@ class FactGrid(Gtk.Grid):
         initial = sorted(initial.items(), key=operator.itemgetter(0), reverse=True)
 
         row = 0
-        for date, facts in initial.items():
+        for date, facts in initial:
             # [FIXME] Order by fact start
             self.attach(self._get_date_widget(date), 0, row, 1, 1)
             self.attach(self._get_fact_list(controller, facts), 1, row, 1, 1)

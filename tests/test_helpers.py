@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import pytest
+import datetime
+
 from gi.repository import Gtk
+
+import pytest
 
 import hamster_gtk.helpers as helpers
 
@@ -129,3 +132,16 @@ def test_decompose_raw_fact_string(request, text, expectation):
             assert result[key] == value
     else:
         assert result is None
+
+
+@pytest.mark.parametrize(('minutes', 'expectation'), (
+    (1, '1 min'),
+    (30, '30 min'),
+    (59, '59 min'),
+    (60, '01:00'),
+    (300, '05:00'),
+))
+def test__get_delta_string(minutes, expectation):
+    delta = datetime.timedelta(minutes=minutes)
+    result = helpers.get_delta_string(delta)
+    assert result == expectation

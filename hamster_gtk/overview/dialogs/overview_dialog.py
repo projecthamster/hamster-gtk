@@ -171,58 +171,46 @@ class OverviewDialog(Gtk.Dialog):
             We handle totals as part of this method in order to limit the
             amount of iterations over ``self._facts``.
         """
-        # [FIXME]
-        # This is probably useful to other clients as well and worth
-        # considering for hamster-lib.
-        def get_total(totals):
-            """Return a dictionary of max deltas per key."""
-            max_total = defaultdict(datetime.timedelta)
-            # [FIXME]
-            # is this really the *max* total, and not rather the total per key?
-            for key, deltas in totals.items():
-                for delta in deltas:
-                    max_total[key] += delta
-            return max_total
-
+        # All facts for a given date
         facts_by_date = defaultdict(list)
-        date_deltas = defaultdict(list)
+        date_deltas = defaultdict(datetime.timedelta)
+        # All facts for a given category
         facts_by_category = defaultdict(list)
-        category_deltas = defaultdict(list)
+        category_deltas = defaultdict(datetime.timedelta)
+        # All facts for a given activity
         facts_by_activity = defaultdict(list)
-        activity_deltas = defaultdict(list)
+        activity_deltas = defaultdict(datetime.timedelta)
 
         GroupedFacts = namedtuple('GroupedFacts', ('by_activity', 'by_category', 'by_date'))
-        # Provide a dummy in case there are no facts to be grouped.
-        grouped_facts = GroupedFacts({}, {}, {})
 
         for fact in self._facts:
+            delta = fact.delta
+
             facts_by_date[fact.date].append(fact)
-            date_deltas[fact.date].append(fact.delta)
+            date_deltas[fact.date] += delta
 
             # Take note: ``Fact.activity`` is only unique for the composite key
             # activity.name/activity.category!
             facts_by_activity[fact.activity].append(fact)
-            activity_deltas[fact.activity].append(fact.delta)
+            activity_deltas[fact.activity] += delta
 
             facts_by_category[fact.category].append(fact)
-            category_deltas[fact.category].append(fact.delta)
+            category_deltas[fact.category] += delta
 
-            grouped_facts = GroupedFacts(
-                by_activity=facts_by_activity,
-                by_category=facts_by_category,
-                by_date=facts_by_date
-            )
-
-        totals = Totals(
-            activity=get_total(activity_deltas),
-            category=get_total(category_deltas),
-            date=get_total(date_deltas)
+        grouped_facts = GroupedFacts(
+            by_activity=facts_by_activity,
+            by_category=facts_by_category,
+            by_date=facts_by_date,
         )
-        return grouped_facts, totals
 
-    def _get_highest_totals(self, dictionary, amount):
+        totals = Totals(activity_deltas, category_deltas, date_deltas)
+
+        Result = namedtuple('Result', ('grouped_facts', 'totals'))
+        return Result(grouped_facts, totals)
+
+    def _get_highest_totals(self, totals, amount):
         """Return specified amount of items with the highest value."""
-        totals = sorted(dictionary.items(), key=operator.itemgetter(1),
+        totals = sorted(totals.items(), key=operator.itemgetter(1),
                         reverse=True)
         if len(totals) < amount:
             result = totals

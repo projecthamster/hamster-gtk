@@ -157,26 +157,14 @@ class TestCharts(object):
         """Make sure instance matches expectation."""
         result = widgets.Charts(totals)
         assert isinstance(result, widgets.Charts)
-        assert len(result.get_children()) == 1
+        assert len(result.get_children()) == 6
 
-    def test__get_category_widget(self, charts, totals):
+    def test__get_barcharts(self, charts, totals):
         """Make sure widget matches expectations."""
-        result = charts._get_category_widget(totals.category)
+        result = charts._get_barcharts(totals.category)
         assert isinstance(result, Gtk.Grid)
         # Each category will trigger adding 3 children.
         assert len(result.get_children()) == 3 * len(totals.category)
-
-    @pytest.mark.parametrize(('minutes', 'expectation'), (
-        (1, '1 min'),
-        (30, '30 min'),
-        (59, '59 min'),
-        (60, '01:00'),
-        (300, '05:00'),
-    ))
-    def test__get_delta_string(self, charts, minutes, expectation):
-        delta = datetime.timedelta(minutes=minutes)
-        result = charts._get_delta_string(delta)
-        assert result == expectation
 
 
 class TestHorizontalBarChart(object):
