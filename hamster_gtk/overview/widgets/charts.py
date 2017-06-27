@@ -87,12 +87,12 @@ class HorizontalBarChart(Gtk.DrawingArea):
     A simple horizontal bar chart.
 
     Note:
-        This solution is not to general. It comes without any coordinate system and labeling.
+        This solution is not too general. It comes without any coordinate system and labeling.
         If you need more, either work towards a dedicated library or incorporate any of the big
         charting backends.
     """
 
-    def __init__(self, value, max_value, width=15, height=40):
+    def __init__(self, value, max_value, width=150, height=40):
         """Initialize widget."""
         super(HorizontalBarChart, self).__init__()
         # [FIXME] Make things more flexible/customizable.
@@ -106,6 +106,7 @@ class HorizontalBarChart(Gtk.DrawingArea):
         self.set_size_request(self._width_hint, self._height_hint)
 
         self.connect('draw', self._on_draw)
+        self.override_background_color(Gtk.StateType.NORMAL, Gdk.RGBA(.5, 1, 1, .5))
 
     def _on_draw(self, widget, context):
         """Method called on ``draw`` event. Renders the actual widget."""
