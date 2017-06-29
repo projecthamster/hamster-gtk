@@ -35,7 +35,7 @@ import hamster_lib
 # under python 2 is practically non existing and manual encoding is not easily
 # possible.
 from backports.configparser import SafeConfigParser
-from gi.repository import Gio, Gdk, GObject, Gtk
+from gi.repository import Gdk, Gio, GObject, Gtk
 from hamster_lib.helpers import config_helpers
 from six import text_type
 
@@ -104,7 +104,7 @@ class MainWindow(Gtk.ApplicationWindow):
         )
 
         # Set tracking as default screen at startup.
-        self.add(TrackingScreen(self.app.controller))
+        self.add(TrackingScreen(self.app))
 
 
 # [FIXME]
@@ -144,6 +144,7 @@ class HamsterGTK(Gtk.Application):
         # Yes this is redundent, but more transparent. And we can worry about
         # this unwarrented assignment once it actually matters.
         self._config = self._reload_config()
+        self.config = self._config
 
         self._create_actions()
 
@@ -275,6 +276,9 @@ class HamsterGTK(Gtk.Application):
             'tmpfile_path': os.path.join(appdirs.user_data_dir, 'hamster-gtk.tmp'),
             'db_engine': 'sqlite',
             'db_path': os.path.join(appdirs.user_data_dir, 'hamster-gtk.sqlite'),
+            # Frontend
+            'autocomplete_activities_range': 30,
+            'autocomplete_split_activity': False,
         }
 
     def _config_to_configparser(self, config):
@@ -305,6 +309,12 @@ class HamsterGTK(Gtk.Application):
         def get_db_path():
             return text_type(config['db_path'])
 
+        def get_autocomplete_activities_range():
+            return text_type(config['autocomplete_activities_range'])
+
+        def get_autocomplete_split_activity():
+            return text_type(config['autocomplete_split_activity'])
+
         cp_instance = SafeConfigParser()
         cp_instance.add_section('Backend')
         cp_instance.set('Backend', 'store', get_store())
@@ -313,6 +323,12 @@ class HamsterGTK(Gtk.Application):
         cp_instance.set('Backend', 'tmpfile_path', get_tmpfile_path())
         cp_instance.set('Backend', 'db_engine', get_db_engine())
         cp_instance.set('Backend', 'db_path', get_db_path())
+
+        cp_instance.add_section('Frontend')
+        cp_instance.set('Frontend', 'autocomplete_activities_range',
+                        get_autocomplete_activities_range())
+        cp_instance.set('Frontend', 'autocomplete_split_activity',
+                        get_autocomplete_split_activity())
 
         return cp_instance
 
@@ -363,11 +379,19 @@ class HamsterGTK(Gtk.Application):
                 })
             return result
 
+        def get_autocomplete_activities_range():
+            return cp_instance.getint('Frontend', 'autocomplete_activities_range')
+
+        def get_autocomplete_split_activity():
+            return cp_instance.getboolean('Frontend', 'autocomplete_split_activity')
+
         result = {
             'store': get_store(),
             'day_start': get_day_start(),
             'fact_min_delta': get_fact_min_delta(),
             'tmpfile_path': get_tmpfile_path(),
+            'autocomplete_activities_range': get_autocomplete_activities_range(),
+            'autocomplete_split_activity': get_autocomplete_split_activity(),
         }
         result.update(get_db_config())
         return result

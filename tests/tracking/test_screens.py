@@ -15,14 +15,14 @@ class TestTrackingScreen(object):
 
     def test_init(self, app):
         """Make sure instance matches expectation."""
-        result = screens.TrackingScreen(app.controller)
+        result = screens.TrackingScreen(app)
         assert isinstance(result, screens.TrackingScreen)
         assert len(result.get_children()) == 2
 
     def test_update_with_ongoing_fact(self, tracking_screen, fact, mocker):
         """Make sure current fact view is shown."""
         fact.end is None
-        tracking_screen._controller.store.facts.get_tmp_fact = mocker.MagicMock(
+        tracking_screen._app.controller.store.facts.get_tmp_fact = mocker.MagicMock(
             return_value=fact)
         tracking_screen.update()
         result = tracking_screen.get_visible_child()
@@ -31,7 +31,7 @@ class TestTrackingScreen(object):
 
     def test_update_with_no_ongoing_fact(self, tracking_screen, mocker):
         """Make sure start tracking view is shown."""
-        tracking_screen._controller.store.facts.get_tmp_fact = mocker.MagicMock(
+        tracking_screen._app.controller.store.facts.get_tmp_fact = mocker.MagicMock(
             side_effect=KeyError)
         tracking_screen.update()
         result = tracking_screen.get_visible_child()
@@ -44,7 +44,7 @@ class TestStartTrackingBox(object):
 
     def test_init(self, app):
         """Make sure instances matches expectation."""
-        result = screens.StartTrackingBox(app.controller)
+        result = screens.StartTrackingBox(app)
         assert isinstance(result, screens.StartTrackingBox)
         assert len(result.get_children()) == 3
 
@@ -52,11 +52,11 @@ class TestStartTrackingBox(object):
         """Make sure a new 'ongoing fact' is created."""
         # [FIXME]
         # We need to find a viable way to check if signals are emitted!
-        start_tracking_box._controller.store.facts.save = mocker.MagicMock()
+        start_tracking_box._app.controller.store.facts.save = mocker.MagicMock()
         raw_fact = '{fact.activity.name}@{fact.category.name}'.format(fact=fact)
         start_tracking_box.raw_fact_entry.props.text = raw_fact
         start_tracking_box._on_start_tracking_button(None)
-        assert start_tracking_box._controller.store.facts.save.called
+        assert start_tracking_box._app.controller.store.facts.save.called
 
     def test__reset(self, start_tracking_box):
         """Make sure all relevant widgets are reset."""

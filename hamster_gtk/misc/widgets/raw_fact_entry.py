@@ -22,11 +22,11 @@ from __future__ import absolute_import, unicode_literals
 import datetime
 
 from gi.repository import GObject, Gtk
+from orderedset import OrderedSet
 from six import text_type
 
 from hamster_gtk import helpers
 from hamster_gtk.helpers import _u
-from orderedset import OrderedSet
 
 
 def _get_segment_boundaries(segment, match):
@@ -60,28 +60,30 @@ def _get_segment_boundaries(segment, match):
 class RawFactEntry(Gtk.Entry):
     """A custom entry widgets that provides ``raw fact`` specific autocompletion behaviour."""
 
-    def __init__(self, controller, split_activity_autocomplete=False, *args, **kwargs):
+    def __init__(self, app, split_activity_autocomplete=False, *args, **kwargs):
         """
         Instantiate class.
 
         Args:
             controller: Controller instance.
+            config: Config instance.
             split_activity_autocomplete (bool, optional): If ``True`` autocompletion
                 will handle ``Activity.name`` and ``Activity.category`` independently.
                 If ``False`` it will try to match against the concatenated ``name@category``
                 string. Defaults to ``False``.
         """
         super(RawFactEntry, self).__init__(*args, **kwargs)
-        self._controller = controller
-        self._controller.signal_handler.connect('facts-changed', self._on_facts_changed)
+        self._app = app
         self._split_activity_autocomplete = split_activity_autocomplete
-        self.set_completion(RawFactCompletion(self._controller))
+        self.set_completion(RawFactCompletion(app))
         # The re.match instance of the current string or None
         self.match = None
         # Identifier for the segment the cursor is currently in. None if no
         # match is available.
         self.current_segment = None
         self.connect('changed', self._on_changed)
+        self._app.controller.signal_handler.connect('config-changed', self._on_config_changed)
+        self._app.controller.signal_handler.connect('facts-changed', self._on_facts_changed)
 
     def replace_segment_text(self, segment_string,):
         """
@@ -156,7 +158,7 @@ class RawFactEntry(Gtk.Entry):
     # Callbacks
     def _on_facts_changed(self, evt):
         """Callback triggered when facts have changed."""
-        self.set_completion(RawFactCompletion(self._controller))
+        self.set_completion(RawFactCompletion(self._app))
 
     def _on_changed(self, widget):
         """
@@ -203,6 +205,9 @@ class RawFactEntry(Gtk.Entry):
             if self.current_segment in ('activity', 'category', 'activity+category'):
                 run_autocomplete(self.current_segment)
 
+    def _on_config_changed(self, evt):
+        self._split_activity_autocomplete = self._app._config['autocomplete_split_activity']
+
 
 class RawFactCompletion(Gtk.EntryCompletion):
     """
@@ -212,13 +217,14 @@ class RawFactCompletion(Gtk.EntryCompletion):
         Gtk.EntryCompletion: Completion instance.
     """
 
-    def __init__(self, controller, *args, **kwargs):
+    def __init__(self, app, *args, **kwargs):
         """Instantiate class."""
         super(RawFactCompletion, self).__init__(*args, **kwargs)
-        self._controller = controller
-        self._activities_model, self._categories_model, self._activities_with_categories_model = (
-            self._get_stores()
-        )
+        self._app = app
+        self._activities_model = Gtk.ListStore(GObject.TYPE_STRING)
+        self._categories_model = Gtk.ListStore(GObject.TYPE_STRING)
+        self._activities_with_categories_model = Gtk.ListStore(GObject.TYPE_STRING)
+        self._populate_stores(None)
         self.set_model(self._activities_model)
         self.set_text_column(0)
         self.set_match_func(self._match_anywhere, None)
@@ -228,11 +234,15 @@ class RawFactCompletion(Gtk.EntryCompletion):
             'category': self._categories_model,
             'activity+category': self._activities_with_categories_model,
         }
+        self._app.controller.signal_handler.connect('config-changed', self._populate_stores)
 
-    def _get_stores(self):
+    def _populate_stores(self, evt):
         activities, categories = OrderedSet(), OrderedSet()
 
-        activities_with_categories_store = Gtk.ListStore(GObject.TYPE_STRING)
+        self._activities_with_categories_model.clear()
+        self._activities_model.clear()
+        self._categories_model.clear()
+
         for activity in self._get_activities():
             activities.add(text_type(activity.name))
             if activity.category:
@@ -246,16 +256,13 @@ class RawFactCompletion(Gtk.EntryCompletion):
                 )
             else:
                 text = activity.name
-            activities_with_categories_store.append([text])
+            self._activities_with_categories_model.append([text])
 
-        activities_store = Gtk.ListStore(GObject.TYPE_STRING)
         for activity in activities:
-            activities_store.append([activity])
+            self._activities_model.append([activity])
 
-        categories_store = Gtk.ListStore(GObject.TYPE_STRING)
         for category in categories:
-            categories_store.append([category])
-        return (activities_store, categories_store, activities_with_categories_store)
+            self._categories_model.append([category])
 
     def _get_activities(self):
         """
@@ -265,8 +272,10 @@ class RawFactCompletion(Gtk.EntryCompletion):
         for autocomplete suggestions.
         """
         today = datetime.date.today()
-        recent_activities = [fact.activity for fact in self._controller.facts.get_all(
-            start=today, end=today)]
+        offset = self._app._config['autocomplete_activities_range']
+        start = today - datetime.timedelta(days=offset)
+        recent_activities = [fact.activity for fact in self._app.controller.facts.get_all(
+            start=start, end=today)]
         return OrderedSet(recent_activities)
 
     def _match_anywhere(self, completion, entrystr, iter, data):

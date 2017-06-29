@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from gi.repository import Gtk
-
 import pytest
+from gi.repository import Gtk
 
 import hamster_gtk.helpers as helpers
 

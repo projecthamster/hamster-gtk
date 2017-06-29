@@ -7,6 +7,7 @@ from __future__ import absolute_import, unicode_literals
 import collections
 
 import pytest
+
 from hamster_gtk.misc import widgets
 from hamster_gtk.preferences.widgets import (ComboFileChooser,
                                              HamsterComboBoxText)

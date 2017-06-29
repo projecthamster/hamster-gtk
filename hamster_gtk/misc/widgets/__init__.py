@@ -17,5 +17,5 @@
 
 """This module provides several multi purpose widgets."""
 
-from .raw_fact_entry import RawFactEntry  # NOQA
 from .labelled_widgets_grid import LabelledWidgetsGrid  # NOQA
+from .raw_fact_entry import RawFactEntry  # NOQA

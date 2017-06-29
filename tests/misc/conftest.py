@@ -71,13 +71,13 @@ def edit_fact_dialog(request, fact, dummy_window):
 @pytest.fixture
 def raw_fact_entry(request, app):
     """Return a ``RawFactEntry`` instance."""
-    return widgets.RawFactEntry(app.controller)
+    return widgets.RawFactEntry(app)
 
 
 @pytest.fixture
 def raw_fact_completion(request, app):
     """Return a RawFactCompletion`` instance."""
-    return widgets.raw_fact_entry.RawFactCompletion(app.controller)
+    return widgets.raw_fact_entry.RawFactCompletion(app)
 
 
 @pytest.fixture

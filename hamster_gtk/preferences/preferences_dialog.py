@@ -30,6 +30,7 @@ from gi.repository import GObject, Gtk
 
 from hamster_gtk.misc.widgets import LabelledWidgetsGrid
 from hamster_gtk.preferences.widgets import (ComboFileChooser,
+                                             HamsterSwitch,
                                              HamsterComboBoxText,
                                              HamsterSpinButton,
                                              SimpleAdjustment, TimeEntry)
@@ -72,6 +73,13 @@ class PreferencesDialog(Gtk.Dialog):
                 ('db_engine', (_('DB _Engine'), HamsterComboBoxText(db_engines))),
                 ('db_path', (_('DB _Path'), ComboFileChooser())),
                 ('tmpfile_path', (_('_Temporary file'), ComboFileChooser())),
+            ]))),
+            (_('Miscellaneous'), LabelledWidgetsGrid(collections.OrderedDict([
+                ('autocomplete_activities_range', (_("Autocomplete Activities Range"),
+                    HamsterSpinButton(SimpleAdjustment(0, GObject.G_MAXDOUBLE, 1)))),
+                ('autocomplete_split_activity',
+                 (_("Autocomplete activities and categories separately"),
+                  HamsterSwitch())),
             ]))),
         ]
 
