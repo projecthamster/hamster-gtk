@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with 'hamster-gtk'.  If not, see <http://www.gnu.org/licenses/>.
 
+"""Unittests for RawFactCompletion."""
+
 from __future__ import absolute_import, unicode_literals
 
 from orderedset import OrderedSet
