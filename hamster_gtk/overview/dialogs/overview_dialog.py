@@ -138,9 +138,10 @@ class OverviewDialog(Gtk.Dialog):
             self._charts.destroy()
             self._charts = False
         else:
+            dialog_width, dialog_height = self.get_size()
             self._charts = Gtk.ScrolledWindow()
-            self._charts.set_min_content_height(200)
-            self._charts.set_min_content_height(400)
+            self._charts.set_min_content_height(dialog_height / 4)
+            self._charts.set_min_content_width(dialog_width)
             self._charts.add(widgets.Charts(self._totals))
             self.main_box.pack_start(self._charts, False, False, 0)
             self.show_all()
