@@ -146,7 +146,7 @@ class OverviewDialog(Gtk.Dialog):
             self.show_all()
 
     # [FIXME]
-    # To avoid multiple calls to the backend, maybe some rudimentaty caching
+    # To avoid multiple calls to the backend, maybe some rudimentary caching
     # would be sensible.
     def _get_facts(self):
         """

@@ -181,7 +181,7 @@ def get_delta_string(delta):
     """
     Return a human readable representation of ``datetime.timedelta`` instance.
 
-    In most contexts its not that useful to present the delta in seconds.
+    In most contexts it is not that useful to present the delta in seconds.
     Instead we return the delta either in minutes or ``hours:minutes`` depending on the
     value.
 
