@@ -60,21 +60,19 @@ class HamsterSpinButton(Gtk.SpinButton, ConfigWidget):
         self.set_numeric(True)
 
         if adjustment is not None:
-            if not isinstance(adjustment, SimpleAdjustment) and not isinstance(adjustment,
-                                                                               Gtk.Adjustment):
-                raise ValueError('Instance of SimpleAdjustment or Gtk.Adjustment is expected.')
-
             if isinstance(adjustment, SimpleAdjustment):
                 self._validate_simple_adjustment(adjustment)
                 adjustment = Gtk.Adjustment(adjustment.min, adjustment.min, adjustment.max,
                     adjustment.step, 10 * adjustment.step, 0)
+            elif not isinstance(adjustment, Gtk.Adjustment):
+                raise ValueError('Instance of SimpleAdjustment or Gtk.Adjustment is expected.')
 
         self.configure(adjustment, climb_rate, digits)
 
-    def _validate_simple_adjustment(self, adj):
-        if adj.min > adj.max:
+    def _validate_simple_adjustment(self, adjustment):
+        if adjustment.min > adjustment.max:
             raise ValueError('Minimal value has to be lower than maximal value.')
-        if adj.step == 0:
+        if adjustment.step == 0:
             raise ValueError('Step value has to be non-zero.')
 
         return True
