@@ -30,9 +30,9 @@ SimpleAdjustment = namedtuple('SimpleAdjustment', ('min', 'max', 'step'))
 Simpilified version of :class:`Gtk.Adjustment`.
 
 Args:
-    min (int): The minimum value.
-    max (int): The maximum value.
-    step (int): The amount the value will be increased/decreased
+    min: The minimum value.
+    max: The maximum value.
+    step: The amount the value will be increased/decreased
         when the corresponding button is clicked.
 """
 
@@ -43,31 +43,39 @@ class HamsterSpinButton(Gtk.SpinButton, ConfigWidget):
     # Required else you would need to specify the full module name in ui file
     __gtype_name__ = 'HamsterSpinButton'
 
-    def __init__(self, adj=None):
+    def __init__(self, adjustment=None, climb_rate=0, digits=0):
         """
         Initialize widget.
 
         Args:
-            adj (Gtk.Adjustment, SimpleAdjustment): Adjustment for the widget, either
+            adj (Gtk.Adjustment, SimpleAdjustment, optional): Adjustment for the widget, either
                 :class:`Gtk.Adjustment` or a :class:`SimpleAdjustment`.
-                See their respective documentation for more information.
+                See their respective documentation for more information. Defaults to ``None`` in
+                which case it can be set later.
+            climb_rate (float): See Gtk.SpinButton documentation.
+            digits (int): See Gtk.SpinButton documentation.
         """
-        super(Gtk.Entry, self).__init__()
+        super(Gtk.SpinButton, self).__init__()
 
-        if adj is not None:
-            if isinstance(adj, SimpleAdjustment):
-                if adj.min > adj.max:
-                    raise ValueError('Minimal value has to be lower than maximal value.')
-                if adj.step == 0:
-                    raise ValueError('Step value has to be non-zero.')
+        self.set_numeric(True)
 
-                adjustment = Gtk.Adjustment(adj.min, adj.min, adj.max, adj.step, 10 * adj.step, 0)
-                self.configure(adjustment, adj.step, 0)
-                self.set_numeric(True)
-            elif isinstance(adj, Gtk.Adjustment):
-                self.set_adjustment(adj)
-            else:
+        if adjustment is not None:
+            if isinstance(adjustment, SimpleAdjustment):
+                self._validate_simple_adjustment(adjustment)
+                adjustment = Gtk.Adjustment(adjustment.min, adjustment.min, adjustment.max,
+                    adjustment.step, 10 * adjustment.step, 0)
+            elif not isinstance(adjustment, Gtk.Adjustment):
                 raise ValueError('Instance of SimpleAdjustment or Gtk.Adjustment is expected.')
+
+        self.configure(adjustment, climb_rate, digits)
+
+    def _validate_simple_adjustment(self, adjustment):
+        if adjustment.min > adjustment.max:
+            raise ValueError('Minimal value has to be lower than maximal value.')
+        if adjustment.step == 0:
+            raise ValueError('Step value has to be non-zero.')
+
+        return True
 
     def get_config_value(self):
         """Return selected value.
