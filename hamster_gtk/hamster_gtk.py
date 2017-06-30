@@ -34,7 +34,7 @@ import hamster_lib
 # Once we drop py2 support, we can use the builtin again but unicode support
 # under python 2 is practically non existing and manual encoding is not easily
 # possible.
-from backports.configparser import SafeConfigParser
+from configparser import SafeConfigParser
 from gi.repository import Gdk, Gio, GObject, Gtk
 from hamster_lib.helpers import config_helpers
 from six import text_type
