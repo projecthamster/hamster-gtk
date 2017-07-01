@@ -21,7 +21,7 @@ from __future__ import absolute_import, unicode_literals
 
 import operator
 
-from gi.repository import Gdk, GObject, Gtk
+from gi.repository import GObject, Gtk
 
 
 class Charts(Gtk.Grid):
@@ -43,8 +43,6 @@ class Charts(Gtk.Grid):
         self.attach(self._get_barcharts(totals.activity), 1, 1, 1, 1)
         self.attach(Gtk.Label('Dates'), 2, 0, 1, 1)
         self.attach(self._get_barcharts(totals.date), 2, 1, 1, 1)
-
-        self.override_background_color(Gtk.StateType.NORMAL, Gdk.RGBA(1, 1, 1, 1))
 
     def _get_barcharts(self, totals):
         """
@@ -120,7 +118,6 @@ class HorizontalBarChart(Gtk.DrawingArea):
         self.set_size_request(self._width_hint, self._height_hint)
 
         self.connect('draw', self._on_draw)
-        self.override_background_color(Gtk.StateType.NORMAL, Gdk.RGBA(.5, 1, 1, .5))
 
     def _on_draw(self, widget, context):
         """Method called on ``draw`` event. Renders the actual widget."""
