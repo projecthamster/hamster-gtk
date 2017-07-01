@@ -25,7 +25,7 @@ from __future__ import absolute_import, unicode_literals
 import datetime
 from gettext import gettext as _
 
-from gi.repository import GObject, Gtk
+from gi.repository import GObject, Gtk, Gdk
 from hamster_lib import Fact
 
 import hamster_gtk.helpers as helpers
@@ -186,6 +186,7 @@ class StartTrackingBox(Gtk.Box):
         # Buttons
         start_button = Gtk.Button(label=_("Start Tracking"))
         start_button.connect('clicked', self._on_start_tracking_button)
+        self.start_button = start_button
         self.pack_start(start_button, False, False, 0)
 
         # Recent activities
@@ -240,7 +241,18 @@ class StartTrackingBox(Gtk.Box):
     def _get_recent_activities_widget(self):
         scrolled_window = Gtk.ScrolledWindow()
         scrolled_window.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        scrolled_window.add(RecentActivitiesGrid(self, self._controller))
+        grid = RecentActivitiesGrid(self, self._app.controller)
+        # We need to 'show' the grid early in order to make sure space is
+        # allocated to its children so they actually have a height that we can
+        # use.
+        grid.show_all()
+        # We fetch an arbitrary Button as height-reference
+        child = grid.get_children()[1]
+        height = child.get_preferred_height()[1]
+        min_height = 6 * height
+
+        scrolled_window.set_min_content_height(min_height)
+        scrolled_window.add(grid)
         return scrolled_window
 
     # Callbacks
