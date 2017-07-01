@@ -28,7 +28,7 @@ setup(
     author="Eric Goller",
     author_email='eric.goller@projecthamster.org',
     url='https://github.com/projecthamster/hamster-gtk',
-    packages=find_packages(),
+    packages=find_packages(exclude=['tests*']),
     install_requires=requirements,
     license="GPL3",
     zip_safe=False,
