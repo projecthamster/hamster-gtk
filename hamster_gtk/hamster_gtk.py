@@ -116,6 +116,7 @@ class SignalHandler(GObject.GObject):
     Once signals have been 'registered' here you can ``emit`` or ``connect`` to
     them via its class instances.
     """
+
     # [TODO]
     # Explain semantics of each signal
     # [TODO]
@@ -259,6 +260,7 @@ class HamsterGTK(Gtk.Application):
         """Reload configuration from designated store."""
         config = self._get_config_from_file()
         self._config = config
+        self.config = config
         return config
 
     def _config_changed(self, sender):
@@ -283,6 +285,8 @@ class HamsterGTK(Gtk.Application):
             # Frontend
             'autocomplete_activities_range': 30,
             'autocomplete_split_activity': False,
+            'tracking_show_recent_activities': True,
+            'tracking_recent_activities_items': 6,
         }
 
     def _config_to_configparser(self, config):
@@ -319,6 +323,12 @@ class HamsterGTK(Gtk.Application):
         def get_autocomplete_split_activity():
             return text_type(config['autocomplete_split_activity'])
 
+        def get_tracking_show_recent_activities():
+            return text_type(config['tracking_show_recent_activities'])
+
+        def get_tracking_recent_activities_items():
+            return text_type(config['tracking_recent_activities_items'])
+
         cp_instance = SafeConfigParser()
         cp_instance.add_section('Backend')
         cp_instance.set('Backend', 'store', get_store())
@@ -333,6 +343,10 @@ class HamsterGTK(Gtk.Application):
                         get_autocomplete_activities_range())
         cp_instance.set('Frontend', 'autocomplete_split_activity',
                         get_autocomplete_split_activity())
+        cp_instance.set('Frontend', 'tracking_show_recent_activities',
+                        get_tracking_show_recent_activities())
+        cp_instance.set('Frontend', 'tracking_recent_activities_items',
+                        get_tracking_recent_activities_items())
 
         return cp_instance
 
@@ -389,6 +403,12 @@ class HamsterGTK(Gtk.Application):
         def get_autocomplete_split_activity():
             return cp_instance.getboolean('Frontend', 'autocomplete_split_activity')
 
+        def get_tracking_show_recent_activities():
+            return cp_instance.getboolean('Frontend', 'tracking_show_recent_activities')
+
+        def get_tracking_recent_activities_items():
+            return int(cp_instance.get('Frontend', 'tracking_recent_activities_items'))
+
         result = {
             'store': get_store(),
             'day_start': get_day_start(),
@@ -396,6 +416,8 @@ class HamsterGTK(Gtk.Application):
             'tmpfile_path': get_tmpfile_path(),
             'autocomplete_activities_range': get_autocomplete_activities_range(),
             'autocomplete_split_activity': get_autocomplete_split_activity(),
+            'tracking_show_recent_activities': get_tracking_recent_activities_items(),
+            'tracking_recent_activities_items': get_tracking_recent_activities_items(),
         }
         result.update(get_db_config())
         return result

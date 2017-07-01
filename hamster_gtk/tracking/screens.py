@@ -169,6 +169,7 @@ class StartTrackingBox(Gtk.Box):
                                                spacing=10, *args, **kwargs)
         self._app = app
         self.set_homogeneous(False)
+        self._app.controller.signal_handler.connect('config-changed', self._on_config_changed)
 
         # [FIXME]
         # Refactor to call separate 'get_widget' methods instead.
@@ -186,10 +187,15 @@ class StartTrackingBox(Gtk.Box):
         # Buttons
         start_button = Gtk.Button(label=_("Start Tracking"))
         start_button.connect('clicked', self._on_start_tracking_button)
+        self.start_button = start_button
         self.pack_start(start_button, False, False, 0)
 
         # Recent activities
-        self.pack_start(self._get_recent_activities_widget(), True, True, 0)
+        if self._app.config['tracking_show_recent_activities']:
+            self.recent_activities_widget = self._get_recent_activities_widget()
+            self.pack_start(self.recent_activities_widget, True, True, 0)
+        else:
+            self.recent_activities_widget = None
 
     def _start_ongoing_fact(self):
         """
@@ -240,7 +246,18 @@ class StartTrackingBox(Gtk.Box):
     def _get_recent_activities_widget(self):
         scrolled_window = Gtk.ScrolledWindow()
         scrolled_window.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        scrolled_window.add(RecentActivitiesGrid(self, self._controller))
+        grid = RecentActivitiesGrid(self, self._app.controller)
+        # We need to 'show' the grid early in order to make sure space is
+        # allocated to its children so they actually have a height that we can
+        # use.
+        grid.show_all()
+        # We fetch an arbitrary Button as height-reference
+        child = grid.get_children()[1]
+        height = child.get_preferred_height()[1]
+        min_height = self._app.config['tracking_recent_activities_items'] * height
+
+        scrolled_window.set_min_content_height(min_height)
+        scrolled_window.add(grid)
         return scrolled_window
 
     # Callbacks
@@ -251,6 +268,21 @@ class StartTrackingBox(Gtk.Box):
     def _on_raw_fact_entry_activate(self, evt):
         """Callback for when ``enter`` is pressed within the entry."""
         self._start_ongoing_fact()
+
+    def _on_config_changed(self, sender):
+        """Callback triggered when 'config-changed' event fired."""
+        if self._app.config['tracking_show_recent_activities']:
+            # We re-create it even if one existed before necause its parameters
+            # (e.g. size) may have changed.
+            if self.recent_activities_widget:
+                self.recent_activities_widget.destroy()
+            self.recent_activities_widget = self._get_recent_activities_widget()
+            self.pack_start(self.recent_activities_widget, True, True, 0)
+        else:
+            if self.recent_activities_widget:
+                self.recent_activities_widget.destroy()
+                self.recent_activities_widget = None
+        self.show_all()
 
 
 class RecentActivitiesGrid(Gtk.Grid):
@@ -264,7 +296,6 @@ class RecentActivitiesGrid(Gtk.Grid):
             start_tracking_widget (StartTrackingBox): Is needed in order to set the raw fact.
             controller: Is needed in order to query for recent activities.
         """
-
         super(Gtk.Grid, self).__init__(*args, **kwargs)
         self._start_tracking_widget = start_tracking_widget
         self._controller = controller
@@ -272,19 +303,16 @@ class RecentActivitiesGrid(Gtk.Grid):
         self._controller.signal_handler.connect('facts-changed', self.refresh)
         self._populate()
 
-
     def refresh(self, sender=None):
         """Clear the current content and re-populate and re-draw the widget."""
         helpers.clear_children(self)
         self._populate()
         self.show_all()
 
-
     def _populate(self):
         """Fill the widget with rows per activity."""
-
         def add_row_widgets(row_counter, activity):
-            """"
+            """
             Add a set of widgets to a specific row based on the activity passed.
 
             Args:
@@ -329,9 +357,8 @@ class RecentActivitiesGrid(Gtk.Grid):
             add_row_widgets(row_counter, activity)
             row_counter += 1
 
-
     def _on_copy_button(self, button, activity):
-        """"
+        """
         Set the activity/category text in the 'start tracking entry'.
 
         Args:
@@ -347,9 +374,8 @@ class RecentActivitiesGrid(Gtk.Grid):
         self._start_tracking_widget.raw_fact_entry.grab_focus_without_selecting()
         self._start_tracking_widget.raw_fact_entry.set_position(len(activity))
 
-
     def _on_start_button(self, button, activity):
-        """"
+        """
         Start a new ongoing fact based on this activity/category.
 
         Args:

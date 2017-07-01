@@ -189,6 +189,7 @@ def get_recent_activities(controller, start, end):
 
 
 def serialize_activity(activity):
+    """Provide a serialized string version of an activity."""
     if activity.category:
         result = '{a.name}@{a.category.name}'.format(a=activity)
     else:
