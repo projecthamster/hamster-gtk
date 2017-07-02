@@ -1,4 +1,4 @@
 # This file specifies all packages required to build the documentation.
 
-Sphinx==1.6.2
+Sphinx==1.6.3
 sphinx-rtd-theme==0.2.4
