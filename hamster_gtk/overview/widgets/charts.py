@@ -23,6 +23,8 @@ import operator
 
 from gi.repository import GObject, Gtk
 
+from hamster_gtk import helpers
+
 
 class Charts(Gtk.Grid):
     """
