@@ -22,6 +22,8 @@
 # have a unicode issue!
 from __future__ import absolute_import
 
+import operator
+
 from gi.repository import GObject, Gtk
 
 from hamster_gtk import helpers
@@ -42,8 +44,10 @@ class FactGrid(Gtk.Grid):
         super(FactGrid, self).__init__(*args, **kwargs)
         self.set_column_spacing(0)
 
+        initial = sorted(initial.items(), key=operator.itemgetter(0), reverse=True)
+
         row = 0
-        for date, facts in initial.items():
+        for date, facts in initial:
             # [FIXME] Order by fact start
             self.attach(self._get_date_widget(date), 0, row, 1, 1)
             self.attach(self._get_fact_list(controller, facts), 1, row, 1, 1)

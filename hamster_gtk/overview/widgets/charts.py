@@ -19,7 +19,11 @@
 
 from __future__ import absolute_import, unicode_literals
 
-from gi.repository import Gtk
+import operator
+
+from gi.repository import GObject, Gtk
+
+from hamster_gtk import helpers
 
 
 class Charts(Gtk.Grid):
@@ -34,52 +38,62 @@ class Charts(Gtk.Grid):
     def __init__(self, totals):
         """Initialize widget."""
         super(Charts, self).__init__()
-        self.attach(self._get_category_widget(totals.category), 0, 0, 1, 1)
-        # [FIXME]
-        # Add analogous widgets for tags and activities?
+        self.set_column_spacing(20)
+        self.attach(Gtk.Label('Categories'), 0, 0, 1, 1)
+        self.attach(self._get_barcharts(totals.category), 0, 1, 1, 1)
+        self.attach(Gtk.Label('Activities'), 1, 0, 1, 1)
+        self.attach(self._get_barcharts(totals.activity), 1, 1, 1, 1)
+        self.attach(Gtk.Label('Dates'), 2, 0, 1, 1)
+        self.attach(self._get_barcharts(totals.date), 2, 1, 1, 1)
 
-    def _get_category_widget(self, category_totals):
-        """Return a widget to represent all categories in a column."""
+    def _get_barcharts(self, totals):
+        """
+        Return a widget to represent all categories in a column.
+
+        Args:
+            totals (dict): A dict that provides delta values for given keys. {key: delta}.
+
+        Returns:
+            Gtk.Grid: A Grid which contains one column and as many rows as there
+                are ``keys`` in ``totals``. Each row contains a barchart with labels
+                showing the delta relative to the highest delta value in ``totals``.
+        """
+        # The highest amount of time spend. This is the scale for all other totals.
+        # Python 2.7 does not yet have support for the ``default`` kwarg.
+        if not totals:
+            max_total = 0
+        else:
+            max_total = max(totals.values())
+            # Sorting a dict like this returns a list of tuples.
+            totals = sorted(totals.items(), key=operator.itemgetter(1),
+                            reverse=True)
+
         grid = Gtk.Grid()
-        row = 0
-        # the highest amount of time spend in a category. This is the scale for
-        # all other totals.
-        max_total = max(category_totals.values())
+        grid.set_column_spacing(5)
+        grid.set_row_spacing(5)
 
-        # Build individual category 'rows'.
-        for category, total in category_totals.items():
-            category_label = Gtk.Label(category)
-            bar_chart = HorizontalBarChart(total.total_seconds(), max_total.total_seconds())
-            total_label = Gtk.Label(self._get_delta_string(total))
+        # Build individual 'rows'.
+        row = 0
+        for category, delta in totals:
+            # For reducing font size we opt for explicit markup in accordance
+            # with (3.2) https://developer.gnome.org/gtk3/3.0/gtk-question-index.html#id530878
+            # As this solution is relative to the users default font size.
+            category_label = Gtk.Label()
+            category_label.set_selectable(True)
+            category_label.set_halign(Gtk.Align.START)
+            category_label.set_markup("<small>{}</small>".format(category))
+            bar_chart = HorizontalBarChart(delta.total_seconds(), max_total.total_seconds(), 100,
+                15)
+            delta_label = Gtk.Label()
+            delta_label.set_selectable(True)
+            delta_label.set_halign(Gtk.Align.START)
+            delta_label.set_markup("<small>{}</small>".format(GObject.markup_escape_text(
+                helpers.get_delta_string(delta))))
             grid.attach(category_label, 0, row, 1, 1)
             grid.attach(bar_chart, 1, row, 1, 1)
-            grid.attach(total_label, 2, row, 1, 1)
+            grid.attach(delta_label, 2, row, 1, 1)
             row += 1
         return grid
-
-    # [FIXME]
-    # Place in a proper helper module. Maybe even in ``hamster-lib``?
-    # In that case make sure to check if we can refactor
-    # ``Fact.get_string_delta``!
-    def _get_delta_string(self, delta):
-        """
-        Return a human readable representation of ``datetime.timedelta`` instance.
-
-        In most contexts its not that useful to present the delta in seconds.
-        Instead we return the delta either in minutes or ``hours:minutes`` depending on the
-        value.
-
-        Note:
-            So far, this does not account for large deltas that span days and more.
-        """
-        seconds = delta.total_seconds()
-        minutes = int(seconds / 60)
-        if minutes < 60:
-            result = '{} min'.format(minutes)
-        else:
-            result = '{hours:02d}:{minutes:02d}'.format(
-                hours=int(seconds / 3600), minutes=int((seconds % 3600) / 60))
-        return result
 
 
 class HorizontalBarChart(Gtk.DrawingArea):
@@ -87,12 +101,12 @@ class HorizontalBarChart(Gtk.DrawingArea):
     A simple horizontal bar chart.
 
     Note:
-        This solution is not to general. It comes without any coordinate system and labeling.
+        This solution is not too general. It comes without any coordinate system and labeling.
         If you need more, either work towards a dedicated library or incorporate any of the big
         charting backends.
     """
 
-    def __init__(self, value, max_value, width=15, height=40):
+    def __init__(self, value, max_value, width=150, height=40):
         """Initialize widget."""
         super(HorizontalBarChart, self).__init__()
         # [FIXME] Make things more flexible/customizable.
