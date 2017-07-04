@@ -21,3 +21,8 @@ recursive-exclude * *.sw?
 
 exclude ci
 recursive-exclude ci *
+
+# Files in ``misc`` should not be part of the sdist as they are not part of the
+# actual package but just a help for desktop integration and such.
+exclude misc
+recursive-exclude misc *

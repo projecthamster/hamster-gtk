@@ -25,6 +25,9 @@ You have been warned.
 Dependencies
 -------------
 
+If you want to use the ``make register-gnome`` target ``desktop-file-install``
+is required. On debian derivates this is provided by ``desktop-file-utils``.
+
 To Run the Testsuite
 ~~~~~~~~~~~~~~~~~~~~~
 - make

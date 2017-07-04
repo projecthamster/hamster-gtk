@@ -19,24 +19,25 @@ BROWSER := python -c "$$BROWSER_PYSCRIPT"
 
 help:
 	@echo "Please use 'make <target>' where <target> is one of"
-	@echo "   clean         to remove all build, test, coverage and Python artifacts"
-	@echo "   clean-build   to remove build artifacts"
-	@echo "   clean-pyc     to remove Python file artifacts"
+	@echo "   clean          to remove all build, test, coverage and Python artifacts"
+	@echo "   clean-build    to remove build artifacts"
+	@echo "   clean-pyc      to remove Python file artifacts"
 	@echo "   clean-docs"
-	@echo "   clean-test    to remove test and coverage artifacts"
-	@echo "   lint          to check style with flake8"
-	@echo "   test          to run tests quickly with the default Python"
-	@echo "   test-all      to run tests on every Python version with tox"
-	@echo "   coverage      to check code coverage quickly with the default Python"
+	@echo "   clean-test     to remove test and coverage artifacts"
+	@echo "   lint           to check style with flake8"
+	@echo "   test           to run tests quickly with the default Python"
+	@echo "   test-all       to run tests on every Python version with tox"
+	@echo "   coverage       to check code coverage quickly with the default Python"
 	@echo "   coverage-html"
 	@echo "   codecov"
-	@echo "   develop       to install (or update) all packages required for development"
-	@echo "   docs          to generate Sphinx HTML documentation, including API docs"
-	@echo "   isort         to run isort on the whole project."
-	@echo "   resources     to generate GTK resources"
-	@echo "   release       to package and upload a release"
-	@echo "   dist          to package"
-	@echo "   install       to install the package to the active Python's site-packages"
+	@echo "   develop        to install (or update) all packages required for development"
+	@echo "   docs           to generate Sphinx HTML documentation, including API docs"
+	@echo "   isort          to run isort on the whole project."
+	@echo "   resources      to generate GTK resources"
+	@echo "   release        to package and upload a release"
+	@echo "   dist           to package"
+	@echo "   install        to install the package to the active Python's site-packages"
+	@echo "   register-gnome to register the package as a GNOME Application."
 
 clean: clean-build clean-pyc clean-test
 
@@ -114,5 +115,8 @@ dist: resources
 	python setup.py bdist_wheel
 	ls -l dist
 
-install: clean
+install: clean resources
 	python setup.py install
+
+register-gnome:
+	desktop-file-install misc/org.projecthamster.hamster-gtk.desktop
