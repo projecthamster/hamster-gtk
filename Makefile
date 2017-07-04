@@ -37,6 +37,7 @@ help:
 	@echo "   release       to package and upload a release"
 	@echo "   dist          to package"
 	@echo "   install       to install the package to the active Python's site-packages"
+	@echo "   register-gtk  to register the package as a GNOME Application."
 
 clean: clean-build clean-pyc clean-test
 
@@ -114,5 +115,8 @@ dist: resources
 	python setup.py bdist_wheel
 	ls -l dist
 
-install: clean
+install: clean resources
 	python setup.py install
+
+register-gtk:
+	desktop-file-install misc/org.projecthamster.hamster-gtk.desktop

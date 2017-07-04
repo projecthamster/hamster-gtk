@@ -137,7 +137,7 @@ class HamsterGTK(Gtk.Application):
 
     def __init__(self):
         """Setup instance and make sure default signals are connected to methods."""
-        super(HamsterGTK, self).__init__()
+        super(HamsterGTK, self).__init__('org.projecthamster.hamster-gtk')
         self.set_resource_base_path('/org/projecthamster/hamster-gtk')
         self.window = None
 

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=hamster-gtk
+Exec=hamster-gtk
+Type=Application
+Terminal=false
+Encoding=UTF-8
+Categories=GTK;GNOME;Utility;
+Version=1.0
+Icon=org.projecthamster.hamser-gtk.png
+Name[de]=hamster-gtk
