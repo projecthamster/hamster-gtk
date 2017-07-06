@@ -169,6 +169,7 @@ class StartTrackingBox(Gtk.Box):
                                                spacing=10, *args, **kwargs)
         self._app = app
         self.set_homogeneous(False)
+        self._app.controller.signal_handler.connect('config-changed', self._on_config_changed)
 
         # [FIXME]
         # Refactor to call separate 'get_widget' methods instead.
@@ -190,7 +191,11 @@ class StartTrackingBox(Gtk.Box):
         self.pack_start(start_button, False, False, 0)
 
         # Recent activities
-        self.pack_start(self._get_recent_activities_widget(), True, True, 0)
+        if self._app.config['tracking_show_recent_activities']:
+            self.recent_activities_widget = self._get_recent_activities_widget()
+            self.pack_start(self.recent_activities_widget, True, True, 0)
+        else:
+            self.recent_activities_widget = None
 
     def _start_ongoing_fact(self):
         """
@@ -263,6 +268,24 @@ class StartTrackingBox(Gtk.Box):
     def _on_raw_fact_entry_activate(self, evt):
         """Callback for when ``enter`` is pressed within the entry."""
         self._start_ongoing_fact()
+
+    def _on_config_changed(self, sender):
+        """Callback triggered when 'config-changed' event fired."""
+        print('CALLBACK TRIGGERD')
+        print(self._app.config)
+        if self._app.config['tracking_show_recent_activities']:
+            if self.recent_activities_widget:
+                pass
+            else:
+                self.recent_activities_widget = self._get_recent_activities_widget()
+                self.pack_start(self.recent_activities_widget, True, True, 0)
+        else:
+            if self.recent_activities_widget:
+                self.recent_activities_widget.destroy()
+                self.recent_activities_widget = None
+            else:
+                pass
+        self.show_all()
 
 
 class RecentActivitiesGrid(Gtk.Grid):
