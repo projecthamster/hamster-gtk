@@ -284,13 +284,11 @@ class RecentActivitiesGrid(Gtk.Grid):
         self._controller.signal_handler.connect('facts-changed', self.refresh)
         self._populate()
 
-
     def refresh(self, sender=None):
         """Clear the current content and re-populate and re-draw the widget."""
         helpers.clear_children(self)
         self._populate()
         self.show_all()
-
 
     def _populate(self):
         """Fill the widget with rows per activity."""
@@ -358,7 +356,6 @@ class RecentActivitiesGrid(Gtk.Grid):
         self._start_tracking_widget.set_raw_fact(activity)
         self._start_tracking_widget.raw_fact_entry.grab_focus_without_selecting()
         self._start_tracking_widget.raw_fact_entry.set_position(len(activity))
-
 
     def _on_start_button(self, button, activity):
         """"
