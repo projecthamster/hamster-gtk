@@ -116,6 +116,7 @@ class SignalHandler(GObject.GObject):
     Once signals have been 'registered' here you can ``emit`` or ``connect`` to
     them via its class instances.
     """
+
     # [TODO]
     # Explain semantics of each signal
     # [TODO]

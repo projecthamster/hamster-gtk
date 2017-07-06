@@ -276,7 +276,6 @@ class RecentActivitiesGrid(Gtk.Grid):
             start_tracking_widget (StartTrackingBox): Is needed in order to set the raw fact.
             controller: Is needed in order to query for recent activities.
         """
-
         super(Gtk.Grid, self).__init__(*args, **kwargs)
         self._start_tracking_widget = start_tracking_widget
         self._controller = controller
@@ -292,9 +291,8 @@ class RecentActivitiesGrid(Gtk.Grid):
 
     def _populate(self):
         """Fill the widget with rows per activity."""
-
         def add_row_widgets(row_counter, activity):
-            """"
+            """
             Add a set of widgets to a specific row based on the activity passed.
 
             Args:
@@ -341,7 +339,7 @@ class RecentActivitiesGrid(Gtk.Grid):
 
 
     def _on_copy_button(self, button, activity):
-        """"
+        """
         Set the activity/category text in the 'start tracking entry'.
 
         Args:
@@ -358,7 +356,7 @@ class RecentActivitiesGrid(Gtk.Grid):
         self._start_tracking_widget.raw_fact_entry.set_position(len(activity))
 
     def _on_start_button(self, button, activity):
-        """"
+        """
         Start a new ongoing fact based on this activity/category.
 
         Args:
