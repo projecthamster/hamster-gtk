@@ -334,6 +334,8 @@ class HamsterGTK(Gtk.Application):
                         get_autocomplete_activities_range())
         cp_instance.set('Frontend', 'autocomplete_split_activity',
                         get_autocomplete_split_activity())
+        cp_instance.set('Frontend', 'tracking_show_recent_activities',
+                        get_tracking_show_recent_activities())
 
         return cp_instance
 
