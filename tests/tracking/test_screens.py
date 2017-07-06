@@ -46,7 +46,7 @@ class TestStartTrackingBox(object):
         """Make sure instances matches expectation."""
         result = screens.StartTrackingBox(app)
         assert isinstance(result, screens.StartTrackingBox)
-        assert len(result.get_children()) == 3
+        assert len(result.get_children()) == 4
 
     def test__on_start_tracking_button(self, start_tracking_box, fact, mocker):
         """Make sure a new 'ongoing fact' is created."""

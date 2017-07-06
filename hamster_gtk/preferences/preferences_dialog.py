@@ -80,6 +80,9 @@ class PreferencesDialog(Gtk.Dialog):
                 ('autocomplete_split_activity',
                  (_("Autocomplete activities and categories separately"),
                   HamsterSwitch())),
+                ('tracking_show_recent_activities',
+                 (_("Allow tracking based on recent activities."),
+                  HamsterSwitch())),
             ]))),
         ]
 

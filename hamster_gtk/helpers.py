@@ -24,6 +24,7 @@ from __future__ import absolute_import, unicode_literals
 import datetime
 import re
 
+from orderedset import OrderedSet
 import six
 from six import text_type
 
@@ -88,6 +89,8 @@ def clear_children(widget):
     It seems GTK really does not have this build in. Iterating over all
     seems a bit blunt, but seems to be the way to do this.
     """
+    # [TODO]
+    # Replace with Gtk.Container.foreach()?
     for child in widget.get_children():
         child.destroy()
     return widget
@@ -175,6 +178,23 @@ def decompose_raw_fact_string(text, raw=False):
     if match and not raw:
         result = match.groupdict()
     return result
+
+
+# [TODO]
+# Oncec LIB-251 has been fixed this should no longer be needed.
+def get_recent_activities(controller, start, end):
+    """Return a list of all activities logged in facts within the given timeframe."""
+    recent_activities = [fact.activity for fact in controller.facts.get_all(start=start, end=end)]
+    return OrderedSet(recent_activities)
+
+
+def serialize_activity(activity):
+    """Provide a serialized string version of an activity."""
+    if activity.category:
+        result = '{a.name}@{a.category.name}'.format(a=activity)
+    else:
+        result = activity.name
+    return text_type(result)
 
 
 def get_delta_string(delta):

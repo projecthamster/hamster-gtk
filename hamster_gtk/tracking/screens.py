@@ -25,7 +25,7 @@ from __future__ import absolute_import, unicode_literals
 import datetime
 from gettext import gettext as _
 
-from gi.repository import GObject, Gtk
+from gi.repository import GObject, Gtk, Gdk
 from hamster_lib import Fact
 
 import hamster_gtk.helpers as helpers
@@ -169,6 +169,7 @@ class StartTrackingBox(Gtk.Box):
                                                spacing=10, *args, **kwargs)
         self._app = app
         self.set_homogeneous(False)
+        self._app.controller.signal_handler.connect('config-changed', self._on_config_changed)
 
         # [FIXME]
         # Refactor to call separate 'get_widget' methods instead.
@@ -186,7 +187,15 @@ class StartTrackingBox(Gtk.Box):
         # Buttons
         start_button = Gtk.Button(label=_("Start Tracking"))
         start_button.connect('clicked', self._on_start_tracking_button)
+        self.start_button = start_button
         self.pack_start(start_button, False, False, 0)
+
+        # Recent activities
+        if self._app.config['tracking_show_recent_activities']:
+            self.recent_activities_widget = self._get_recent_activities_widget()
+            self.pack_start(self.recent_activities_widget, True, True, 0)
+        else:
+            self.recent_activities_widget = None
 
     def _start_ongoing_fact(self):
         """
@@ -230,6 +239,27 @@ class StartTrackingBox(Gtk.Box):
         """Clear all data entry fields."""
         self.raw_fact_entry.props.text = ''
 
+    def set_raw_fact(self, raw_fact):
+        """Set the text in the raw fact entry."""
+        self.raw_fact_entry.props.text = raw_fact
+
+    def _get_recent_activities_widget(self):
+        scrolled_window = Gtk.ScrolledWindow()
+        scrolled_window.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        grid = RecentActivitiesGrid(self, self._app.controller)
+        # We need to 'show' the grid early in order to make sure space is
+        # allocated to its children so they actually have a height that we can
+        # use.
+        grid.show_all()
+        # We fetch an arbitrary Button as height-reference
+        child = grid.get_children()[1]
+        height = child.get_preferred_height()[1]
+        min_height = 6 * height
+
+        scrolled_window.set_min_content_height(min_height)
+        scrolled_window.add(grid)
+        return scrolled_window
+
     # Callbacks
     def _on_start_tracking_button(self, button):
         """Callback for the 'start tracking' button."""
@@ -238,3 +268,123 @@ class StartTrackingBox(Gtk.Box):
     def _on_raw_fact_entry_activate(self, evt):
         """Callback for when ``enter`` is pressed within the entry."""
         self._start_ongoing_fact()
+
+    def _on_config_changed(self, sender):
+        """Callback triggered when 'config-changed' event fired."""
+        print('CALLBACK TRIGGERD')
+        print(self._app.config)
+        if self._app.config['tracking_show_recent_activities']:
+            if self.recent_activities_widget:
+                pass
+            else:
+                self.recent_activities_widget = self._get_recent_activities_widget()
+                self.pack_start(self.recent_activities_widget, True, True, 0)
+        else:
+            if self.recent_activities_widget:
+                self.recent_activities_widget.destroy()
+                self.recent_activities_widget = None
+            else:
+                pass
+        self.show_all()
+
+
+class RecentActivitiesGrid(Gtk.Grid):
+    """A widget that lists recent activities and allows for quick continued tracking."""
+
+    def __init__(self, start_tracking_widget, controller, *args, **kwargs):
+        """
+        Initiate widget.
+
+        Args:
+            start_tracking_widget (StartTrackingBox): Is needed in order to set the raw fact.
+            controller: Is needed in order to query for recent activities.
+        """
+        super(Gtk.Grid, self).__init__(*args, **kwargs)
+        self._start_tracking_widget = start_tracking_widget
+        self._controller = controller
+
+        self._controller.signal_handler.connect('facts-changed', self.refresh)
+        self._populate()
+
+    def refresh(self, sender=None):
+        """Clear the current content and re-populate and re-draw the widget."""
+        helpers.clear_children(self)
+        self._populate()
+        self.show_all()
+
+    def _populate(self):
+        """Fill the widget with rows per activity."""
+        def add_row_widgets(row_counter, activity):
+            """
+            Add a set of widgets to a specific row based on the activity passed.
+
+            Args:
+                row_counter (int): Which row to add to.
+                activity (hamster_lib.Activity): The activity that is represented by this row.
+            """
+            def get_label(activity):
+                """Label representing the activity/category combination."""
+                label = Gtk.Label(helpers.serialize_activity(activity))
+                label.set_halign(Gtk.Align.START)
+                return label
+
+            def get_copy_button(activity):
+                """
+                A button that will copy the activity/category string to the raw fact entry.
+
+                The main use case for this is a user that want to add a description or tag before
+                actually starting the tracking.
+                """
+                button = Gtk.Button('Copy')
+                activity = helpers.serialize_activity(activity)
+                button.connect('clicked', self._on_copy_button, activity)
+                return button
+
+            def get_start_button(activity):
+                """A button that will start a new ongoing fact based on that activity."""
+                button = Gtk.Button('Start')
+                activity = helpers.serialize_activity(activity)
+                button.connect('clicked', self._on_start_button, activity)
+                return button
+
+            self.attach(get_label(activity), 0, row_counter, 1, 1)
+            self.attach(get_copy_button(activity), 1, row_counter, 1, 1)
+            self.attach(get_start_button(activity), 2, row_counter, 1, 1)
+
+        today = datetime.date.today()
+        start = today - datetime.timedelta(90)
+        activities = reversed(helpers.get_recent_activities(self._controller, start, today))
+
+        row_counter = 0
+        for activity in activities:
+            add_row_widgets(row_counter, activity)
+            row_counter += 1
+
+
+    def _on_copy_button(self, button, activity):
+        """
+        Set the activity/category text in the 'start tracking entry'.
+
+        Args:
+            button (Gtk.Button): The button that was clicked.
+            activity (text_type): Activity text to be copied as raw fact.
+
+        Note:
+            Besides copying the text we also assign focus and place the cursor
+            at the end of the pasted text as to facilitate fast entry of
+            additional text.
+        """
+        self._start_tracking_widget.set_raw_fact(activity)
+        self._start_tracking_widget.raw_fact_entry.grab_focus_without_selecting()
+        self._start_tracking_widget.raw_fact_entry.set_position(len(activity))
+
+    def _on_start_button(self, button, activity):
+        """
+        Start a new ongoing fact based on this activity/category.
+
+        Args:
+            button (Gtk.Button): The button that was clicked.
+            activity (text_type): Activity text to be copied as raw fact.
+        """
+        self._start_tracking_widget.set_raw_fact(activity)
+        self._start_tracking_widget._start_ongoing_fact()

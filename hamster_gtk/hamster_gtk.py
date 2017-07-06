@@ -117,6 +117,11 @@ class SignalHandler(GObject.GObject):
     them via its class instances.
     """
 
+    # [TODO]
+    # Explain semantics of each signal
+    # [TODO]
+    # Add signals for all changed hamster-lib objects?
+
     __gsignals__ = {
         str('facts-changed'): (GObject.SIGNAL_RUN_LAST, None, ()),
         str('daterange-changed'): (GObject.SIGNAL_RUN_LAST, None, (GObject.TYPE_PYOBJECT,)),
@@ -329,6 +334,8 @@ class HamsterGTK(Gtk.Application):
                         get_autocomplete_activities_range())
         cp_instance.set('Frontend', 'autocomplete_split_activity',
                         get_autocomplete_split_activity())
+        cp_instance.set('Frontend', 'tracking_show_recent_activities',
+                        get_tracking_show_recent_activities())
 
         return cp_instance
 
