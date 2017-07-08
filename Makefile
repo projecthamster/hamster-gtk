@@ -71,7 +71,7 @@ lint:
 	flake8 hamster-dbus tests
 
 test:
-	py.test $(TEST_ARGS) tests/
+	xvfb-run py.test $(TEST_ARGS) tests/
 
 test-all: test
 	tox
