@@ -73,7 +73,7 @@ lint:
 test:
 	py.test $(TEST_ARGS) tests/
 
-test-all: test
+test-all:
 	tox
 
 coverage:

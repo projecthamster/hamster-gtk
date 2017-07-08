@@ -1,7 +1,7 @@
 # This file is used for local testing with and without tox as well as for
 # testing on the CI servers.
 # This file is not part of our packaging specification. It is used to generate
-# a reproduceable test environment. For check out ``docs/packaging``.
+# a reproducible test environment. For check out ``docs/packaging``.
 # For package-requirements refer to ``setup.py``.
 #
 # Some of the requirements are repeated in ``tox.ini`` to explicity check their version.

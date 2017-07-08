@@ -13,6 +13,7 @@ import datetime
 
 from freezegun import freeze_time
 from gi.repository import Gtk
+import pytest
 
 from hamster_gtk import helpers
 from hamster_gtk.misc import dialogs
@@ -179,6 +180,7 @@ class TestEditFactDialog(object):
 
     # [FIXME]
     # Add tests for changed values.
+    @pytest.mark.xfail
     def test_updated_fact_same(self, dummy_window, fact):
         """
         Make sure the property returns Fact with matching field values.
