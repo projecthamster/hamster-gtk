@@ -109,5 +109,7 @@ def config(request, tmpdir):
         'db_path': ':memory:',
         'autocomplete_activities_range': 30,
         'autocomplete_split_activity': False,
+        'tracking_show_recent_activities': True,
+        'tracking_recent_activities_items': 6,
     }
     return config

@@ -19,8 +19,9 @@ class TestPreferencesDialog(object):
         grids = result.get_content_area().get_children()[0].get_children()
         # This assumes 2 children per config entry (label and widget).
         grid_entry_counts = [len(g.get_children()) / 2 for g in grids]
-        assert sum(grid_entry_counts) == 8
+        assert sum(grid_entry_counts) == 10
 
+    @pytest.mark.slowtest
     def test_get_config(self, preferences_dialog, config_parametrized):
         """
         Make sure retrieval of field values works as expected.
@@ -32,6 +33,7 @@ class TestPreferencesDialog(object):
         result = preferences_dialog.get_config()
         assert result == config_parametrized
 
+    @pytest.mark.slowtest
     def test_set_config(self, preferences_dialog, config_parametrized):
         """Make sure setting the field values works as expected."""
         preferences_dialog._set_config(config_parametrized)
