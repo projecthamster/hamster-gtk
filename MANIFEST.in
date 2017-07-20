@@ -6,6 +6,8 @@ include README.rst
 include Makefile
 include tox.ini
 include .editorconfig
+include *.nix
+include *.txt
 
 exclude docs/hamster_gtk.*
 
