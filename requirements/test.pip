@@ -11,6 +11,9 @@
 check-manifest==0.35
 coverage==4.3.4
 doc8==0.7.0
+# This is needed to prevent ``pytest-factoryboy`` to pull a more recent (faulty)
+# version. See #214 for details.
+factory-boy==2.8.1
 fauxfactory==2.0.9
 flake8==3.2.1
 flake8-debugger==1.4.0
