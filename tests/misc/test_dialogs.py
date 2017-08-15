@@ -13,7 +13,6 @@ import datetime
 
 from freezegun import freeze_time
 from gi.repository import Gtk
-import pytest
 
 from hamster_gtk import helpers
 from hamster_gtk.misc import dialogs
@@ -180,22 +179,10 @@ class TestEditFactDialog(object):
 
     # [FIXME]
     # Add tests for changed values.
-    @pytest.mark.xfail
     def test_updated_fact_same(self, dummy_window, fact):
-        """
-        Make sure the property returns Fact with matching field values.
-
-        We need to jump through some extra hoops because we the current
-        implementation will always set the edited fact to today as well as ignore
-        all 'second' time info.
-        """
+        """Make sure the property returns Fact with matching field values."""
         dialog = dialogs.EditFactDialog(dummy_window, fact)
         result = dialog.updated_fact
-        # The default 'raw fact' used in populating the entry field does discard
-        # the original facts timeinfos seconds. This would couse a mismatch, so
-        # we account for it manually.
-        fact.start = fact.start.replace(second=0)
-        fact.end = fact.end.replace(second=0)
         assert result.as_tuple() == fact.as_tuple()
 
 
