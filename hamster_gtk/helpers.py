@@ -22,6 +22,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import datetime
+import operator
 import re
 
 from orderedset import OrderedSet
@@ -184,7 +185,14 @@ def decompose_raw_fact_string(text, raw=False):
 # Oncec LIB-251 has been fixed this should no longer be needed.
 def get_recent_activities(controller, start, end):
     """Return a list of all activities logged in facts within the given timeframe."""
-    recent_activities = [fact.activity for fact in controller.facts.get_all(start=start, end=end)]
+    # [FIXME]
+    # This manual sorting within python is of cause less than optimal. We stick
+    # with it for now as this is just a preliminary workaround helper anyway and
+    # effective sorting will need to be implemented by the storage backend in
+    # ``hamster-lib``.
+    facts = sorted(controller.facts.get_all(start=start, end=end),
+        key=operator.attrgetter('start'), reverse=True)
+    recent_activities = [fact.activity for fact in facts]
     return OrderedSet(recent_activities)
 
 

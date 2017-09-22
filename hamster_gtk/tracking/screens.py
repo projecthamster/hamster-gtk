@@ -350,7 +350,7 @@ class RecentActivitiesGrid(Gtk.Grid):
 
         today = datetime.date.today()
         start = today - datetime.timedelta(90)
-        activities = reversed(helpers.get_recent_activities(self._controller, start, today))
+        activities = helpers.get_recent_activities(self._controller, start, today)
 
         row_index = 0
         for activity in activities:
