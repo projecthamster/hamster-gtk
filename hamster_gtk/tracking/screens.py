@@ -252,9 +252,11 @@ class StartTrackingBox(Gtk.Box):
         # use.
         grid.show_all()
         # We fetch an arbitrary Button as height-reference
-        child = grid.get_children()[1]
-        height = child.get_preferred_height()[1]
-        min_height = self._app.config['tracking_recent_activities_items'] * height
+        min_height = 0
+        children = grid.get_children()
+        if children:
+            height = children[1].get_preferred_height()[1]
+            min_height = self._app.config['tracking_recent_activities_items'] * height
 
         scrolled_window.set_min_content_height(min_height)
         scrolled_window.add(grid)
