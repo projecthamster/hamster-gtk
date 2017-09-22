@@ -272,7 +272,7 @@ class StartTrackingBox(Gtk.Box):
     def _on_config_changed(self, sender):
         """Callback triggered when 'config-changed' event fired."""
         if self._app.config['tracking_show_recent_activities']:
-            # We re-create it even if one existed before necause its parameters
+            # We re-create it even if one existed before because its parameters
             # (e.g. size) may have changed.
             if self.recent_activities_widget:
                 self.recent_activities_widget.destroy()
