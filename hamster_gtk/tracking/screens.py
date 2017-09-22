@@ -311,7 +311,7 @@ class RecentActivitiesGrid(Gtk.Grid):
 
     def _populate(self):
         """Fill the widget with rows per activity."""
-        def add_row_widgets(row_counter, activity):
+        def add_row_widgets(row_index, activity):
             """
             Add a set of widgets to a specific row based on the activity passed.
 
@@ -344,18 +344,18 @@ class RecentActivitiesGrid(Gtk.Grid):
                 button.connect('clicked', self._on_start_button, activity)
                 return button
 
-            self.attach(get_label(activity), 0, row_counter, 1, 1)
-            self.attach(get_copy_button(activity), 1, row_counter, 1, 1)
-            self.attach(get_start_button(activity), 2, row_counter, 1, 1)
+            self.attach(get_label(activity), 0, row_index, 1, 1)
+            self.attach(get_copy_button(activity), 1, row_index, 1, 1)
+            self.attach(get_start_button(activity), 2, row_index, 1, 1)
 
         today = datetime.date.today()
         start = today - datetime.timedelta(90)
         activities = reversed(helpers.get_recent_activities(self._controller, start, today))
 
-        row_counter = 0
+        row_index = 0
         for activity in activities:
-            add_row_widgets(row_counter, activity)
-            row_counter += 1
+            add_row_widgets(row_index, activity)
+            row_index += 1
 
     def _on_copy_button(self, button, activity):
         """
