@@ -433,12 +433,9 @@ class HamsterGTK(Gtk.Application):
 
     def _get_config_from_file(self):
         """
-        Return a config dictionary from acp_instanceg file.
+        Return a config dictionary from app_instance file.
 
-        If there is none create a default config file. This methods main job is
-        to convert strings from the loaded ConfigParser File to appropiate
-        instances suitable for our config dictionary. The actual data retrival
-        is provided by a hamster-lib helper function.
+        If there is none create a default config file.
 
         Returns:
             dict: Dictionary of config key/values.
