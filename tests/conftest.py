@@ -35,13 +35,17 @@ def appdirs(request):
 
 # Instances
 @pytest.fixture
-def app(request):
+def app(request, config):
     """
     Return an ``Application`` fixture.
 
     Please note: the app has just been started but not activated.
     """
-    app = hamster_gtk.HamsterGTK()
+    def monkeypatched_reload_config(self):
+        return config
+    HamsterGTK = hamster_gtk.HamsterGTK
+    HamsterGTK._reload_config = monkeypatched_reload_config
+    app = HamsterGTK()
     app._startup(app)
     return app
 
