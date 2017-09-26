@@ -104,7 +104,7 @@ def config(request, tmpdir):
         'store': 'sqlalchemy',
         'day_start': datetime.time(5, 30, 0),
         'fact_min_delta': 1,
-        'tmpfile_path': tmpdir.join('tmpfile.hamster'),
+        'tmpfile_path': str(tmpdir.join('tmpfile.hamster')),
         'db_engine': 'sqlite',
         'db_path': ':memory:',
         'autocomplete_activities_range': 30,
