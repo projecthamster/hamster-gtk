@@ -14,9 +14,19 @@ from hamster_gtk.tracking import TrackingScreen
 class TestHamsterGTK(object):
     """Unittests for the main app class."""
 
-    def test_instantiation(self):
-        """Make sure class instatiation works as intended."""
-        app = hamster_gtk.HamsterGTK()
+    def test_instantiation(self, config):
+        """
+        Make sure class instatiation works as intended.
+
+        We actually test against a monkeypatched class in order to avoid the
+        config loading machinery as this would access the user data on fs.
+        The relevant skiped methods need to be tested separately.
+        """
+        def monkeypatched_reload_config(self):
+            return config
+        HamsterGTK = hamster_gtk.HamsterGTK
+        HamsterGTK._reload_config = monkeypatched_reload_config
+        app = HamsterGTK()
         assert app
 
     def test__reload_config(self, app, config, mocker):
