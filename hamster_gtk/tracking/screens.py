@@ -256,7 +256,7 @@ class StartTrackingBox(Gtk.Box):
         children = grid.get_children()
         if children:
             height = children[1].get_preferred_height()[1]
-            min_height = self._app.config['tracking_recent_activities_items'] * height
+            min_height = self._app.config['tracking_recent_activities_count'] * height
 
         scrolled_window.set_min_content_height(min_height)
         scrolled_window.add(grid)

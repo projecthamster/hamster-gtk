@@ -114,6 +114,6 @@ def config(request, tmpdir):
         'autocomplete_activities_range': 30,
         'autocomplete_split_activity': False,
         'tracking_show_recent_activities': True,
-        'tracking_recent_activities_items': 6,
+        'tracking_recent_activities_count': 6,
     }
     return config

@@ -286,7 +286,7 @@ class HamsterGTK(Gtk.Application):
             'autocomplete_activities_range': 30,
             'autocomplete_split_activity': False,
             'tracking_show_recent_activities': True,
-            'tracking_recent_activities_items': 6,
+            'tracking_recent_activities_count': 6,
         }
 
     def _config_to_configparser(self, config):
@@ -326,8 +326,8 @@ class HamsterGTK(Gtk.Application):
         def get_tracking_show_recent_activities():
             return text_type(config['tracking_show_recent_activities'])
 
-        def get_tracking_recent_activities_items():
-            return text_type(config['tracking_recent_activities_items'])
+        def get_tracking_recent_activities_count():
+            return text_type(config['tracking_recent_activities_count'])
 
         cp_instance = SafeConfigParser()
         cp_instance.add_section('Backend')
@@ -345,8 +345,8 @@ class HamsterGTK(Gtk.Application):
                         get_autocomplete_split_activity())
         cp_instance.set('Frontend', 'tracking_show_recent_activities',
                         get_tracking_show_recent_activities())
-        cp_instance.set('Frontend', 'tracking_recent_activities_items',
-                        get_tracking_recent_activities_items())
+        cp_instance.set('Frontend', 'tracking_recent_activities_count',
+                        get_tracking_recent_activities_count())
 
         return cp_instance
 
@@ -406,8 +406,8 @@ class HamsterGTK(Gtk.Application):
         def get_tracking_show_recent_activities():
             return cp_instance.getboolean('Frontend', 'tracking_show_recent_activities')
 
-        def get_tracking_recent_activities_items():
-            return int(cp_instance.get('Frontend', 'tracking_recent_activities_items'))
+        def get_tracking_recent_activities_count():
+            return int(cp_instance.get('Frontend', 'tracking_recent_activities_count'))
 
         result = {
             'store': get_store(),
@@ -416,8 +416,8 @@ class HamsterGTK(Gtk.Application):
             'tmpfile_path': get_tmpfile_path(),
             'autocomplete_activities_range': get_autocomplete_activities_range(),
             'autocomplete_split_activity': get_autocomplete_split_activity(),
-            'tracking_show_recent_activities': get_tracking_recent_activities_items(),
-            'tracking_recent_activities_items': get_tracking_recent_activities_items(),
+            'tracking_show_recent_activities': get_tracking_show_recent_activities(),
+            'tracking_recent_activities_count': get_tracking_recent_activities_count(),
         }
         result.update(get_db_config())
         return result

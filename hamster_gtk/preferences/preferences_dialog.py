@@ -83,7 +83,7 @@ class PreferencesDialog(Gtk.Dialog):
                 ('tracking_show_recent_activities',
                  (_("Show recent activities for quickly starting tracking."),
                   HamsterSwitch())),
-                ('tracking_recent_activities_items', (_('How many recent activities?'),
+                ('tracking_recent_activities_count', (_('How many recent activities?'),
                     HamsterSpinButton(SimpleAdjustment(0, GObject.G_MAXDOUBLE, 1)))),
             ]))),
         ]
