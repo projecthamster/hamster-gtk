@@ -22,6 +22,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import datetime
+from gettext import gettext as _
 import operator
 import re
 
@@ -182,7 +183,7 @@ def decompose_raw_fact_string(text, raw=False):
 
 
 # [TODO]
-# Oncec LIB-251 has been fixed this should no longer be needed.
+# Once LIB-251 has been fixed this should no longer be needed.
 def get_recent_activities(controller, start, end):
     """Return a list of all activities logged in facts within the given timeframe."""
     # [FIXME]
@@ -196,10 +197,34 @@ def get_recent_activities(controller, start, end):
     return OrderedSet(recent_activities)
 
 
-def serialize_activity(activity):
-    """Provide a serialized string version of an activity."""
+def serialize_activity(activity, separator='@', none_category='not categorized'):
+    """
+    Provide a serialized string version of an activity.
+
+    Args:
+        activity (Activity): ``Activity`` instance to serialize.
+        separator (str, optional): ``string`` used to separate ``activity.name`` and
+            ``category.name``. The separator will be omitted if ``none_categoty=''`` and
+            ``activity.category=None``. Defaults to ``@``.
+        none_category (str, optional): ``string`` to represent the 'lack of a cactegory' for an
+            activity instance. Defaults to ``not categorized``.
+
+    Returns:
+        str: A string representation of the passed activity.
+    """
+    if not separator:
+        raise ValueError(_("No valid separator has been provided."))
+    if not none_category and none_category is not '':
+        raise ValueError(_("No valid text for 'none_category' has been provided."))
+
     if activity.category:
-        result = '{a.name}@{a.category.name}'.format(a=activity)
+        category_text = activity.category.name
+    else:
+        category_text = none_category
+
+    if category_text:
+        result = '{activity_text}{separator}{category_text}'.format(activity_text=activity.name,
+            category_text=category_text, separator=separator)
     else:
         result = activity.name
     return text_type(result)

@@ -87,7 +87,7 @@ def tracking_show_recent_activities_parametrized(request):
 
 
 @pytest.fixture(params=(0, 1, 5, 15))
-def tracking_recent_activities_items_parametrized(request):
+def tracking_recent_activities_count_parametrized(request):
     """Return a parametrized tracking_recent_activities_items_parametrized value."""
     return request.param
 
@@ -97,7 +97,7 @@ def config_parametrized(request, store_parametrized, day_start_parametrized,
         fact_min_delta_parametrized, tmpfile_path_parametrized, db_engine_parametrized,
         db_path_parametrized, autocomplete_activities_range_parametrized,
         autocomplete_split_activity_parametrized, tracking_show_recent_activities_parametrized,
-        tracking_recent_activities_items_parametrized):
+        tracking_recent_activities_count_parametrized):
             """Return a config fixture with heavily parametrized config values."""
             return {
                 'store': store_parametrized,
@@ -109,7 +109,7 @@ def config_parametrized(request, store_parametrized, day_start_parametrized,
                 'autocomplete_activities_range': autocomplete_activities_range_parametrized,
                 'autocomplete_split_activity': autocomplete_split_activity_parametrized,
                 'tracking_show_recent_activities': tracking_show_recent_activities_parametrized,
-                'tracking_recent_activities_items': tracking_recent_activities_items_parametrized,
+                'tracking_recent_activities_count': tracking_recent_activities_count_parametrized,
             }
 
 

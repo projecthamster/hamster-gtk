@@ -201,18 +201,9 @@ class FactBox(Gtk.Box):
 
     def _get_activity_widget(self, fact):
         """Return widget to render the activity, including its related category."""
-        # [FIXME]
-        # Once 'preferences/config' is live, we can change this.
-        # Most likly we do not actually need to jump through extra hoops as
-        # legacy hamster did but just use a i18n'ed string and be done.
-        if not fact.category:
-            category = 'not categorised'
-        else:
-            category = str(fact.category)
         activity_label = Gtk.Label()
-        activity_label.set_markup("{activity} - {category}".format(
-            activity=GObject.markup_escape_text(fact.activity.name),
-            category=GObject.markup_escape_text(category)))
+        label_text = helpers.serialize_activity(fact.activity)
+        activity_label.set_markup(GObject.markup_escape_text(label_text))
         activity_label.props.halign = Gtk.Align.START
         return activity_label
 

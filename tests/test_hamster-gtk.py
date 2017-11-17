@@ -24,7 +24,7 @@ class TestHamsterGTK(object):
         """
         def monkeypatched_reload_config(self):
             return config
-        HamsterGTK = hamster_gtk.HamsterGTK
+        HamsterGTK = hamster_gtk.HamsterGTK  # NOQA
         HamsterGTK._reload_config = monkeypatched_reload_config
         app = HamsterGTK()
         assert app
