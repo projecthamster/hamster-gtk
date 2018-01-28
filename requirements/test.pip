@@ -13,7 +13,7 @@ coverage==4.4.2
 doc8==0.8.0
 # This is needed to prevent ``pytest-factoryboy`` to pull a more recent (faulty)
 # version. See #214 for details.
-factory-boy==2.9.2
+factory-boy==2.10.0
 fauxfactory==2.1.1
 flake8==3.5.0
 flake8-debugger==3.0.0
