@@ -251,7 +251,7 @@ class StartTrackingBox(Gtk.Box):
         # allocated to its children so they actually have a height that we can
         # use.
         grid.show_all()
-        # We fetch an arbitrary Button as height-reference
+        # We fetch an arbitrary Button as height-reference [#224]
         min_height = 0
         children = grid.get_children()
         if children:
