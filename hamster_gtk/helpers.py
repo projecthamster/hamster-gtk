@@ -197,30 +197,26 @@ def get_recent_activities(controller, start, end):
     return OrderedSet(recent_activities)
 
 
-def serialize_activity(activity, separator='@', none_category='not categorized'):
+def serialize_activity(activity, separator='@'):
     """
     Provide a serialized string version of an activity.
 
     Args:
         activity (Activity): ``Activity`` instance to serialize.
         separator (str, optional): ``string`` used to separate ``activity.name`` and
-            ``category.name``. The separator will be omitted if ``none_category=''`` and
+            ``category.name``. The separator will be omitted if
             ``activity.category=None``. Defaults to ``@``.
-        none_category (str, optional): ``string`` to represent the 'lack of a category' for an
-            activity instance. Defaults to ``not categorized``.
 
     Returns:
         str: A string representation of the passed activity.
     """
     if not separator:
         raise ValueError(_("No valid separator has been provided."))
-    if not none_category and none_category is not '':
-        raise ValueError(_("No valid text for 'none_category' has been provided."))
+
+    category_text = None
 
     if activity.category:
         category_text = activity.category.name
-    else:
-        category_text = none_category
 
     if category_text:
         result = '{activity_text}{separator}{category_text}'.format(activity_text=activity.name,

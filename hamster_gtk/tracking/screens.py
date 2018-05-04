@@ -323,7 +323,7 @@ class RecentActivitiesGrid(Gtk.Grid):
             """
             def get_label(activity):
                 """Label representing the activity/category combination."""
-                label = Gtk.Label(helpers.serialize_activity(activity, none_category=''))
+                label = Gtk.Label(helpers.serialize_activity(activity))
                 label.set_halign(Gtk.Align.START)
                 return label
 
@@ -335,14 +335,14 @@ class RecentActivitiesGrid(Gtk.Grid):
                 actually starting the tracking.
                 """
                 button = Gtk.Button('Copy')
-                activity = helpers.serialize_activity(activity, none_category='')
+                activity = helpers.serialize_activity(activity)
                 button.connect('clicked', self._on_copy_button, activity)
                 return button
 
             def get_start_button(activity):
                 """A button that will start a new ongoing fact based on that activity."""
                 button = Gtk.Button('Start')
-                activity = helpers.serialize_activity(activity, none_category='')
+                activity = helpers.serialize_activity(activity)
                 button.connect('clicked', self._on_start_button, activity)
                 return button
 
