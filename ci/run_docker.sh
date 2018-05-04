@@ -11,13 +11,11 @@ xvfb=$!
 
 export DISPLAY=:99
 
-pip install --upgrade pip
 pip install -r requirements/test.pip
-
-python setup.py install
+pip install .
 make resources
-
 make test-all
+
 # See: https://docs.codecov.io/docs/testing-with-docker for details
 bash <(curl -s https://codecov.io/bash)
 test $err = 0
