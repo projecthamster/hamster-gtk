@@ -187,7 +187,7 @@ def decompose_raw_fact_string(text, raw=False):
 def get_recent_activities(controller, start, end):
     """Return a list of all activities logged in facts within the given timeframe."""
     # [FIXME]
-    # This manual sorting within python is of cause less than optimal. We stick
+    # This manual sorting within python is of course less than optimal. We stick
     # with it for now as this is just a preliminary workaround helper anyway and
     # effective sorting will need to be implemented by the storage backend in
     # ``hamster-lib``.
@@ -204,9 +204,9 @@ def serialize_activity(activity, separator='@', none_category='not categorized')
     Args:
         activity (Activity): ``Activity`` instance to serialize.
         separator (str, optional): ``string`` used to separate ``activity.name`` and
-            ``category.name``. The separator will be omitted if ``none_categoty=''`` and
+            ``category.name``. The separator will be omitted if ``none_category=''`` and
             ``activity.category=None``. Defaults to ``@``.
-        none_category (str, optional): ``string`` to represent the 'lack of a cactegory' for an
+        none_category (str, optional): ``string`` to represent the 'lack of a category' for an
             activity instance. Defaults to ``not categorized``.
 
     Returns:

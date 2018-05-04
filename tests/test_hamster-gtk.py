@@ -16,7 +16,7 @@ class TestHamsterGTK(object):
 
     def test_instantiation(self, config):
         """
-        Make sure class instatiation works as intended.
+        Make sure class instantiation works as intended.
 
         We actually test against a monkeypatched class in order to avoid the
         config loading machinery as this would access the user data on fs.
