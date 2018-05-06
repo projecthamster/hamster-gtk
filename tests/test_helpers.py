@@ -146,3 +146,26 @@ def test__get_delta_string(minutes, expectation):
     delta = datetime.timedelta(minutes=minutes)
     result = helpers.get_delta_string(delta)
     assert result == expectation
+
+
+class TestSerializeActivity(object):
+    """Unit tests for `serialize_activity` helper function."""
+
+    #@pytest.mark.parametrize('seperator', (
+    def test_with_category(self, activity):
+        """Make sure that the serialized activity matches expectations."""
+        result = helpers.serialize_activity(activity)
+        assert result == '{s.name}@{s.category.name}'.format(s=activity)
+
+    @pytest.mark.parametrize('activity__category', (None,))
+    def test_without_category(self, activity):
+        """Make sure that the serialized activity matches expectations."""
+        result = helpers.serialize_activity(activity)
+        assert result == '{s.name}'.format(s=activity)
+
+    @pytest.mark.parametrize('separator', (';', '/', '%'))
+    def test_seperators(self, activity, separator):
+        """Make sure that the serialized activity matches expectations."""
+        result = helpers.serialize_activity(activity, separator)
+        assert result == '{s.name}{seperator}{s.category.name}'.format(s=activity,
+            seperator=separator)
