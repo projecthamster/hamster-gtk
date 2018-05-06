@@ -20,9 +20,8 @@
 
 from __future__ import absolute_import, unicode_literals
 
-from orderedset import OrderedSet
-
 from gi.repository import Gtk
+from orderedset import OrderedSet
 
 from hamster_gtk.misc.widgets.raw_fact_entry import RawFactCompletion
 

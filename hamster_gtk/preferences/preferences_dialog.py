@@ -30,9 +30,8 @@ from gi.repository import GObject, Gtk
 
 from hamster_gtk.misc.widgets import LabelledWidgetsGrid
 from hamster_gtk.preferences.widgets import (ComboFileChooser,
-                                             HamsterSwitch,
                                              HamsterComboBoxText,
-                                             HamsterSpinButton,
+                                             HamsterSpinButton, HamsterSwitch,
                                              SimpleAdjustment, TimeEntry)
 
 

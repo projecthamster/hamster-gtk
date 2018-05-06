@@ -22,12 +22,12 @@
 from __future__ import absolute_import, unicode_literals
 
 import datetime
-from gettext import gettext as _
 import operator
 import re
+from gettext import gettext as _
 
-from orderedset import OrderedSet
 import six
+from orderedset import OrderedSet
 from six import text_type
 
 
