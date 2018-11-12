@@ -9,7 +9,7 @@
 
 
 check-manifest==0.37
-coverage==4.5.1
+coverage==4.5.2
 doc8==0.8.0
 # This is needed to prevent ``pytest-factoryboy`` to pull a more recent (faulty)
 # version. See #214 for details.
