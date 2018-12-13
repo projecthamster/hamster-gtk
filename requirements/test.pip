@@ -28,4 +28,4 @@ pytest-faker==2.0.0
 pytest-factoryboy==2.0.2
 pytest-mock==1.10.0
 pytest-xvfb==1.1.0
-tox==3.5.3
+tox==3.6.0
