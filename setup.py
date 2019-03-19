@@ -16,12 +16,13 @@ with open('HISTORY.rst') as history_file:
     history = history_file.read().replace('.. :changelog:', '')
 
 requirements = [
-    'hamster-lib',
+    'orderedset',
+    'hamster-lib >=0.13.0,<0.14.0',
 ]
 
 setup(
     name='hamster-gtk',
-    version='0.11.0',
+    version='0.11.1',
     description="A GTK interface to the hamster time tracker.",
     long_description=readme + '\n\n' + history,
     author="Eric Goller",
