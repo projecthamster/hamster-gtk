@@ -25,7 +25,7 @@ pep8-naming==0.8.2
 pep257==0.7.0
 pytest==5.0.0
 pytest-faker==2.0.0
-pytest-factoryboy==2.0.2
+pytest-factoryboy==2.0.3
 pytest-mock==1.10.4
 pytest-xvfb==1.2.0
 tox==3.13.2
