@@ -28,6 +28,11 @@ Dependencies
 If you want to use the ``make register-gnome`` target ``desktop-file-install``
 is required. On debian derivates this is provided by ``desktop-file-utils``.
 
+Installing from sources:
+~~~~~~~~~~~~~~~~~~~~~~~~
+- xmllint (Needed in order to call ``resources`` make target. On debian this is
+  part of the ``libxml2-utils`` package.
+
 To Run the Testsuite
 ~~~~~~~~~~~~~~~~~~~~~
 - make
