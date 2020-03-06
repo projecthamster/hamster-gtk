@@ -108,7 +108,7 @@ class EditFactDialog(Gtk.Dialog):
 
     def _get_old_fact_widget(self):
         """Return a widget representing the fact to be edited."""
-        label = Gtk.Label(text_type(self._fact))
+        label = Gtk.Label(label=text_type(self._fact))
         label.set_hexpand(True)
         label.set_name('EditDialogOldFactLabel')
         return label
@@ -156,12 +156,12 @@ class EditFactDialog(Gtk.Dialog):
 
     def _get_delete_button(self):
         """Return a *delete* button."""
-        return Gtk.Button(_('_Delete'), use_underline=True)
+        return Gtk.Button(label=_('_Delete'), use_underline=True)
 
     def _get_apply_button(self):
         """Return a *apply* button."""
-        return Gtk.Button(_('_Apply'), use_underline=True)
+        return Gtk.Button(label=_('_Apply'), use_underline=True)
 
     def _get_cancel_button(self):
         """Return a *cancel* button."""
-        return Gtk.Button(_('_Cancel'), use_underline=True)
+        return Gtk.Button(label=_('_Cancel'), use_underline=True)

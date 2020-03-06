@@ -26,7 +26,7 @@ import collections
 from gettext import gettext as _
 
 import hamster_lib
-from gi.repository import GObject, Gtk
+from gi.repository import GObject, Gtk, GLib
 
 from hamster_gtk.misc.widgets import LabelledWidgetsGrid
 from hamster_gtk.preferences.widgets import (ComboFileChooser,
@@ -66,7 +66,7 @@ class PreferencesDialog(Gtk.Dialog):
             (_('Tracking'), LabelledWidgetsGrid(collections.OrderedDict([
                 ('day_start', (_('_Day Start (HH:MM:SS)'), TimeEntry())),
                 ('fact_min_delta', (_('_Minimal Fact Duration'),
-                    HamsterSpinButton(SimpleAdjustment(0, GObject.G_MAXDOUBLE, 1)))),
+                    HamsterSpinButton(SimpleAdjustment(0, GLib.MAXDOUBLE, 1)))),
             ]))),
             (_('Storage'), LabelledWidgetsGrid(collections.OrderedDict([
                 ('store', (_('_Store'), HamsterComboBoxText(stores))),
@@ -76,7 +76,7 @@ class PreferencesDialog(Gtk.Dialog):
             ]))),
             (_('Miscellaneous'), LabelledWidgetsGrid(collections.OrderedDict([
                 ('autocomplete_activities_range', (_("Autocomplete Activities Range"),
-                    HamsterSpinButton(SimpleAdjustment(0, GObject.G_MAXDOUBLE, 1)))),
+                    HamsterSpinButton(SimpleAdjustment(0, GLib.MAXDOUBLE, 1)))),
                 ('autocomplete_split_activity',
                  (_("Autocomplete activities and categories separately"),
                   HamsterSwitch())),
@@ -87,7 +87,7 @@ class PreferencesDialog(Gtk.Dialog):
         notebook.set_name('PreferencesNotebook')
 
         for title, page in self._pages:
-            notebook.append_page(page, Gtk.Label(title))
+            notebook.append_page(page, Gtk.Label(label=title))
 
         if initial:
             self._set_config(initial)

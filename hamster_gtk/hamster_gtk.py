@@ -34,7 +34,7 @@ import hamster_lib
 # Once we drop py2 support, we can use the builtin again but unicode support
 # under python 2 is practically non existing and manual encoding is not easily
 # possible.
-from configparser import SafeConfigParser
+from configparser import ConfigParser
 from gi.repository import Gdk, Gio, GObject, Gtk
 from hamster_lib.helpers import config_helpers
 from six import text_type
@@ -70,7 +70,7 @@ class HeaderBar(Gtk.HeaderBar):
 
     def _get_overview_button(self):
         """Return a button to open the ``Overview`` dialog."""
-        button = Gtk.Button(_("Overview"))
+        button = Gtk.Button(label=_("Overview"))
         button.connect('clicked', self._on_overview_button)
         return button
 
@@ -289,7 +289,7 @@ class HamsterGTK(Gtk.Application):
             config (dict): Dictionary of config key/value pairs.
 
         Returns:
-            SafeConfigParser: SafeConfigParser instance representing config.
+            ConfigParser: ConfigParser instance representing config.
         """
         def get_store():
             return config['store']
@@ -315,7 +315,7 @@ class HamsterGTK(Gtk.Application):
         def get_autocomplete_split_activity():
             return text_type(config['autocomplete_split_activity'])
 
-        cp_instance = SafeConfigParser()
+        cp_instance = ConfigParser()
         cp_instance.add_section('Backend')
         cp_instance.set('Backend', 'store', get_store())
         cp_instance.set('Backend', 'day_start', get_day_start())
@@ -401,7 +401,7 @@ class HamsterGTK(Gtk.Application):
         Write a configparser instance to a config file.
 
         Args:
-            cp_instance (SafeConfigParser): Instance to be written to file.
+            cp_instance (ConfigParser): Instance to be written to file.
         """
         config_helpers.write_config_file(configparser_instance, self._appdirs, 'hamster-gtk.conf')
 

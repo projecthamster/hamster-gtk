@@ -62,8 +62,13 @@ class HamsterSpinButton(Gtk.SpinButton, ConfigWidget):
         if adjustment is not None:
             if isinstance(adjustment, SimpleAdjustment):
                 self._validate_simple_adjustment(adjustment)
-                adjustment = Gtk.Adjustment(adjustment.min, adjustment.min, adjustment.max,
-                    adjustment.step, 10 * adjustment.step, 0)
+                adjustment = Gtk.Adjustment(
+                    value=adjustment.min,
+                    lower=adjustment.min,
+                    upper=adjustment.max,
+                    step_increment=adjustment.step, page_increment=(10 * adjustment.step),
+                    page_size=0
+                )
             elif not isinstance(adjustment, Gtk.Adjustment):
                 raise ValueError('Instance of SimpleAdjustment or Gtk.Adjustment is expected.')
 

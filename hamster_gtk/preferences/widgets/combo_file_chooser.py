@@ -47,7 +47,7 @@ class ComboFileChooser(Gtk.Grid, ConfigWidget):
         self._entry = Gtk.Entry()
         self._entry.set_hexpand(True)
 
-        self._button = Gtk.Button(_("Choose"))
+        self._button = Gtk.Button(label=_("Choose"))
         self._button.connect('clicked', self._on_choose_clicked)
 
         self.attach(self._entry, 0, 0, 1, 1)

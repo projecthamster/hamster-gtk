@@ -21,7 +21,7 @@ from __future__ import absolute_import, unicode_literals
 
 from gettext import gettext as _
 
-from gi.repository import GObject, Gtk
+from gi.repository import GObject, Gtk, GLib
 from six import text_type
 
 from hamster_gtk.helpers import get_parent_window
@@ -48,7 +48,7 @@ class HeaderBar(Gtk.HeaderBar):
     # Widgets
     def _get_export_button(self):
         """Return a button to export facts."""
-        button = Gtk.Button(_("Export"))
+        button = Gtk.Button(label=_("Export"))
         button.connect('clicked', self._on_export_button_clicked)
         return button
 
@@ -56,19 +56,19 @@ class HeaderBar(Gtk.HeaderBar):
         """Return a button that opens the *select daterange* dialog."""
         # We add a dummy label which will be set properly once a daterange is
         # set.
-        button = Gtk.Button('')
+        button = Gtk.Button(label='')
         button.connect('clicked', self._on_daterange_button_clicked)
         return button
 
     def _get_prev_daterange_button(self):
         """Return a 'previous dateframe' widget."""
-        button = Gtk.Button(_("Earlier"))
+        button = Gtk.Button(label=_("Earlier"))
         button.connect('clicked', self._on_previous_daterange_button_clicked)
         return button
 
     def _get_next_daterange_button(self):
         """Return a 'next dateframe' widget."""
-        button = Gtk.Button(_("Later"))
+        button = Gtk.Button(label=_("Later"))
         button.connect('clicked', self._on_next_daterange_button_clicked)
         return button
 
@@ -128,6 +128,6 @@ class Summary(Gtk.Box):
         for category, total in category_totals:
             label = Gtk.Label()
             label.set_markup("<b>{}:</b> {} minutes".format(
-                GObject.markup_escape_text(text_type(category)),
+                GLib.markup_escape_text(text_type(category)),
                 int(total.total_seconds() / 60)))
             self.pack_start(label, False, False, 10)
