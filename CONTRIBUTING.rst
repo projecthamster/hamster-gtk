@@ -98,6 +98,7 @@ Before you submit a pull request, check that it meets these guidelines:
 3. The pull request should work for Python 2.7 and 3.4. Check
    https://travis-ci.org/projecthamster/hamster-gtk/pull_requests
    and make sure that the tests pass for all supported Python versions.
+4. The base for the Pull Request should be against the develop branch. 
 
 Tips
 ----
