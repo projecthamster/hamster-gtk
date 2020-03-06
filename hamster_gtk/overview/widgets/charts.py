@@ -21,7 +21,7 @@ from __future__ import absolute_import, unicode_literals
 
 import operator
 
-from gi.repository import GObject, Gtk
+from gi.repository import GObject, Gtk, GLib
 
 from hamster_gtk import helpers
 
@@ -39,11 +39,11 @@ class Charts(Gtk.Grid):
         """Initialize widget."""
         super(Charts, self).__init__()
         self.set_column_spacing(20)
-        self.attach(Gtk.Label('Categories'), 0, 0, 1, 1)
+        self.attach(Gtk.Label(label='Categories'), 0, 0, 1, 1)
         self.attach(self._get_barcharts(totals.category), 0, 1, 1, 1)
-        self.attach(Gtk.Label('Activities'), 1, 0, 1, 1)
+        self.attach(Gtk.Label(label='Activities'), 1, 0, 1, 1)
         self.attach(self._get_barcharts(totals.activity), 1, 1, 1, 1)
-        self.attach(Gtk.Label('Dates'), 2, 0, 1, 1)
+        self.attach(Gtk.Label(label='Dates'), 2, 0, 1, 1)
         self.attach(self._get_barcharts(totals.date), 2, 1, 1, 1)
 
     def _get_barcharts(self, totals):
@@ -87,7 +87,7 @@ class Charts(Gtk.Grid):
             delta_label = Gtk.Label()
             delta_label.set_selectable(True)
             delta_label.set_halign(Gtk.Align.START)
-            delta_label.set_markup("<small>{}</small>".format(GObject.markup_escape_text(
+            delta_label.set_markup("<small>{}</small>".format(GLib.markup_escape_text(
                 helpers.get_delta_string(delta))))
             grid.attach(category_label, 0, row, 1, 1)
             grid.attach(bar_chart, 1, row, 1, 1)

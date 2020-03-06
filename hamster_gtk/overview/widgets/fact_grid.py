@@ -24,7 +24,7 @@ from __future__ import absolute_import
 
 import operator
 
-from gi.repository import GObject, Gtk
+from gi.repository import GObject, Gtk, GLib
 
 from hamster_gtk import helpers
 from hamster_gtk.misc.dialogs import EditFactDialog
@@ -65,7 +65,7 @@ class FactGrid(Gtk.Grid):
         date_box.set_name('DayRowDateBox')
         date_label = Gtk.Label()
         date_label.set_name('OverviewDateLabel')
-        date_label.set_markup("<b>{}</b>".format(GObject.markup_escape_text(date_string)))
+        date_label.set_markup("<b>{}</b>".format(GLib.markup_escape_text(date_string)))
         date_label.set_valign(Gtk.Align.START)
         date_label.set_justify(Gtk.Justification.RIGHT)
         date_box.add(date_label)
@@ -165,14 +165,14 @@ class FactListRow(Gtk.ListBoxRow):
         """"Return widget to represent ``Fact.start`` and ``Fact.end``."""
         start_time = fact.start.strftime('%H:%M')
         end_time = fact.end.strftime('%H:%M')
-        time_label = Gtk.Label('{start} - {end}'.format(start=start_time, end=end_time))
+        time_label = Gtk.Label(label='{start} - {end}'.format(start=start_time, end=end_time))
         time_label.props.valign = Gtk.Align.START
         time_label.props.halign = Gtk.Align.START
         return time_label
 
     def _get_delta_widget(self, fact):
         """"Return widget to represent ``Fact.delta``."""
-        label = Gtk.Label('{} Minutes'.format(fact.get_string_delta()))
+        label = Gtk.Label(label='{} Minutes'.format(fact.get_string_delta()))
         label.props.valign = Gtk.Align.START
         label.props.halign = Gtk.Align.END
         box = Gtk.EventBox()
@@ -211,8 +211,8 @@ class FactBox(Gtk.Box):
             category = str(fact.category)
         activity_label = Gtk.Label()
         activity_label.set_markup("{activity} - {category}".format(
-            activity=GObject.markup_escape_text(fact.activity.name),
-            category=GObject.markup_escape_text(category)))
+            activity=GLib.markup_escape_text(fact.activity.name),
+            category=GLib.markup_escape_text(category)))
         activity_label.props.halign = Gtk.Align.START
         return activity_label
 
@@ -220,7 +220,7 @@ class FactBox(Gtk.Box):
         """Return widget to represent ``Fact.tags``."""
         def get_tag_widget(name):
             tag_label = Gtk.Label()
-            tag_label.set_markup("<small>{}</small>".format(GObject.markup_escape_text(name)))
+            tag_label.set_markup("<small>{}</small>".format(GLib.markup_escape_text(name)))
             tag_label.set_name('OverviewTagLabel')
             tag_box = Gtk.EventBox()
             tag_box.set_name('OverviewTagBox')
@@ -240,6 +240,6 @@ class FactBox(Gtk.Box):
         description_label.set_name('OverviewDescriptionLabel')
         description_label.set_line_wrap(True)
         description_label.set_markup("<small><i>{}</i></small>".format(
-            GObject.markup_escape_text(fact.description)))
+            GLib.markup_escape_text(fact.description)))
         description_label.props.halign = Gtk.Align.START
         return description_label

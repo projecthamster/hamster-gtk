@@ -70,7 +70,7 @@ class HeaderBar(Gtk.HeaderBar):
 
     def _get_overview_button(self):
         """Return a button to open the ``Overview`` dialog."""
-        button = Gtk.Button(_("Overview"))
+        button = Gtk.Button(label=_("Overview"))
         button.connect('clicked', self._on_overview_button)
         return button
 

@@ -87,7 +87,7 @@ class DateRangeSelectDialog(Gtk.Dialog):
 
     # Widgets
     def _get_apply_button(self):
-        button = Gtk.Button(_('_Apply'), use_underline=True)
+        button = Gtk.Button(label=_('_Apply'), use_underline=True)
         return button
 
     def _get_today_widget(self):
@@ -128,11 +128,11 @@ class DateRangeSelectDialog(Gtk.Dialog):
 
     def _get_custom_range_label(self):
         """Return a 'heading' label for the widget."""
-        return Gtk.Label(_("Custom Range"))
+        return Gtk.Label(label=_("Custom Range"))
 
     def _get_custom_range_connection_label(self):
         """Return the label to be displayed between the two calendars."""
-        return Gtk.Label(_("to"))
+        return Gtk.Label(label=_("to"))
 
     # Helper
     def _get_double_label_button(self, left_label, right_label):
@@ -145,11 +145,11 @@ class DateRangeSelectDialog(Gtk.Dialog):
         grid = Gtk.Grid()
         button.add(grid)
 
-        left_label = Gtk.Label(left_label)
+        left_label = Gtk.Label(label=left_label)
         left_label.set_hexpand(True)
         left_label.set_halign(Gtk.Align.START)
 
-        right_label = Gtk.Label(right_label)
+        right_label = Gtk.Label(label=right_label)
         right_label.set_hexpand(True)
         right_label.set_halign(Gtk.Align.END)
 

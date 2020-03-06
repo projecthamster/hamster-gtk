@@ -61,13 +61,14 @@ def paths(request, faker):
 @pytest.fixture
 def adjustment(request, numbers):
     """Return a list of random numbers."""
-    value = sorted(numbers)[len(numbers) // 2]
-    lower = min(numbers)
-    upper = max(numbers)
-    step_increment = 1
-    page_increment = 5
-    page_size = 0
-    return Gtk.Adjustment(value, lower, upper, step_increment, page_increment, page_size)
+    return Gtk.Adjustment(
+        value=sorted(numbers)[len(numbers) // 2],
+        lower=min(numbers),
+        upper=max(numbers),
+        step_increment=1,
+        page_increment=5,
+        page_size=0
+    )
 
 
 @pytest.fixture

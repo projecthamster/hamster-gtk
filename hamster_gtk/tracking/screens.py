@@ -107,21 +107,21 @@ class CurrentFactBox(Gtk.Box):
 
     def _get_fact_label(self, fact):
         text = '{fact}'.format(fact=fact)
-        return Gtk.Label(text)
+        return Gtk.Label(label=text)
 
     def _get_cancel_button(self):
-        cancel_button = Gtk.Button(_('Cancel'))
+        cancel_button = Gtk.Button(label=_('Cancel'))
         cancel_button.connect('clicked', self._on_cancel_button)
         return cancel_button
 
     def _get_save_button(self):
-        save_button = Gtk.Button(_('Stop & Save'))
+        save_button = Gtk.Button(label=_('Stop & Save'))
         save_button.connect('clicked', self._on_save_button)
         return save_button
 
     def _get_invalid_label(self):
         """Return placeholder in case there is no current ongoing fact present."""
-        return Gtk.Label(_("There currently is no ongoing fact that could be displayed."))
+        return Gtk.Label(label=_("There currently is no ongoing fact that could be displayed."))
 
     # Callbacks
     def _on_cancel_button(self, button):
@@ -174,7 +174,7 @@ class StartTrackingBox(Gtk.Box):
         # Refactor to call separate 'get_widget' methods instead.
         # Introduction text
         text = _('Currently no tracked activity. Want to start one?')
-        self.current_fact_label = Gtk.Label(text)
+        self.current_fact_label = Gtk.Label(label=text)
         self.pack_start(self.current_fact_label, False, False, 0)
 
         # Fact entry field

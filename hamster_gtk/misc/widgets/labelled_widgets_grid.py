@@ -44,7 +44,7 @@ class LabelledWidgetsGrid(Gtk.Grid):
 
         row = 0
         for key, (label, widget) in self._fields.items():
-            label_widget = Gtk.Label(label)
+            label_widget = Gtk.Label(label=label)
             label_widget.set_use_underline(True)
             label_widget.set_mnemonic_widget(widget)
             self.attach(label_widget, 0, row, 1, 1)
