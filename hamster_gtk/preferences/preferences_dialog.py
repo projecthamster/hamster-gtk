@@ -30,9 +30,8 @@ from gi.repository import GObject, Gtk
 
 from hamster_gtk.misc.widgets import LabelledWidgetsGrid
 from hamster_gtk.preferences.widgets import (ComboFileChooser,
-                                             HamsterSwitch,
                                              HamsterComboBoxText,
-                                             HamsterSpinButton,
+                                             HamsterSpinButton, HamsterSwitch,
                                              SimpleAdjustment, TimeEntry)
 
 
@@ -80,6 +79,11 @@ class PreferencesDialog(Gtk.Dialog):
                 ('autocomplete_split_activity',
                  (_("Autocomplete activities and categories separately"),
                   HamsterSwitch())),
+                ('tracking_show_recent_activities',
+                 (_("Show recent activities for quickly starting tracking."),
+                  HamsterSwitch())),
+                ('tracking_recent_activities_count', (_('How many recent activities?'),
+                    HamsterSpinButton(SimpleAdjustment(0, GObject.G_MAXDOUBLE, 1)))),
             ]))),
         ]
 

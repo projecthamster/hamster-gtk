@@ -35,13 +35,17 @@ def appdirs(request):
 
 # Instances
 @pytest.fixture
-def app(request):
+def app(request, config):
     """
     Return an ``Application`` fixture.
 
     Please note: the app has just been started but not activated.
     """
-    app = hamster_gtk.HamsterGTK()
+    def monkeypatched_reload_config(self):
+        return config
+    HamsterGTK = hamster_gtk.HamsterGTK  # NOQA
+    HamsterGTK._reload_config = monkeypatched_reload_config
+    app = HamsterGTK()
     app._startup(app)
     return app
 
@@ -104,10 +108,12 @@ def config(request, tmpdir):
         'store': 'sqlalchemy',
         'day_start': datetime.time(5, 30, 0),
         'fact_min_delta': 1,
-        'tmpfile_path': tmpdir.join('tmpfile.hamster'),
+        'tmpfile_path': str(tmpdir.join('tmpfile.hamster')),
         'db_engine': 'sqlite',
         'db_path': ':memory:',
         'autocomplete_activities_range': 30,
         'autocomplete_split_activity': False,
+        'tracking_show_recent_activities': True,
+        'tracking_recent_activities_count': 6,
     }
     return config

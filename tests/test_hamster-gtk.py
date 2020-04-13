@@ -14,9 +14,19 @@ from hamster_gtk.tracking import TrackingScreen
 class TestHamsterGTK(object):
     """Unittests for the main app class."""
 
-    def test_instantiation(self):
-        """Make sure class instatiation works as intended."""
-        app = hamster_gtk.HamsterGTK()
+    def test_instantiation(self, config):
+        """
+        Make sure class instantiation works as intended.
+
+        We actually test against a monkeypatched class in order to avoid the
+        config loading machinery as this would access the user data on fs.
+        The relevant skiped methods need to be tested separately.
+        """
+        def monkeypatched_reload_config(self):
+            return config
+        HamsterGTK = hamster_gtk.HamsterGTK  # NOQA
+        HamsterGTK._reload_config = monkeypatched_reload_config
+        app = HamsterGTK()
         assert app
 
     def test__reload_config(self, app, config, mocker):
@@ -29,7 +39,7 @@ class TestHamsterGTK(object):
     def test__get_default_config(self, app, appdirs):
         """Make sure the defaults use appdirs for relevant paths."""
         result = app._get_default_config()
-        assert len(result) == 8
+        assert len(result) == 10
         assert os.path.dirname(result['tmpfile_path']) == appdirs.user_data_dir
         assert os.path.dirname(result['db_path']) == appdirs.user_data_dir
 

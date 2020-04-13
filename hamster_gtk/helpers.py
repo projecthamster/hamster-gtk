@@ -22,9 +22,12 @@
 from __future__ import absolute_import, unicode_literals
 
 import datetime
+import operator
 import re
+from gettext import gettext as _
 
 import six
+from orderedset import OrderedSet
 from six import text_type
 
 
@@ -88,6 +91,8 @@ def clear_children(widget):
     It seems GTK really does not have this build in. Iterating over all
     seems a bit blunt, but seems to be the way to do this.
     """
+    # [TODO]
+    # Replace with Gtk.Container.foreach()?
     for child in widget.get_children():
         child.destroy()
     return widget
@@ -175,6 +180,50 @@ def decompose_raw_fact_string(text, raw=False):
     if match and not raw:
         result = match.groupdict()
     return result
+
+
+# [TODO]
+# Once LIB-251 has been fixed this should no longer be needed.
+def get_recent_activities(controller, start, end):
+    """Return a list of all activities logged in facts within the given timeframe."""
+    # [FIXME]
+    # This manual sorting within python is of course less than optimal. We stick
+    # with it for now as this is just a preliminary workaround helper anyway and
+    # effective sorting will need to be implemented by the storage backend in
+    # ``hamster-lib``.
+    facts = sorted(controller.facts.get_all(start=start, end=end),
+        key=operator.attrgetter('start'), reverse=True)
+    recent_activities = [fact.activity for fact in facts]
+    return OrderedSet(recent_activities)
+
+
+def serialize_activity(activity, separator='@'):
+    """
+    Provide a serialized string version of an activity.
+
+    Args:
+        activity (Activity): ``Activity`` instance to serialize.
+        separator (str, optional): ``string`` used to separate ``activity.name`` and
+            ``category.name``. The separator will be omitted if
+            ``activity.category=None``. Defaults to ``@``.
+
+    Returns:
+        str: A string representation of the passed activity.
+    """
+    if not separator:
+        raise ValueError(_("No valid separator has been provided."))
+
+    category_text = None
+
+    if activity.category:
+        category_text = activity.category.name
+
+    if category_text:
+        result = '{activity_text}{separator}{category_text}'.format(activity_text=activity.name,
+            category_text=category_text, separator=separator)
+    else:
+        result = activity.name
+    return text_type(result)
 
 
 def get_delta_string(delta):
