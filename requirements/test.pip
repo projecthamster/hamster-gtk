@@ -26,6 +26,6 @@ pep257==0.7.0
 pytest==5.4.3
 pytest-faker==2.0.0
 pytest-factoryboy==2.0.3
-pytest-mock==3.1.0
+pytest-mock==3.1.1
 pytest-xvfb==1.2.0
 tox==3.15.1
