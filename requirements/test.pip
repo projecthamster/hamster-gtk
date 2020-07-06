@@ -9,7 +9,7 @@
 
 
 check-manifest==0.42
-coverage==5.1
+coverage==5.2
 doc8==0.8.1
 # This is needed to prevent ``pytest-factoryboy`` to pull a more recent (faulty)
 # version. See #214 for details.
@@ -20,7 +20,7 @@ flake8-debugger==3.2.1
 flake8-print==3.1.4
 freezegun==0.3.15
 future==0.18.2
-isort==5.0.3
+isort==5.0.4
 pep8-naming==0.11.1
 pep257==0.7.0
 pytest==5.4.3
