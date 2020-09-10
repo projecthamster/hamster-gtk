@@ -20,7 +20,7 @@ flake8-debugger==3.2.1
 flake8-print==3.1.4
 freezegun==1.0.0
 future==0.18.2
-isort==5.5.1
+isort==5.5.2
 pep8-naming==0.11.1
 pep257==0.7.0
 pytest==6.0.1
