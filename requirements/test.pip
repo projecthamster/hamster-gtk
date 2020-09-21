@@ -8,7 +8,7 @@
 # Including them here as well has the advantage of keeping them up to date via requires.io
 
 
-check-manifest==0.42
+check-manifest==0.43
 coverage==5.3
 doc8==0.8.1
 # This is needed to prevent ``pytest-factoryboy`` to pull a more recent (faulty)
