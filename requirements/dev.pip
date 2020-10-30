@@ -7,6 +7,6 @@
 -r ./test.pip
 
 bumpversion==0.6.0
-ipython==7.18.1
+ipython==7.19.0
 wheel==0.35.1
 watchdog==0.10.3
