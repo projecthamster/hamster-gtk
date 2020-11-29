@@ -16,7 +16,7 @@ doc8==0.8.1
 factory-boy==3.1.0
 fauxfactory==3.1.0
 flake8==3.8.4
-flake8-debugger==3.2.1
+flake8-debugger==4.0.0
 flake8-print==3.1.4
 freezegun==1.0.0
 future==0.18.2
