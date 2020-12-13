@@ -8,5 +8,5 @@
 
 bumpversion==0.6.0
 ipython==7.19.0
-wheel==0.36.1
+wheel==0.36.2
 watchdog==1.0.1
