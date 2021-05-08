@@ -15,7 +15,7 @@ doc8==0.8.1
 # version. See #214 for details.
 factory-boy==3.2.0
 fauxfactory==3.1.0
-flake8==3.9.1
+flake8==3.9.2
 flake8-debugger==4.0.0
 flake8-print==4.0.0
 freezegun==1.1.0
