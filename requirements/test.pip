@@ -21,7 +21,7 @@ flake8-print==4.0.0
 freezegun==1.1.0
 future==0.18.2
 isort==5.9.3
-pep8-naming==0.12.0
+pep8-naming==0.12.1
 pep257==0.7.0
 pytest==6.2.4
 pytest-faker==2.0.0
